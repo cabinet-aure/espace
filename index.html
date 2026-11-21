@@ -156,9 +156,9 @@
 (function(){
   var X='https://script.google.com/macros/s/AKfycbzvr244hWagP_E1qOxgDi29Fl8IIPMSJmukeA2eHmq7fGx5Mk0a67XbBVq4J3Dkk5Hg/exec';
   var P=new URLSearchParams(location.search), C=P.get('c'), S=P.get('s'), K=P.get('k');
-  var ID=C?{c:C}:{s:S,k:K};
+  var ID=C?{code:C}:{s:S,k:K}; // vers le script : « code » (le paramètre « c » y est refusé par Google)
   var VUE=(P.get('r')||(C?'':'banque')).toLowerCase();
-  function lienVue(v){var q=new URLSearchParams(ID);if(v)q.set('r',v);return '?'+q.toString();}
+  function lienVue(v){var q=new URLSearchParams(C?{c:C}:{s:S,k:K});if(v)q.set('r',v);return '?'+q.toString();}
   var MAX=10*1024*1024, zones=[];
   var NUAGE='<svg class="ico" viewBox="0 0 64 48" aria-hidden="true"><path d="M51 20.5A15 15 0 0 0 22.5 15 11.5 11.5 0 0 0 12.5 37.5h37A8.6 8.6 0 0 0 51 20.5z" fill="#2e6b3a"/><path d="M32 31V18" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M24 23.5 32 15.5l8 8" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   var ACCEPT='.pdf,.ofx,.jpg,.jpeg,.png,.xls,.xlsx,.csv,.qif,.txt,.tsv,.cfonb,.dat,.120';
