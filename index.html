@@ -154,7 +154,7 @@
 </div>
 <script>
 (function(){
-  var X='https://script.google.com/macros/s/AKfycbzvr244hWagP_E1qOxgDi29Fl8IIPMSJmukeA2eHmq7fGx5Mk0a67XbBVq4J3Dkk5Hg/exec';
+  var X='https://script.google.com/macros/s/AKfycbxgSBTBv2-7wJGAkK_k5iSuTYz6ojZHxS5gjB7bayJLvCmexIHZ_Ldo7YiRaa0JJKsv/exec';
   var P=new URLSearchParams(location.search), C=P.get('c'), S=P.get('s'), K=P.get('k');
   var ID=C?{c:C}:{s:S,k:K};
   var VUE=(P.get('r')||(C?'':'banque')).toLowerCase();
@@ -171,7 +171,7 @@
     'credit cooperatif':['CC','#e2007a'],'banque palatine':['BP','#0f2c59'],'paypal':['PP','#003087']};
   function $(i){return document.getElementById(i);}
   function esc(t){var d=document.createElement('div');d.textContent=t==null?'':t;return d.innerHTML;}
-  function cle(t){return String(t).normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[’']/g,'\'').toLowerCase();}
+  function cle(t){return String(t).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’']/g,'\'').toLowerCase();}
   function deBanque(b){
     if(/^(crédit|credit) /i.test(b))return 'du '+b;
     if(/^(la |le )/i.test(b))return 'de '+b;
