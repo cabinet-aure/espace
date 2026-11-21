@@ -200,10 +200,30 @@
   function erreurLien(t){$('chargement').innerHTML=esc(t)+'<br><br>Pour toute information : 01&nbsp;30&nbsp;49&nbsp;50&nbsp;05.';}
   if(!C&&!(S&&K)){erreurLien('Ce lien n’est pas valide.');return;}
 
+  // Lecture des données : fetch sans cookie (3 essais), puis secours par balise script (JSONP)
+  function essaiFetch(){
+    return fetch(X+'?'+new URLSearchParams(ID).toString()+'&t='+Date.now(),{credentials:'omit',cache:'no-store',redirect:'follow'})
+      .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();});
+  }
+  function essaiJsonp(){
+    return new Promise(function(ok,ko){
+      var nom='rep'+Date.now(),s=document.createElement('script'),fin=setTimeout(function(){nettoie();ko(new Error('délai'));},15000);
+      function nettoie(){clearTimeout(fin);try{delete window[nom];}catch(e){window[nom]=undefined;}if(s.parentNode)s.parentNode.removeChild(s);}
+      window[nom]=function(d){nettoie();ok(d);};
+      s.onerror=function(){nettoie();ko(new Error('script'));};
+      var q=new URLSearchParams(ID);q.set('callback',nom);q.set('t',Date.now());
+      s.src=X+'?'+q.toString();document.head.appendChild(s);
+    });
+  }
+  function lireDonnees(){
+    var n=0;
+    function tente(){return essaiFetch().catch(function(e){n++;if(n<3)return new Promise(function(r){setTimeout(r,1500);}).then(tente);throw e;});}
+    return tente().catch(function(){return essaiJsonp();});
+  }
   function charger(){
     $('chargement').style.display='';$('chargement').innerHTML='<span class="rond"></span>Chargement de votre espace…';
     $('formulaire').style.display='none';$('merci').style.display='none';$('accueil').style.display='none';
-    fetch(X+'?'+new URLSearchParams(ID).toString()).then(function(r){return r.json();}).then(function(d){
+    lireDonnees().then(function(d){
       if(!d.ok){erreurLien(d.erreur||'Ce lien n’est pas valide.');return;}
       $('societe').textContent=d.societe;$('pSoc').textContent=d.societe;
       if(d.mail){$('pMail').textContent=d.mail;}else{$('pMailL').style.display='none';}
