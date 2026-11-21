@@ -10,6 +10,7 @@
   *{box-sizing:border-box}
   body{margin:0;background:#f1f3f2;font-family:Arial,Helvetica,sans-serif;color:var(--txt);font-size:15px;line-height:1.45}
   .wrap{max-width:820px;margin:0 auto;padding:16px 14px 0}
+  @media(min-width:1400px){.wrap{max-width:1000px;padding-top:28px}body{font-size:16.5px}.tete .lib{font-size:16px}.tete .soc{font-size:21px}.rub h2{font-size:19px}.bq-nom{font-size:19px}.t .h{font-size:19px}.t .b{font-size:15.5px}.t .go{font-size:16px}.ic{width:58px;height:58px}}
   .carte{background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.08);border-top:6px solid var(--or)}
   .carte>footer{border-radius:0 0 12px 12px}
   .bq-tete>div:not(.pastille){flex:1;min-width:0}
@@ -229,7 +230,7 @@
       if(d.mail){$('pMail').textContent=d.mail;}else{$('pMailL').style.display='none';}
       $('titre').textContent=(d.periode||'').replace(/^Relevés/i,'Documents bancaires')||'Documents bancaires';
       if(d.dateLimite){$('dateLimite').textContent=d.dateLimite;$('limite').style.display='';}
-      [].forEach.call(document.querySelectorAll('.retour'),function(a){a.href=lienVue('');a.style.display=VUE==='banque'?'inline-block':'none';});
+      [].forEach.call(document.querySelectorAll('.retour'),function(a){a.href=lienVue(C?'':'accueil');a.style.display=VUE==='banque'?'inline-block':'none';});
       if(VUE==='banque'){afficher(d.documents||[],d.attente||[]);$('formulaire').style.display='';}
       else{tuiles(d);$('accueil').style.display='';}
       $('chargement').style.display='none';
