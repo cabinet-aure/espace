@@ -169,6 +169,22 @@
     'caixa geral de depositos':['CGD','#0060a9'],'banque bcp':['BCP','#e30613'],'hsbc':['HSBC','#db0011'],'credit du nord':['CDN','#003d7c'],
     'boursobank':['B','#d6006f'],'boursorama':['B','#d6006f'],'revolut':['R','#191c1f'],'bpifrance':['BPI','#ffcd00'],
     'credit cooperatif':['CC','#e2007a'],'banque palatine':['BP','#0f2c59'],'paypal':['PP','#003087']};
+  // Banque lue dans la colonne Compte (« Compte courant Crédit Agricole (se terminant par 5540) »)
+  var BANQUES=['Banque Populaire','Crédit Agricole','Caisse d’Épargne','Crédit Mutuel','CIC','Société Générale','BNP Paribas','LCL',
+    'La Banque Postale','Qonto','Shine','Caixa Geral de Depósitos','Banque BCP','HSBC','Crédit du Nord','BoursoBank','Boursorama',
+    'Revolut','Memo Bank','Banque Palatine','Crédit Coopératif','Fortuneo','Hello bank!','Nickel','Bpifrance','Banque Courtois',
+    'Banque Kolb','Banque Laydernier','Banque Rhône-Alpes','Banque Tarneaud','Wise','Manager.one','PayPal'];
+  function banqueDe(compte){
+    var t=cle(compte),tr='',pos=1e9;
+    BANQUES.forEach(function(b){var p=t.indexOf(cle(b));if(p>=0&&(p<pos||(p===pos&&b.length>tr.length))){tr=b;pos=p;}});
+    if(tr)return tr;
+    var m=String(compte).match(/^(?:compte\s+\S+\s+)?(.+?)\s*\(/i);
+    return m?m[1].trim():'Autre banque';
+  }
+  function sansBanque(compte,b){
+    var t=String(compte),p=cle(t).indexOf(cle(b));
+    return p<0?t:(t.slice(0,p)+t.slice(p+b.length)).replace(/\s{2,}/g,' ').trim();
+  }
   function $(i){return document.getElementById(i);}
   function esc(t){var d=document.createElement('div');d.textContent=t==null?'':t;return d.innerHTML;}
   function cle(t){return String(t).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’']/g,'\'').toLowerCase();}
@@ -239,6 +255,7 @@
   function afficher(docs,attente){
     var ordre=[],bq={},att={},h='';
     attente.forEach(function(a){att[a.banque]=a;});
+    docs.forEach(function(x){if(!x.banque){x.banque=banqueDe(x.compte);x.compte=sansBanque(x.compte,x.banque);}});
     docs.forEach(function(x){if(!bq[x.banque]){bq[x.banque]=[];ordre.push(x.banque);}bq[x.banque].push(x);});
     var aDeposer=docs.filter(function(x){return x.statut!=='Reçu';}).length;
     ordre.forEach(function(b){
