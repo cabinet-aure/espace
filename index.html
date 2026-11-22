@@ -163,6 +163,25 @@
   .bq-tete>div.droite{flex:0 0 auto}
   @media(max-width:600px){.bq-tete>div.droite{flex:1 1 100%;margin-left:58px;justify-content:flex-start}.histo{padding:6px 12px 10px}}
   .rien .pd{display:block;font-weight:normal;color:#333;margin-top:4px}
+  /* ===== Rubrique Bilan (bleu pétrole) ===== */
+  .bil .rub{background:#1f5f6b}
+  .bil .rub .dl b{color:#1f5f6b}
+  .btn.pe{background:#1f5f6b;border-bottom-color:#123b43}
+  .bil .zone{border-color:#b7d3d8;background:#f6fafb}
+  .bil .zone.survol{background:#e4f0f2;border-color:#1f5f6b}
+  .bil .ztxt b{color:#1f5f6b}
+  .bil .fichiers li{border-color:#d6e6e9}
+  .prog{display:flex;align-items:center;gap:12px;margin:12px 0 4px;font-size:14px;color:#666}
+  .prog .bar{flex:1;height:8px;background:#dcebee;border-radius:4px;overflow:hidden}
+  .prog .bar span{display:block;height:100%;background:#1f5f6b;border-radius:4px}
+  .bil h3{font-size:13px;text-transform:uppercase;letter-spacing:.5px;color:#1f5f6b;margin:22px 0 8px;padding-bottom:5px;border-bottom:2px solid #e4f0f2}
+  .bdoc{border:1px solid #e4e4e4;border-radius:8px;padding:12px 14px;margin-bottom:10px;background:#fff}
+  .bdoc .bt{font-weight:bold;margin-bottom:2px}
+  .bdoc .bs{font-size:13px;color:#6b6b6b;margin-bottom:10px}
+  .bdoc.ok{background:#f7f7f7;border-color:#eee;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+  .bdoc.ok .bt{color:#6b6b6b;font-weight:normal;margin:0}
+  .bdoc.ok .rl{color:#2e6b3a;font-size:13px;font-weight:bold}
+  .bdoc.err{border-color:#c0392b}
   .retourS{display:inline-block;font-size:14px;color:#d84315;font-weight:bold;text-decoration:none;border:1px solid #f0c4b4;background:#fffaf8;border-radius:20px;padding:5px 12px;margin-bottom:12px}
   @media(max-width:600px){.grille{grid-template-columns:1fr}}
 </style>
@@ -254,6 +273,15 @@
     <label class="f large"><span>Commentaires (facultatif)</span><textarea id="e_commentaires" maxlength="2000"></textarea></label>
    </div>
    <div class="actions"><button class="btn or" id="envoyerEmb">✓ Envoyer les informations</button><div class="erreur" id="erreurEmb"></div></div>
+  </div>
+  <div id="bilan" style="display:none">
+   <div class="corps bil">
+    <div class="rub"><h2 id="bTitre"></h2><span class="dl" id="bLimite" style="display:none">Date limite : <b id="bDate"></b></span></div>
+    <div class="consigne" style="font-size:14px;color:#666">Ces documents nous permettent de préparer votre bilan. Déposez chaque document dans sa zone, puis cliquez sur «&nbsp;Envoyer mes documents&nbsp;».</div>
+    <div class="prog" id="bProgL"><div class="bar"><span id="bBar"></span></div><div id="bProg"></div></div>
+    <div id="bDocs"></div>
+   </div>
+   <div class="actions"><button class="btn pe" id="envoyerBil" disabled>✔ Envoyer mes documents</button><div class="erreur" id="erreurBil"></div></div>
   </div>
   <div class="merci" id="merci">
     <div class="ok">✔</div>
@@ -347,7 +375,7 @@
   }
   function charger(){
     $('chargement').style.display='';$('chargement').innerHTML='<span class="rond"></span>Chargement de votre espace…';
-    $('formulaire').style.display='none';$('merci').style.display='none';$('accueil').style.display='none';$('social').style.display='none';$('embauche').style.display='none';
+    $('formulaire').style.display='none';$('merci').style.display='none';$('accueil').style.display='none';$('social').style.display='none';$('embauche').style.display='none';$('bilan').style.display='none';
     lireDonnees().then(function(d){
       if(!d.ok){erreurLien(d.erreur||'Ce lien n’est pas valide.');return;}
       $('societe').textContent=d.societe;$('pSoc').textContent=d.societe;
@@ -359,6 +387,7 @@
       [].forEach.call(document.querySelectorAll('.retour'),function(a){a.href=lienVue(C?'':'accueil');a.style.display=(VUE&&VUE!=='accueil')?'inline-block':'none';});
       if(VUE==='banque'){afficher(d.documents||[],d.attente||[]);$('formulaire').style.display='';}
       else if(VUE==='social'){afficherSocial(d);$('social').style.display='';}
+      else if(VUE==='bilan'&&d.bilan){afficherBilan(d.bilan);$('bilan').style.display='';}
       else if(VUE==='embauche'){$('retourSoc').href=lienVue('social');lireBrouillon();majEmb();$('embauche').style.display='';}
       else{tuiles(d);$('accueil').style.display='';}
       $('chargement').style.display='none';
@@ -386,7 +415,7 @@
       '<div class="b">'+corpsB+'</div>'+
       '<div class="go">'+(n?'✓ Déposer':'Consulter')+'</div></a>'+
       '<a class="t" style="--c:#d84315" href="'+lienVue('social')+'"><div class="h"><span>👥</span>Social</div>'+
-      '<div class="b">Éléments de paie, embauches, arrêts de travail, départs…</div><div class="go">✓ Déposer un document</div></a>'+inactive('📁','Bilan','Documents pour le bilan','#1f5f6b');
+      '<div class="b">Éléments de paie, embauches, arrêts de travail, départs…</div><div class="go">✓ Déposer un document</div></a>'+tuileBilan(d.bilan);
   }
   // Rubriques prévues, pas encore ouvertes : affichées en gris, sans lien
   function inactive(i,t,l,c){
@@ -510,6 +539,80 @@
   $('ic').onclick=function(e){e.stopPropagation();var o=$('panneau').hidden;$('panneau').hidden=!o;this.setAttribute('aria-expanded',o?'true':'false');};
   document.addEventListener('click',function(e){if(!$('panneau').hidden&&!$('panneau').contains(e.target)){$('panneau').hidden=true;$('ic').setAttribute('aria-expanded','false');}});
 
+  // ===================== RUBRIQUE BILAN =====================
+  var PE='#1f5f6b',NUAGE_PE=NUAGE.replace('#2e6b3a',PE),bzones=[];
+  function zoneBil(texte){return '<label class="zone petite"><input type="file" multiple accept="'+ACC_SOC+'">'+NUAGE_PE+'<span class="ztxt">'+texte+'<br><b>ou sélectionnez un fichier</b></span></label><ul class="fichiers"></ul>';}
+  // Case de l'accueil : demande en cours (vert pétrole, « ✓ Déposer »), tout reçu (« ✔ À jour »), sinon « Prochainement »
+  function tuileBilan(b){
+    if(!b)return inactive('📁','Bilan','Documents pour le bilan','#1f5f6b');
+    var n=b.documents.filter(function(x){return x.statut!=='Reçu';}).length,corps;
+    if(n)corps='<span class="st">'+esc(b.titre)+'</span>'+(b.dateLimite?'<span class="dl" style="margin-top:2px">Avant le '+esc(b.dateLimite)+'</span>':'');
+    else corps='<span class="st">✔ À jour</span><br>'+esc(b.titre);
+    return '<a class="t" style="--c:#1f5f6b" href="'+lienVue('bilan')+'"><div class="h"><span>📁</span>Bilan</div><div class="b">'+corps+'</div>'+
+      '<div class="go">'+(n?'✓ Déposer':'Consulter')+'</div></a>';
+  }
+  function afficherBilan(b){
+    $('bTitre').textContent='Documents pour le '+b.titre.charAt(0).toLowerCase()+b.titre.slice(1);
+    var docs=b.documents,recus=docs.filter(function(x){return x.statut==='Reçu';}).length;
+    if(b.dateLimite&&recus<docs.length){$('bDate').textContent=b.dateLimite;$('bLimite').style.display='';}else $('bLimite').style.display='none';
+    $('bBar').style.width=(docs.length?Math.round(100*recus/docs.length):0)+'%';
+    $('bProg').textContent=recus+' document'+(recus>1?'s':'')+' reçu'+(recus>1?'s':'')+' sur '+docs.length;
+    $('bProgL').style.display=docs.length?'':'none';
+    var h='',themes=[];
+    docs.forEach(function(x){if(themes.indexOf(x.theme)<0)themes.push(x.theme);});
+    themes.forEach(function(t){
+      if(t)h+='<h3>'+esc(t)+'</h3>';
+      docs.filter(function(x){return x.theme===t;}).forEach(function(x){
+        if(x.statut==='Reçu')h+='<div class="bdoc ok"><div class="bt">✔ '+esc(x.document)+'</div><div class="rl">Reçu le '+esc(x.recuLe)+'</div></div>';
+        else h+='<div class="bdoc" data-ref="'+esc(x.ref)+'"><div class="bt">'+esc(x.document)+(x.etiquette?'<span class="etiq">'+esc(x.etiquette)+'</span>':'')+'</div>'+
+          (x.explication?'<div class="bs">'+esc(x.explication)+'</div>':'<div class="bs"></div>')+zoneBil('Déposez ici le fichier')+'</div>';
+      });
+    });
+    h+='<h3>Autre document</h3><div class="bdoc" data-ref="AUTRE"><div class="bt">Autre document pour le bilan</div><div class="bs">Tout autre document utile à la préparation de votre bilan</div>'+
+      zoneBil('Déposez ici le fichier')+'<textarea class="prec" placeholder="Précision éventuelle (facultatif)"></textarea></div>';
+    $('bDocs').innerHTML=h;
+    bzones=[].slice.call($('bDocs').querySelectorAll('.bdoc[data-ref]'));
+    bzones.forEach(function(d){brancherZone(d,majBil,'erreurBil');});
+    var p=$('bDocs').querySelector('.prec');if(p)p.addEventListener('input',majBil);
+    $('envoyerBil').lot=null;$('erreurBil').textContent='';
+    majBil();
+  }
+  function majBil(){
+    var n=bzones.reduce(function(s,d){return s+d.files.length;},0),p=$('bDocs').querySelector('.prec');
+    $('envoyerBil').disabled=!(n||(p&&p.value.trim()));
+  }
+  $('envoyerBil').onclick=function(){
+    var b=this,taches=[],recap=[];
+    $('erreurBil').textContent='';
+    bzones.forEach(function(d){
+      var ref=d.getAttribute('data-ref'),p=d.querySelector('.prec'),prec=p?p.value.trim():'',titre=d.querySelector('.bt').firstChild.textContent;
+      d.files.forEach(function(f,i){taches.push({d:d,ref:ref,prec:i===0?prec:'',f:f});});
+      if(!d.files.length&&prec)taches.push({d:d,ref:ref,prec:prec,f:null});
+      if(d.files.length)recap.push(titre+' : '+d.files.length+' fichier'+(d.files.length>1?'s':''));
+      else if(prec)recap.push(titre+' : précision transmise');
+    });
+    if(!taches.length)return;
+    b.lot=b.lot||('B'+Date.now().toString(36)+Math.random().toString(36).slice(2,8));
+    b.disabled=true;
+    var i=0;
+    function echec(e){b.disabled=false;b.textContent='✔ Envoyer mes documents';
+      $('erreurBil').textContent='L’envoi a échoué ('+(e.message||e)+'). Merci de réessayer : les fichiers déjà envoyés ne seront pas perdus.';}
+    (function suivant(){
+      if(i>=taches.length){
+        b.innerHTML='<span class="rond"></span>Envoi en cours…';
+        poster(avecId({rubrique:'bilan',etape:'fin',lot:b.lot})).then(function(){
+          b.lot=null;merci('Nous vous remercions : vos documents ont bien été transmis au cabinet.',recap);
+        }).catch(echec);
+        return;
+      }
+      var t=taches[i];
+      if((t.f&&t.f._ok)||(!t.f&&t.d._precOk)){i++;return suivant();}
+      b.innerHTML='<span class="rond"></span>Envoi en cours… '+(i+1)+' / '+taches.length;
+      (t.f?lire(t.f):Promise.resolve('')).then(function(b64){
+        return poster(avecId({rubrique:'bilan',lot:b.lot,ref:t.ref,precision:t.prec,nom:t.f?t.f.name:'',type:t.f?t.f.type:'',base64:b64}));
+      }).then(function(){if(t.f)t.f._ok=true;else t.d._precOk=true;i++;suivant();}).catch(echec);
+    })();
+  };
   // ===================== RUBRIQUE SOCIAL =====================
   var OR='#d84315',NUAGE_OR=NUAGE.replace('#2e6b3a',OR);
   var ACC_SOC='.pdf,.jpg,.jpeg,.png,.heic,.doc,.docx,.xls,.xlsx,.csv,.txt';
@@ -590,7 +693,7 @@
     $('merciTitre').textContent=titre;
     $('recap').innerHTML=recap.map(function(t){return '<li>'+esc(t)+'</li>';}).join('');
     $('revenir').href=lienVue(C?'':'accueil');
-    $('social').style.display='none';$('embauche').style.display='none';$('formulaire').style.display='none';
+    $('social').style.display='none';$('embauche').style.display='none';$('formulaire').style.display='none';$('bilan').style.display='none';
     $('merci').style.display='block';window.scrollTo(0,0);
   }
   $('envoyerSoc').onclick=function(){
@@ -763,7 +866,7 @@
   });});
   // Alerte avant de quitter : formulaire commencé ou fichiers choisis mais pas envoyés
   window.addEventListener('beforeunload',function(e){
-    var fic=szones.some(function(d){return d.files&&d.files.length;})||Object.keys(PIECES).some(function(k){return PIECES[k].files&&PIECES[k].files.length;});
+    var fic=szones.some(function(d){return d.files&&d.files.length;})||bzones.some(function(d){return d.files&&d.files.length;})||Object.keys(PIECES).some(function(k){return PIECES[k].files&&PIECES[k].files.length;});
     if((modifie||fic)&&$('merci').style.display!=='block'){e.preventDefault();e.returnValue='';return '';}
   });
   charger();
