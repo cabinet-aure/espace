@@ -162,6 +162,7 @@
   .traite h2{font-size:18px;margin:0 0 10px}
   .bq-tete>div.droite{flex:0 0 auto}
   @media(max-width:600px){.bq-tete>div.droite{flex:1 1 100%;margin-left:58px;justify-content:flex-start}.histo{padding:6px 12px 10px}}
+  .rien .pd{display:block;font-weight:normal;color:#333;margin-top:4px}
   .retourS{display:inline-block;font-size:14px;color:#d84315;font-weight:bold;text-decoration:none;border:1px solid #f0c4b4;background:#fffaf8;border-radius:20px;padding:5px 12px;margin-bottom:12px}
   @media(max-width:600px){.grille{grid-template-columns:1fr}}
 </style>
@@ -351,8 +352,10 @@
       if(!d.ok){erreurLien(d.erreur||'Ce lien n’est pas valide.');return;}
       $('societe').textContent=d.societe;$('pSoc').textContent=d.societe;
       if(d.mail){$('pMail').textContent=d.mail;}else{$('pMailL').style.display='none';}
-      $('titre').textContent=(d.periode||'').replace(/^Relevés/i,'Documents bancaires')||'Documents bancaires';
-      if(d.dateLimite){$('dateLimite').textContent=d.dateLimite;$('limite').style.display='';}
+      var aFaire=(d.documents||[]).some(function(x){return x.statut!=='Reçu';});
+      $('titre').textContent=aFaire?((d.periode||'').replace(/^Relevés/i,'Documents bancaires')||'Documents bancaires'):'Documents bancaires';
+      if(d.dateLimite&&aFaire){$('dateLimite').textContent=d.dateLimite;$('limite').style.display='';}else{$('limite').style.display='none';}
+      $('rien').innerHTML='✔ Vos documents bancaires sont à jour.<span class="pd">Prochaine demande&nbsp;: '+prochaineDemande()+'.</span>';
       [].forEach.call(document.querySelectorAll('.retour'),function(a){a.href=lienVue(C?'':'accueil');a.style.display=(VUE&&VUE!=='accueil')?'inline-block':'none';});
       if(VUE==='banque'){afficher(d.documents||[],d.attente||[]);$('formulaire').style.display='';}
       else if(VUE==='social'){afficherSocial(d);$('social').style.display='';}
@@ -362,6 +365,12 @@
     }).catch(function(){erreurLien('La page n’a pas pu être chargée. Merci de réessayer dans quelques instants.');});
   }
 
+  // Date de la prochaine demande bancaire : le 2 du mois (ce mois-ci si on est le 1er)
+  function prochaineDemande(){
+    var a=new Date(),pr=new Date(a.getFullYear(),a.getMonth()+(a.getDate()<2?0:1),2);
+    var MO=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+    return '<span style="white-space:nowrap">'+pr.getDate()+' '+MO[pr.getMonth()]+' '+pr.getFullYear()+'</span>';
+  }
   function tuiles(d){
     var docs=d.documents||[],n=docs.filter(function(x){return x.statut!=='Reçu';}).length,att=(d.attente||[]).length;
     // Deux états : documents à transmettre, ou « ✔ À jour » avec la date de la prochaine demande (le 2 du mois)
@@ -371,9 +380,7 @@
       corpsB='<span class="st">'+esc(mois?mois.charAt(0).toUpperCase()+mois.slice(1):'Documents bancaires')+'</span>'+
         (d.dateLimite?'<span class="dl" style="margin-top:2px">Avant le '+esc(d.dateLimite)+'</span>':'');
     }else{
-      var a=new Date(),pr=new Date(a.getFullYear(),a.getMonth()+(a.getDate()<2?0:1),2);
-      var MO=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
-      corpsB='<span class="st">✔ À jour</span><br>Prochaine demande&nbsp;: <span style="white-space:nowrap">'+pr.getDate()+' '+MO[pr.getMonth()]+' '+pr.getFullYear()+'</span>';
+      corpsB='<span class="st">✔ À jour</span><br>Prochaine demande&nbsp;: '+prochaineDemande();
     }
     $('tuiles').innerHTML='<a class="t" style="--c:#2e6b3a" href="'+lienVue('banque')+'"><div class="h"><span>🏦</span>Banque</div>'+
       '<div class="b">'+corpsB+'</div>'+
