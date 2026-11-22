@@ -154,9 +154,9 @@
   .histo .hl{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 0;border-bottom:1px dashed #eadbd5;font-size:14px;flex-wrap:wrap}
   .histo .hl:last-child{border-bottom:0}
   .histo .qd{color:#777;font-size:13px}
-  .st{font-size:12px;font-weight:bold;border-radius:12px;padding:3px 10px;white-space:nowrap}
-  .st.enc{background:#fdeee8;color:#a04000}
-  .st.fait{background:#e8f5e9;color:#2e6b3a}
+  .stt{font-size:12px;font-weight:bold;border-radius:12px;padding:3px 10px;white-space:nowrap}
+  .stt.enc{background:#fdeee8;color:#a04000}
+  .stt.fait{background:#e8f5e9;color:#2e6b3a}
   .traite{text-align:center;padding:34px 24px;color:#333}
   .traite .ok{width:58px;height:58px;border-radius:50%;background:#2e6b3a;color:#fff;font-size:30px;line-height:58px;margin:0 auto 14px}
   .traite h2{font-size:18px;margin:0 0 10px}
@@ -364,13 +364,22 @@
 
   function tuiles(d){
     var docs=d.documents||[],n=docs.filter(function(x){return x.statut!=='Reçu';}).length,att=(d.attente||[]).length;
-    var st=n?n+' document'+(n>1?'s':'')+' attendu'+(n>1?'s':''):(att?'Envoi en cours de vérification':'✔ Aucun document attendu');
-    var per=(d.periode||'').replace(/^Relevés/i,'Documents bancaires');
-    $('tuiles').innerHTML='<a class="t'+(n?'':' ok')+'" style="--c:#2e6b3a" href="'+lienVue('banque')+'"><div class="h"><span>🏦</span>Banque</div>'+
-      '<div class="b"><span class="st">'+esc(st)+'</span><br>'+esc(per)+(n&&d.dateLimite?'<span class="dl">Avant le '+esc(d.dateLimite)+'</span>':'')+'</div>'+
-      '<div class="go">'+(n?'Déposer mes documents':'Consulter')+'</div></a>'+
+    // Deux états : documents à transmettre, ou « ✔ À jour » avec la date de la prochaine demande (le 2 du mois)
+    var corpsB;
+    if(n){
+      var mois=(d.periode||'').replace(/^Relevés\s+(de\s+|d’|d')?/i,'');
+      corpsB='<span class="st">'+esc(mois?mois.charAt(0).toUpperCase()+mois.slice(1):'Documents bancaires')+'</span>'+
+        (d.dateLimite?'<span class="dl" style="margin-top:2px">Avant le '+esc(d.dateLimite)+'</span>':'');
+    }else{
+      var a=new Date(),pr=new Date(a.getFullYear(),a.getMonth()+(a.getDate()<2?0:1),2);
+      var MO=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+      corpsB='<span class="st">✔ À jour</span><br>Prochaine demande&nbsp;: <span style="white-space:nowrap">'+pr.getDate()+' '+MO[pr.getMonth()]+' '+pr.getFullYear()+'</span>';
+    }
+    $('tuiles').innerHTML='<a class="t" style="--c:#2e6b3a" href="'+lienVue('banque')+'"><div class="h"><span>🏦</span>Banque</div>'+
+      '<div class="b">'+corpsB+'</div>'+
+      '<div class="go">'+(n?'✓ Déposer':'Consulter')+'</div></a>'+
       '<a class="t" style="--c:#d84315" href="'+lienVue('social')+'"><div class="h"><span>👥</span>Social</div>'+
-      '<div class="b">Éléments de paie, embauches, arrêts de travail, départs…</div><div class="go">Déposer un document</div></a>'+inactive('📁','Bilan','Documents pour le bilan','#1f5f6b');
+      '<div class="b">Éléments de paie, embauches, arrêts de travail, départs…</div><div class="go">✓ Déposer un document</div></a>'+inactive('📁','Bilan','Documents pour le bilan','#1f5f6b');
   }
   // Rubriques prévues, pas encore ouvertes : affichées en gris, sans lien
   function inactive(i,t,l,c){
@@ -507,7 +516,7 @@
       bt='<button type="button" class="hist">🕘 Historique ('+l.length+')'+(enc?'<span class="enc"> · '+enc+' en cours</span>':'')+'</button>';
       hi='<div class="histo"><div class="ht">Vos envois des 12 derniers mois</div>'+l.map(function(x){
         return '<div class="hl"><div><b>'+esc(x.libelle)+'</b><div class="qd">Envoyé le '+esc(x.envoye)+'</div></div>'+
-          (x.traite?'<span class="st fait">✔ Traité le '+esc(x.traite)+'</span>':'<span class="st enc">⏳ En cours de traitement</span>')+'</div>';
+          (x.traite?'<span class="stt fait">✔ Traité le '+esc(x.traite)+'</span>':'<span class="stt enc">⏳ En cours de traitement</span>')+'</div>';
       }).join('')+'</div>';
     }
     return '<div class="banque" data-cat="'+cat+'" style="--c:'+OR+'"><div class="bq-tete"><div class="pastille" style="background:'+OR+';font-size:20px">'+ic+'</div>'+
@@ -524,7 +533,7 @@
     var sal=d.paie!=='X',h='';ENVOIS=d.envois||[];
     if(sal)h+=blocSoc('paie','📋','Éléments de paie du mois','Heures, primes, absences, acomptes…',zoneSoc('Faites glisser ici vos éléments de paie'));
     h+=blocSoc('embauche','✍️','Embauche','Nouveau salarié : un formulaire à remplir en ligne',
-      '<a class="btn or petit" href="'+lienVue('embauche')+'">✍️ Remplir le formulaire d’embauche</a>');
+      '<a class="btn or petit" href="'+lienVue('embauche')+'">✓ Remplir le formulaire d’embauche</a>');
     if(sal){
       h+=blocSoc('arret','🩺','Arrêt de travail','Arrêt maladie, accident du travail, prolongation…',champSal('arret')+zoneSoc('Faites glisser ici l’arrêt de travail'));
       h+=blocSoc('depart','🚪','Départ','Démission, fin de CDD, rupture conventionnelle, licenciement…',champSal('depart')+zoneSoc('Faites glisser ici les documents du départ'));
