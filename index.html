@@ -137,6 +137,12 @@
   .piece .pt2 i{font-weight:normal;color:#777}
   .piece.err{border-color:#c0392b;background:#fdf1f0}
   .piece.err .pt2{color:#c0392b}
+  .alerte{display:none;background:#fff9c4;border:1px solid #f2d65c;border-left:6px solid #f9a825;border-radius:8px;padding:12px 16px;margin:12px 0 4px;font-size:14px;color:#5d4300}
+  .alerte b{display:block;margin-bottom:6px;font-size:15px;color:#3e2d00}
+  .alerte ul{margin:0;padding-left:20px;columns:2;column-gap:28px}.alerte li{margin:0 0 4px;break-inside:avoid}
+  @media(max-width:600px){.alerte ul{columns:1}}
+  .brouillon{display:none;background:#e8f5e9;border:1px solid #b9dcbb;border-radius:8px;padding:10px 14px;margin:12px 0 4px;font-size:14px;color:#1f4d27}
+  .brouillon a{color:#1f4d27;font-weight:bold;white-space:nowrap}
   .retourS{display:inline-block;font-size:14px;color:#d84315;font-weight:bold;text-decoration:none;border:1px solid #f0c4b4;background:#fffaf8;border-radius:20px;padding:5px 12px;margin-bottom:12px}
   @media(max-width:600px){.grille{grid-template-columns:1fr}}
 </style>
@@ -194,6 +200,8 @@
     <a class="retourS" id="retourSoc" href="#">← Retour à la rubrique Social</a>
     <div class="rub or"><h2>✍️ Formulaire d’embauche</h2></div>
     <div class="consigne">Merci de remplir tous les champs et de joindre les pièces demandées : l’envoi n’est possible que lorsque le formulaire est complet.</div>
+    <div class="brouillon" id="brouillon">✔ Votre saisie précédente a été conservée. Les pièces jointes sont à déposer à nouveau. <a href="#" id="effacerBrouillon">Tout effacer et recommencer</a></div>
+    <div class="alerte" id="alerteEmb"><b>⚠ Formulaire incomplet : merci de compléter les éléments suivants :</b><ul id="alerteListe"></ul></div>
     <div class="sect"><h3>1. Le salarié</h3><div class="grille">
       <label class="f"><span>Nom</span><input id="e_nom" maxlength="40" autocomplete="off"></label>
       <label class="f"><span>Prénom</span><input id="e_prenom" maxlength="40" autocomplete="off"></label>
@@ -317,7 +325,7 @@
       [].forEach.call(document.querySelectorAll('.retour'),function(a){a.href=lienVue(C?'':'accueil');a.style.display=(VUE&&VUE!=='accueil')?'inline-block':'none';});
       if(VUE==='banque'){afficher(d.documents||[],d.attente||[]);$('formulaire').style.display='';}
       else if(VUE==='social'){afficherSocial(d);$('social').style.display='';}
-      else if(VUE==='embauche'){$('retourSoc').href=lienVue('social');majEmb();$('embauche').style.display='';}
+      else if(VUE==='embauche'){$('retourSoc').href=lienVue('social');lireBrouillon();majEmb();$('embauche').style.display='';}
       else{tuiles(d);$('accueil').style.display='';}
       $('chargement').style.display='none';
     }).catch(function(){erreurLien('La page n’a pas pu être chargée. Merci de réessayer dans quelques instants.');});
@@ -590,7 +598,7 @@
     piecesVues=l;
   }
   ['input','change'].forEach(function(ev){$('embauche').addEventListener(ev,function(e){
-    var f=e.target.closest&&e.target.closest('.f');if(f)f.classList.remove('err');if(!document.querySelector('#embauche .err'))$('erreurEmb').textContent='';
+    var f=e.target.closest&&e.target.closest('.f');if(f)f.classList.remove('err');if(!document.querySelector('#embauche .err')){$('erreurEmb').textContent='';$('alerteEmb').style.display='none';}
     if(e.target.tagName!=='TEXTAREA'&&!(e.target.type==='file'))majEmb();
   });});
   function valEmb(){
@@ -618,10 +626,13 @@
     v.commentaires=$('e_commentaires').value.trim();
     piecesVues.forEach(function(p){if(!p.getAttribute('data-fac')&&!p.files.length){p.classList.add('err');if(!premier)premier=p;var t=p.lib.replace(/ \(recto verso\)/,'');err.push(/^RIB/.test(t)?t:t.charAt(0).toLowerCase()+t.slice(1));}});
     if(err.length){
-      $('erreurEmb').textContent='Merci de compléter : '+err.join(', ')+'.';
-      if(premier)premier.scrollIntoView({behavior:'smooth',block:'center'});
+      $('alerteListe').innerHTML=err.map(function(t){return '<li>'+esc(t.charAt(0).toUpperCase()+t.slice(1))+'</li>';}).join('');
+      $('alerteEmb').style.display='block';
+      $('erreurEmb').textContent='Formulaire incomplet : voir la liste en haut de la page.';
+      $('alerteEmb').scrollIntoView({behavior:'smooth',block:'start'});
       return null;
     }
+    $('alerteEmb').style.display='none';
     return v;
   }
   $('envoyerEmb').onclick=function(){
@@ -648,13 +659,46 @@
       b.innerHTML='<span class="rond"></span>Finalisation…';
       return poster(avecId({rubrique:'embauche',etape:'fin',ref:b.ref}));
     }).then(function(){
-      b.ref=null;
+      b.ref=null;modifie=false;effacerBrouillon();
       merci('Nous vous remercions : le formulaire d’embauche de '+qui+' a bien été transmis au cabinet.',recap);
     }).catch(function(e){
       b.disabled=false;b.textContent='✔ Envoyer le formulaire d’embauche';
       $('erreurEmb').textContent='L’envoi a échoué ('+(e.message||e)+'). Merci de réessayer : les éléments déjà envoyés ne seront pas perdus.';
     });
   };
+
+  // ----- Brouillon du formulaire d'embauche (gardé sur cet ordinateur jusqu'à l'envoi) -----
+  var CLE_BR='aure-embauche-'+(C||S||''),modifie=false;
+  var CHAMPS=['nom','prenom','adresse','telephone','email','situation','enfants','dateEmbauche','heureArrivee','emploi','motifCdd','finCdd',
+    'heures','horaires','salaireEn','montant','couverture','enfantsCouverts','motifDispense','dispAutre','commentaires'];
+  function ecrireBrouillon(){
+    try{
+      var o={contrat:radio('contrat'),mutuelle:radio('mutuelle')};
+      CHAMPS.forEach(function(n){o[n]=$('e_'+n).value;});
+      localStorage.setItem(CLE_BR,JSON.stringify(o));
+    }catch(e){}
+  }
+  function effacerBrouillon(){try{localStorage.removeItem(CLE_BR);}catch(e){}}
+  function lireBrouillon(){
+    var o=null;
+    try{o=JSON.parse(localStorage.getItem(CLE_BR)||'null');}catch(e){}
+    if(!o)return;
+    CHAMPS.forEach(function(n){if(o[n]!=null)$('e_'+n).value=o[n];});
+    ['contrat','mutuelle'].forEach(function(n){var r=document.querySelector('input[name="'+n+'"][value="'+o[n]+'"]');if(r)r.checked=true;});
+    $('brouillon').style.display='block';
+  }
+  $('effacerBrouillon').onclick=function(e){
+    e.preventDefault();modifie=false;effacerBrouillon();location.reload();
+  };
+  ['input','change'].forEach(function(ev){$('embauche').addEventListener(ev,function(e){
+    if(e.target.type==='file')return;
+    modifie=true;ecrireBrouillon();
+  });});
+  // Alerte avant de quitter : formulaire commencé ou fichiers choisis mais pas envoyés
+  window.addEventListener('beforeunload',function(e){
+    var fic=szones.some(function(d){return d.files&&d.files.length;})||Object.keys(PIECES).some(function(k){return PIECES[k].files&&PIECES[k].files.length;});
+    if((modifie||fic)&&$('merci').style.display!=='block'){e.preventDefault();e.returnValue='';return '';}
+  });
   charger();
 })();
 </script>
