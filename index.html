@@ -143,6 +143,25 @@
   @media(max-width:600px){.alerte ul{columns:1}}
   .brouillon{display:none;background:#e8f5e9;border:1px solid #b9dcbb;border-radius:8px;padding:10px 14px;margin:12px 0 4px;font-size:14px;color:#1f4d27}
   .brouillon a{color:#1f4d27;font-weight:bold;white-space:nowrap}
+  .droite{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+  .droite .pret{margin-left:0}
+  .hist{border:1px solid #f0c4b4;background:#fff;color:#d84315;border-radius:16px;padding:5px 12px;font:inherit;font-size:13px;font-weight:bold;cursor:pointer;white-space:nowrap}
+  .hist:hover,.hist.ouvert{background:#fdeee8}
+  .hist .enc{color:#a04000;font-weight:normal}
+  .histo{display:none;border-top:1px solid #f3dcd3;background:#fffaf8;padding:6px 18px 10px;border-left:4px solid #d84315}
+  .histo.ouvert{display:block}
+  .histo .ht{font-size:12px;font-weight:bold;color:#a04000;text-transform:uppercase;letter-spacing:.3px;margin:6px 0 2px}
+  .histo .hl{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 0;border-bottom:1px dashed #eadbd5;font-size:14px;flex-wrap:wrap}
+  .histo .hl:last-child{border-bottom:0}
+  .histo .qd{color:#777;font-size:13px}
+  .st{font-size:12px;font-weight:bold;border-radius:12px;padding:3px 10px;white-space:nowrap}
+  .st.enc{background:#fdeee8;color:#a04000}
+  .st.fait{background:#e8f5e9;color:#2e6b3a}
+  .traite{text-align:center;padding:34px 24px;color:#333}
+  .traite .ok{width:58px;height:58px;border-radius:50%;background:#2e6b3a;color:#fff;font-size:30px;line-height:58px;margin:0 auto 14px}
+  .traite h2{font-size:18px;margin:0 0 10px}
+  .bq-tete>div.droite{flex:0 0 auto}
+  @media(max-width:600px){.bq-tete>div.droite{flex:1 1 100%;margin-left:58px;justify-content:flex-start}.histo{padding:6px 12px 10px}}
   .retourS{display:inline-block;font-size:14px;color:#d84315;font-weight:bold;text-decoration:none;border:1px solid #f0c4b4;background:#fffaf8;border-radius:20px;padding:5px 12px;margin-bottom:12px}
   @media(max-width:600px){.grille{grid-template-columns:1fr}}
 </style>
@@ -291,6 +310,18 @@
     return 'de '+b;
   }
   function erreurLien(t){$('chargement').innerHTML=esc(t)+'<br><br>Pour toute information : 01&nbsp;30&nbsp;49&nbsp;50&nbsp;05.';}
+  var TR=P.get('traiter');
+  if(TR){
+    $('chargement').innerHTML='<span class="rond"></span>Enregistrement…';
+    fetch(X,{method:'POST',body:JSON.stringify({action:'traiter',lot:TR,k:K})}).then(function(r){return r.json();}).then(function(d){
+      if(!d.ok){erreurLien(d.erreur||'Ce lien n’est pas valide.');return;}
+      $('societe').textContent=d.societe;
+      $('chargement').className='traite';
+      $('chargement').innerHTML='<div class="ok">✔</div><h2>'+(d.deja?'Déjà marqué comme traité le ':'C’est noté : marqué comme traité le ')+esc(d.traite)+'</h2>'+
+        '<p>'+esc(d.libelle)+'</p><p>Le client voit « Traité le '+esc(d.traite)+' » dans son espace.</p>';
+    }).catch(function(){erreurLien('L’enregistrement a échoué. Merci de réessayer dans quelques instants.');});
+    return;
+  }
   if(!C&&!(S&&K)){erreurLien('Ce lien n’est pas valide.');return;}
 
   // Lecture des données : fetch sans cookie (3 essais), puis secours par balise script (JSONP)
@@ -469,13 +500,22 @@
   var szones=[];
   function avecId(o){for(var k in ID)o[k]=ID[k];return o;}
   function zoneSoc(texte,petit){return '<label class="zone'+(petit?' petite':'')+'"><input type="file" multiple accept="'+ACC_SOC+'">'+NUAGE_OR+'<span class="ztxt">'+texte+'<br><b>ou sélectionnez un fichier</b></span></label><ul class="fichiers"></ul>';}
+  var ENVOIS=[];
   function blocSoc(cat,ic,titre,sous,corps){
+    var l=ENVOIS.filter(function(x){return x.cat===cat;}),enc=l.filter(function(x){return !x.traite;}).length,bt='',hi='';
+    if(l.length){
+      bt='<button type="button" class="hist">🕘 Historique ('+l.length+')'+(enc?'<span class="enc"> · '+enc+' en cours</span>':'')+'</button>';
+      hi='<div class="histo"><div class="ht">Vos envois des 12 derniers mois</div>'+l.map(function(x){
+        return '<div class="hl"><div><b>'+esc(x.libelle)+'</b><div class="qd">Envoyé le '+esc(x.envoye)+'</div></div>'+
+          (x.traite?'<span class="st fait">✔ Traité le '+esc(x.traite)+'</span>':'<span class="st enc">⏳ En cours de traitement</span>')+'</div>';
+      }).join('')+'</div>';
+    }
     return '<div class="banque" data-cat="'+cat+'" style="--c:'+OR+'"><div class="bq-tete"><div class="pastille" style="background:'+OR+';font-size:20px">'+ic+'</div>'+
-      '<div><div class="bq-nom">'+titre+'</div><div class="bq-cpt">'+sous+'</div></div><span class="pret"></span></div><div class="bq-corps">'+corps+'</div></div>';
+      '<div><div class="bq-nom">'+titre+'</div><div class="bq-cpt">'+sous+'</div></div><div class="droite"><span class="pret"></span>'+bt+'</div></div><div class="bq-corps">'+corps+'</div>'+hi+'</div>';
   }
   function champSal(){return '<label class="f"><span>Nom et prénom du salarié</span><input class="sal" type="text" maxlength="60" placeholder="ex. : DUPONT Jean" autocomplete="off"></label>';}
   function afficherSocial(d){
-    var sal=d.paie!=='X',h='';
+    var sal=d.paie!=='X',h='';ENVOIS=d.envois||[];
     if(sal)h+=blocSoc('paie','📋','Éléments de paie du mois','Heures, primes, absences, acomptes…',zoneSoc('Faites glisser ici vos éléments de paie'));
     h+=blocSoc('embauche','✍️','Embauche','Nouveau salarié : un formulaire à remplir en ligne',
       '<a class="btn or petit" href="'+lienVue('embauche')+'">✍️ Remplir le formulaire d’embauche</a>');
@@ -486,6 +526,9 @@
     h+=blocSoc('autre','📄','Autre document social','Mutuelle, médecine du travail, courrier de l’URSSAF…',
       zoneSoc('Faites glisser ici vos autres documents')+'<textarea class="prec" placeholder="Précision éventuelle (facultatif)"></textarea>');
     $('blocsSoc').innerHTML=h;
+    [].forEach.call($('blocsSoc').querySelectorAll('.hist'),function(b){
+      b.onclick=function(){var hi=b.closest('.banque').querySelector('.histo');var o=!hi.classList.contains('ouvert');hi.classList.toggle('ouvert',o);b.classList.toggle('ouvert',o);};
+    });
     szones=[].slice.call($('blocsSoc').querySelectorAll('.banque')).filter(function(b){return b.querySelector('.zone');});
     szones.forEach(function(b){brancherZone(b,majSoc,'erreurSoc');});
     [].forEach.call($('blocsSoc').querySelectorAll('input.sal,textarea.prec'),function(i){
