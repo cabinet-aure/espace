@@ -317,8 +317,8 @@
       if(!d.ok){erreurLien(d.erreur||'Ce lien n’est pas valide.');return;}
       $('societe').textContent=d.societe;
       $('chargement').className='traite';
-      $('chargement').innerHTML='<div class="ok">✔</div><h2>'+(d.deja?'Déjà marqué comme traité le ':'C’est noté : marqué comme traité le ')+esc(d.traite)+'</h2>'+
-        '<p>'+esc(d.libelle)+'</p><p>Le client voit « Traité le '+esc(d.traite)+' » dans son espace.</p>';
+      $('chargement').innerHTML='<div class="ok">✔</div><h2>'+(d.deja?'Déjà enregistré':'Enregistré')+'</h2>'+
+        '<p><b>'+esc(d.libelle)+'</b> ('+esc(d.societe)+')</p><p>Traité le '+esc(d.traite)+' : le client le voit dans son espace.</p><p style="color:#777;font-size:13px">Vous pouvez fermer cette page.</p>';
     }).catch(function(){erreurLien('L’enregistrement a échoué. Merci de réessayer dans quelques instants.');});
     return;
   }
@@ -513,15 +513,21 @@
     return '<div class="banque" data-cat="'+cat+'" style="--c:'+OR+'"><div class="bq-tete"><div class="pastille" style="background:'+OR+';font-size:20px">'+ic+'</div>'+
       '<div><div class="bq-nom">'+titre+'</div><div class="bq-cpt">'+sous+'</div></div><div class="droite"><span class="pret"></span>'+bt+'</div></div><div class="bq-corps">'+corps+'</div>'+hi+'</div>';
   }
-  function champSal(){return '<label class="f"><span>Nom et prénom du salarié</span><input class="sal" type="text" maxlength="60" placeholder="ex. : DUPONT Jean" autocomplete="off"></label>';}
+  var TYPES={arret:['Arrêt maladie','Prolongation d’arrêt maladie','Accident du travail','Prolongation d’accident du travail','Accident de trajet','Maladie professionnelle','Congé maternité','Congé paternité','Mi-temps thérapeutique'],
+    depart:['Démission','Rupture conventionnelle','Fin de CDD','Fin de période d’essai','Licenciement','Départ à la retraite','Autre']};
+  function champSal(cat){
+    return '<div class="grille" style="margin-bottom:10px"><label class="f" style="margin:0"><span>Nom et prénom du salarié</span><input class="sal" type="text" maxlength="60" placeholder="ex. : DUPONT Jean" autocomplete="off"></label>'+
+      '<label class="f" style="margin:0"><span>'+(cat==='arret'?'Type d’arrêt':'Type de départ')+'</span><select class="typ"><option value="">Choisir…</option>'+
+      TYPES[cat].map(function(t){return '<option>'+t+'</option>';}).join('')+'</select></label></div>';
+  }
   function afficherSocial(d){
     var sal=d.paie!=='X',h='';ENVOIS=d.envois||[];
     if(sal)h+=blocSoc('paie','📋','Éléments de paie du mois','Heures, primes, absences, acomptes…',zoneSoc('Faites glisser ici vos éléments de paie'));
     h+=blocSoc('embauche','✍️','Embauche','Nouveau salarié : un formulaire à remplir en ligne',
       '<a class="btn or petit" href="'+lienVue('embauche')+'">✍️ Remplir le formulaire d’embauche</a>');
     if(sal){
-      h+=blocSoc('arret','🩺','Arrêt de travail','Arrêt maladie, accident du travail, prolongation…',champSal()+zoneSoc('Faites glisser ici l’arrêt de travail'));
-      h+=blocSoc('depart','🚪','Départ','Démission, fin de CDD, rupture conventionnelle, licenciement…',champSal()+zoneSoc('Faites glisser ici les documents du départ'));
+      h+=blocSoc('arret','🩺','Arrêt de travail','Arrêt maladie, accident du travail, prolongation…',champSal('arret')+zoneSoc('Faites glisser ici l’arrêt de travail'));
+      h+=blocSoc('depart','🚪','Départ','Démission, fin de CDD, rupture conventionnelle, licenciement…',champSal('depart')+zoneSoc('Faites glisser ici les documents du départ'));
     }
     h+=blocSoc('autre','📄','Autre document social','Mutuelle, médecine du travail, courrier de l’URSSAF…',
       zoneSoc('Faites glisser ici vos autres documents')+'<textarea class="prec" placeholder="Précision éventuelle (facultatif)"></textarea>');
@@ -531,8 +537,8 @@
     });
     szones=[].slice.call($('blocsSoc').querySelectorAll('.banque')).filter(function(b){return b.querySelector('.zone');});
     szones.forEach(function(b){brancherZone(b,majSoc,'erreurSoc');});
-    [].forEach.call($('blocsSoc').querySelectorAll('input.sal,textarea.prec'),function(i){
-      i.addEventListener('input',function(){var f=i.closest('.f');if(f)f.classList.remove('err');majSoc();});
+    [].forEach.call($('blocsSoc').querySelectorAll('input.sal,textarea.prec,select.typ'),function(i){
+      i.addEventListener(i.tagName==='SELECT'?'change':'input',function(){var f=i.closest('.f');if(f)f.classList.remove('err');majSoc();});
     });
     $('envoyerSoc').lot=null;$('erreurSoc').textContent='';
     majSoc();
@@ -576,14 +582,16 @@
     $('erreurSoc').textContent='';
     szones.forEach(function(d){
       var cat=d.getAttribute('data-cat'),s=d.querySelector('input.sal'),sal=s?s.value.trim():'',p=d.querySelector('.prec'),prec=p?p.value.trim():'';
-      var titre=d.querySelector('.bq-nom').textContent;
+      var ty=d.querySelector('select.typ'),typ=ty?ty.value:'';
+      var titre=ty&&typ?typ:d.querySelector('.bq-nom').textContent;
       if(s&&d.files.length&&!sal){s.closest('.f').classList.add('err');manque=true;}
-      d.files.forEach(function(f,i){taches.push({d:d,cat:cat,sal:sal,prec:i===0?prec:'',f:f});});
+      if(ty&&d.files.length&&!typ){ty.closest('.f').classList.add('err');manque=true;}
+      d.files.forEach(function(f,i){taches.push({d:d,cat:cat,sal:sal,typ:typ,prec:i===0?prec:'',f:f});});
       if(!d.files.length&&prec)taches.push({d:d,cat:cat,sal:'',prec:prec,f:null});
       if(d.files.length)recap.push(titre+(sal?' – '+sal:'')+' : '+d.files.length+' fichier'+(d.files.length>1?'s':''));
       else if(prec)recap.push(titre+' : précision transmise');
     });
-    if(manque){$('erreurSoc').textContent='Merci d’indiquer le nom du salarié.';return;}
+    if(manque){$('erreurSoc').textContent='Merci d’indiquer le nom du salarié et de choisir le type, dans les cases en rouge.';return;}
     if(!taches.length)return;
     b.lot=b.lot||('L'+Date.now().toString(36)+Math.random().toString(36).slice(2,8));
     b.disabled=true;
@@ -602,7 +610,7 @@
       if((t.f&&t.f._ok)||(!t.f&&t.d._precOk)){i++;return suivant();}
       b.innerHTML='<span class="rond"></span>Envoi en cours… '+(i+1)+' / '+taches.length;
       (t.f?lire(t.f):Promise.resolve('')).then(function(b64){
-        return poster(avecId({rubrique:'social',lot:b.lot,categorie:t.cat,salarie:t.sal,precision:t.prec,nom:t.f?t.f.name:'',type:t.f?t.f.type:'',base64:b64}));
+        return poster(avecId({rubrique:'social',lot:b.lot,categorie:t.cat,salarie:t.sal,nature:t.typ||'',precision:t.prec,nom:t.f?t.f.name:'',type:t.f?t.f.type:'',base64:b64}));
       }).then(function(){if(t.f)t.f._ok=true;else t.d._precOk=true;i++;suivant();}).catch(echec);
     })();
   };
