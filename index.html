@@ -563,7 +563,7 @@
     themes.forEach(function(t){
       if(t)h+='<h3>'+esc(t)+'</h3>';
       docs.filter(function(x){return x.theme===t;}).forEach(function(x){
-        if(x.statut==='Reçu')h+='<div class="bdoc ok"><div class="bt">✔ '+esc(x.document)+'</div><div class="rl">Reçu le '+esc(x.recuLe)+'</div></div>';
+        if(x.statut==='Reçu')h+='<div class="bdoc ok"><div class="bt">✔ '+esc(x.document)+'</div><div class="rl">'+(x.valide?'Validé par le cabinet le '+esc(x.valide):'Reçu le '+esc(x.recuLe))+'</div></div>';
         else h+='<div class="bdoc" data-ref="'+esc(x.ref)+'"><div class="bt">'+esc(x.document)+(x.etiquette?'<span class="etiq">'+esc(x.etiquette)+'</span>':'')+'</div>'+
           (x.explication?'<div class="bs">'+esc(x.explication)+'</div>':'<div class="bs"></div>')+zoneBil('Déposez ici le fichier')+'</div>';
       });
