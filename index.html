@@ -218,10 +218,10 @@
   <div id="embauche" style="display:none">
    <div class="corps soc">
     <a class="retourS" id="retourSoc" href="#">← Retour à la rubrique Social</a>
-    <div class="rub or"><h2>✍️ Formulaire d’embauche</h2></div>
-    <div class="consigne">Merci de remplir tous les champs et de joindre les pièces demandées : l’envoi n’est possible que lorsque le formulaire est complet.</div>
+    <div class="rub or"><h2>✍️ Informations pour l’embauche</h2></div>
+    <div class="consigne">Merci de remplir tous les champs et de joindre les pièces demandées : l’envoi n’est possible que lorsque tout est complet.</div>
     <div class="brouillon" id="brouillon">✔ Votre saisie précédente a été conservée. Les pièces jointes sont à déposer à nouveau. <a href="#" id="effacerBrouillon">Tout effacer et recommencer</a></div>
-    <div class="alerte" id="alerteEmb"><b>⚠ Formulaire incomplet : merci de compléter les éléments suivants :</b><ul id="alerteListe"></ul></div>
+    <div class="alerte" id="alerteEmb"><b>⚠ Informations incomplètes : merci de compléter les éléments suivants :</b><ul id="alerteListe"></ul></div>
     <div class="sect"><h3>1. Le salarié</h3><div class="grille">
       <label class="f"><span>Nom</span><input id="e_nom" maxlength="40" autocomplete="off"></label>
       <label class="f"><span>Prénom</span><input id="e_prenom" maxlength="40" autocomplete="off"></label>
@@ -253,7 +253,7 @@
     <div class="sect"><h3>4. Les pièces à joindre</h3><div id="pieces"></div></div>
     <label class="f large"><span>Commentaires (facultatif)</span><textarea id="e_commentaires" maxlength="2000"></textarea></label>
    </div>
-   <div class="actions"><button class="btn or" id="envoyerEmb">✔ Envoyer le formulaire d’embauche</button><div class="erreur" id="erreurEmb"></div></div>
+   <div class="actions"><button class="btn or" id="envoyerEmb">✓ Envoyer les informations</button><div class="erreur" id="erreurEmb"></div></div>
   </div>
   <div class="merci" id="merci">
     <div class="ok">✔</div>
@@ -539,8 +539,8 @@
   function afficherSocial(d){
     var sal=d.paie!=='X',h='';ENVOIS=d.envois||[];
     if(sal)h+=blocSoc('paie','📋','Éléments de paie du mois','Heures, primes, absences, acomptes…',zoneSoc('Faites glisser ici vos éléments de paie'));
-    h+=blocSoc('embauche','✍️','Embauche','Nouveau salarié : un formulaire à remplir en ligne',
-      '<a class="btn or petit" href="'+lienVue('embauche')+'">✓ Remplir le formulaire d’embauche</a>');
+    h+=blocSoc('embauche','✍️','Embauche','Un nouveau salarié ? Transmettez-nous ses informations',
+      '<a class="btn or petit" href="'+lienVue('embauche')+'">✓ Nous informer d’une embauche</a>');
     if(sal){
       h+=blocSoc('arret','🩺','Arrêt de travail','Arrêt maladie, accident du travail, prolongation…',champSal('arret')+zoneSoc('Faites glisser ici l’arrêt de travail'));
       h+=blocSoc('depart','🚪','Départ','Démission, fin de CDD, rupture conventionnelle, licenciement…',champSal('depart')+zoneSoc('Faites glisser ici les documents du départ'));
@@ -695,7 +695,7 @@
     if(err.length){
       $('alerteListe').innerHTML=err.map(function(t){return '<li>'+esc(t.charAt(0).toUpperCase()+t.slice(1))+'</li>';}).join('');
       $('alerteEmb').style.display='block';
-      $('erreurEmb').textContent='Formulaire incomplet : voir la liste en haut de la page.';
+      $('erreurEmb').textContent='Informations incomplètes : voir la liste en haut de la page.';
       $('alerteEmb').scrollIntoView({behavior:'smooth',block:'start'});
       return null;
     }
@@ -711,7 +711,7 @@
       if(p.files.length)recap.push(p.lib+' : '+p.files.length+' fichier'+(p.files.length>1?'s':''));
     });
     var qui=v.nom.toUpperCase()+' '+v.prenom.toLowerCase().replace(/(^|[\s-])\S/g,function(m){return m.toUpperCase();});
-    b.disabled=true;b.innerHTML='<span class="rond"></span>Envoi du formulaire…';
+    b.disabled=true;b.innerHTML='<span class="rond"></span>Envoi des informations…';
     (b.ref?Promise.resolve({ref:b.ref}):poster(avecId({rubrique:'embauche',etape:'donnees',donnees:v}))).then(function(r){
       b.ref=r.ref;var i=0;
       return new Promise(function(ok,ko){(function suiv(){
@@ -727,9 +727,9 @@
       return poster(avecId({rubrique:'embauche',etape:'fin',ref:b.ref}));
     }).then(function(){
       b.ref=null;modifie=false;effacerBrouillon();
-      merci('Nous vous remercions : le formulaire d’embauche de '+qui+' a bien été transmis au cabinet.',recap);
+      merci('Nous vous remercions : les informations concernant l’embauche de '+qui+' ont bien été transmises au cabinet.',recap);
     }).catch(function(e){
-      b.disabled=false;b.textContent='✔ Envoyer le formulaire d’embauche';
+      b.disabled=false;b.textContent='✓ Envoyer les informations';
       $('erreurEmb').textContent='L’envoi a échoué ('+(e.message||e)+'). Merci de réessayer : les éléments déjà envoyés ne seront pas perdus.';
     });
   };
