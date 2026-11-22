@@ -61,7 +61,7 @@
   .fichiers li span{overflow:hidden;text-overflow:ellipsis}
   .fichiers button{border:0;background:none;color:#b3261e;cursor:pointer;font:inherit;padding:0;flex:none}
   .avert{font-size:13px;color:#a04000;background:var(--orange2);border-radius:6px;padding:7px 10px;margin-top:8px;display:none}
-  .autre .bq-corps{border-left:4px solid #9e9e9e}
+  .autre .bq-corps{border-left:4px solid #546e7a}
   textarea{width:100%;margin-top:10px;border:1px solid #d6d6d6;border-radius:6px;padding:8px;font:inherit;font-size:14px;min-height:54px}
   .actions{text-align:center;padding:8px 30px 26px}
   .btn{background:var(--vert);color:#fff;border:0;border-bottom:3px solid #1a3d22;border-radius:8px;padding:14px 28px;font-size:16px;font-weight:bold;cursor:pointer}
@@ -133,10 +133,10 @@
     </div>
     <div class="rien" id="rien" style="display:none">✔ Aucun document n’est attendu de votre part pour le moment.</div>
     <div id="banques"></div>
-    <div class="banque autre" id="autre" style="--c:#9e9e9e">
-      <div class="bq-tete"><div class="pastille" style="background:#9e9e9e">+</div>
-        <div><div class="bq-nom">Autre document</div><div class="bq-cpt">Nouveau prêt, crédit-bail, nouveau compte…</div></div><span class="pret"></span></div>
-      <div class="bq-corps"><div class="attente" style="display:none"></div><label class="zone"><input type="file" multiple accept=".pdf,.ofx,.jpg,.jpeg,.png,.xls,.xlsx,.csv,.qif,.txt,.tsv,.cfonb,.dat,.120"><svg class="ico" viewBox="0 0 64 48" aria-hidden="true"><path d="M51 20.5A15 15 0 0 0 22.5 15 11.5 11.5 0 0 0 12.5 37.5h37A8.6 8.6 0 0 0 51 20.5z" fill="#2e6b3a"/><path d="M32 31V18" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M24 23.5 32 15.5l8 8" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="ztxt">Faites glisser ici un autre document<br><b>ou sélectionnez un fichier</b></span></label><ul class="fichiers"></ul>
+    <div class="banque autre" id="autre" style="--c:#546e7a">
+      <div class="bq-tete"><div class="pastille" style="background:#546e7a"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M12 12v6M9 15h6"/></svg></div>
+        <div><div class="bq-nom">Autres documents</div><div class="bq-cpt">Avis de paiement de vos clients, liste des chèques émis, liste des chèques reçus, nouveau prêt, crédit-bail…</div></div><span class="pret"></span></div>
+      <div class="bq-corps"><div class="attente" style="display:none"></div><label class="zone"><input type="file" multiple accept=".pdf,.ofx,.jpg,.jpeg,.png,.xls,.xlsx,.csv,.qif,.txt,.tsv,.cfonb,.dat,.120"><svg class="ico" viewBox="0 0 64 48" aria-hidden="true"><path d="M51 20.5A15 15 0 0 0 22.5 15 11.5 11.5 0 0 0 12.5 37.5h37A8.6 8.6 0 0 0 51 20.5z" fill="#2e6b3a"/><path d="M32 31V18" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M24 23.5 32 15.5l8 8" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="ztxt">Faites glisser ici vos autres documents<br><b>ou sélectionnez un fichier</b></span></label><ul class="fichiers"></ul>
         <textarea id="precision" placeholder="Précision éventuelle (facultatif)"></textarea>
       </div>
     </div>
@@ -341,7 +341,7 @@
     zones.forEach(function(d){
       var banque=d.getAttribute('data-banque')||'';
       d.files.forEach(function(f){if(!f._ok)taches.push({banque:banque,f:f});});
-      if(d.files.length)recap.push((banque||'Autre document')+' : '+d.files.length+' fichier'+(d.files.length>1?'s':''));
+      if(d.files.length)recap.push((banque||'Autres documents')+' : '+d.files.length+' fichier'+(d.files.length>1?'s':''));
     });
     if(prec&&!$('autre').files.length){taches.push({banque:'',f:null});recap.push('Précision transmise');}
     var precEnvoyee=false;
