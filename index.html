@@ -74,6 +74,8 @@
   .patiente .barre i{display:block;height:100%;width:5%;background:#e64a19;border-radius:7px;transition:width .4s}
   .patiente .n{font-size:14px;color:#555;word-break:break-word}
   .patiente .f2{font-size:13px;color:#888;margin-top:6px}
+  .patiente.vert{border-color:#2e6b3a;background:#eef6ef}.patiente.vert h3{color:#2e6b3a}.patiente.vert .barre{background:#d5e8d8}.patiente.vert .barre i{background:#2e6b3a}
+  .patiente.pe{border-color:#1f5f6b;background:#eaf3f4}.patiente.pe h3{color:#1f5f6b}.patiente.pe .barre{background:#cfe3e6}.patiente.pe .barre i{background:#1f5f6b}
   .rond{display:inline-block;width:22px;height:22px;border:3px solid #f0e6c4;border-top-color:var(--or);border-radius:50%;animation:t 1s linear infinite;vertical-align:middle;margin-right:8px}
   @keyframes t{to{transform:rotate(360deg)}}
   .chargement{text-align:center;padding:40px 20px;color:#555}
@@ -846,7 +848,7 @@
     b.innerHTML='<span class="rond"></span>'+(texte||'Envoi en cours…');
     var a=b.previousElementSibling;
     if(!a||!a.classList||!a.classList.contains('patiente')){
-      a=document.createElement('div');a.className='patiente';
+      a=document.createElement('div');a.className='patiente'+(b.closest('#bilan')?' pe':(b.closest('#social,#embauche,#cdd')?'':' vert'));
       a.innerHTML='<h3>⏳ Envoi en cours, merci de patienter</h3><p><b>Ne fermez pas cette page</b> avant le message de confirmation.</p>'+
         '<div class="barre"><i></i></div><div class="n"></div><div class="f2">Cela peut prendre jusqu’à une minute selon la taille des fichiers.</div>';
       b.parentNode.insertBefore(a,b);
