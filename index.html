@@ -125,6 +125,7 @@
   .grille{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px}
   .large{grid-column:1/-1}
   .cache{display:none!important}
+  .pconsigne{font-size:14px;color:#666;margin:2px 0 8px}
   .cddinfo{font-size:14px;color:#666;margin-top:-6px}
   .cddnouv{display:block;font-size:14px;color:#666}.cddnouv b{color:#222}
   .finproche{background:#fff3e0;border:1px solid #ffcc80;border-radius:6px;padding:8px 12px;font-size:14px;color:#8a3b12;margin:0 0 10px}
@@ -671,9 +672,11 @@
   var TYPES={arret:['Arrêt maladie','Prolongation d’arrêt maladie','Accident du travail','Prolongation d’accident du travail','Accident de trajet','Maladie professionnelle','Congé maternité','Congé paternité','Mi-temps thérapeutique'],
     depart:['Démission','Rupture conventionnelle','Fin de CDD','Fin de période d’essai','Licenciement','Départ à la retraite','Autre']};
   function champSal(cat){
-    return '<div class="grille" style="margin-bottom:10px"><label class="f" style="margin:0"><span>Nom et prénom du salarié</span><input class="sal" type="text" maxlength="60" placeholder="ex. : DUPONT Jean" autocomplete="off"></label>'+
-      '<label class="f" style="margin:0"><span>'+(cat==='arret'?'Type d’arrêt':'Type de départ')+'</span><select class="typ"><option value="">Choisir…</option>'+
-      TYPES[cat].map(function(t){return '<option>'+t+'</option>';}).join('')+'</select></label></div>';
+    return '<div class="grille" style="margin-bottom:10px"><label class="f" style="margin:0"><span>Nom du salarié</span><input class="sal" type="text" maxlength="40" placeholder="ex. : DUPONT" autocomplete="off"></label>'+
+      '<label class="f" style="margin:0"><span>Prénom du salarié</span><input class="pre" type="text" maxlength="40" placeholder="ex. : Jean" autocomplete="off"></label>'+
+      '<label class="f'+(cat==='arret'?'':' large')+'" style="margin:0"><span>'+(cat==='arret'?'Type d’arrêt':'Type de départ')+'</span><select class="typ"><option value="">Choisir…</option>'+
+      TYPES[cat].map(function(t){return '<option>'+t+'</option>';}).join('')+'</select></label>'+
+      (cat==='arret'?'<label class="f" style="margin:0"><span class="libdat">Date de début de l’arrêt</span><input class="dat" type="date"></label>':'')+'</div>';
   }
   function afficherSocial(d){
     var sal=d.paie!=='X',h='';ENVOIS=d.envois||[];
@@ -699,8 +702,10 @@
     });
     szones=[].slice.call($('blocsSoc').querySelectorAll('.banque')).filter(function(b){return b.querySelector('.zone');});
     szones.forEach(function(b){brancherZone(b,majSoc,'erreurSoc');});
-    [].forEach.call($('blocsSoc').querySelectorAll('input.sal,textarea.prec,select.typ'),function(i){
-      i.addEventListener(i.tagName==='SELECT'?'change':'input',function(){var f=i.closest('.f');if(f)f.classList.remove('err');majSoc();});
+    [].forEach.call($('blocsSoc').querySelectorAll('input.sal,input.pre,input.dat,textarea.prec,select.typ'),function(i){
+      i.addEventListener(i.tagName==='SELECT'?'change':'input',function(){var f=i.closest('.f');if(f)f.classList.remove('err');
+        if(i.classList.contains('typ')){var l=i.closest('.banque').querySelector('.libdat');if(l)l.textContent=/^Accident/.test(i.value)?'Date de l’accident':'Date de début de l’arrêt';}
+        majSoc();});
     });
     $('envoyerSoc').lot=null;$('erreurSoc').textContent='';
     majSoc();
@@ -728,6 +733,12 @@
     ['dragleave','drop'].forEach(function(e){zone.addEventListener(e,function(ev){ev.preventDefault();zone.classList.remove('survol');});});
     zone.addEventListener('drop',function(ev){ajouter(ev.dataTransfer.files);});
   }
+  // « durant » + « jean-pierre » → « DURANT Jean-Pierre »
+  function nomSalarie(n,p){
+    n=String(n||'').replace(/\s+/g,' ').trim().toUpperCase();
+    p=String(p||'').replace(/\s+/g,' ').trim().toLowerCase().replace(/(^|[\s'’-])(\S)/g,function(m,a,b){return a+b.toUpperCase();});
+    return (n+' '+p).trim();
+  }
   function majSoc(){
     var n=szones.reduce(function(s,d){return s+d.files.length;},0),p=$('blocsSoc').querySelector('.prec');
     $('envoyerSoc').disabled=!(n||(p&&p.value.trim()));
@@ -743,17 +754,20 @@
     var b=this,taches=[],recap=[],manque=false;
     $('erreurSoc').textContent='';
     szones.forEach(function(d){
-      var cat=d.getAttribute('data-cat'),s=d.querySelector('input.sal'),sal=s?s.value.trim():'',p=d.querySelector('.prec'),prec=p?p.value.trim():'';
-      var ty=d.querySelector('select.typ'),typ=ty?ty.value:'';
-      var titre=ty&&typ?typ:d.querySelector('.bq-nom').textContent;
-      if(s&&d.files.length&&!sal){s.closest('.f').classList.add('err');manque=true;}
+      var cat=d.getAttribute('data-cat'),s=d.querySelector('input.sal'),pr=d.querySelector('input.pre'),p=d.querySelector('.prec'),prec=p?p.value.trim():'';
+      var nomS=s?s.value.trim():'',preS=pr?pr.value.trim():'',sal=nomSalarie(nomS,preS);
+      var ty=d.querySelector('select.typ'),typ=ty?ty.value:'',da=d.querySelector('input.dat'),dat=da?da.value:'';
+      var titre=ty&&typ?typ+(dat?' du '+dat.split('-').reverse().join('/'):''):d.querySelector('.bq-nom').textContent;
+      if(s&&d.files.length&&!nomS){s.closest('.f').classList.add('err');manque=true;}
+      if(pr&&d.files.length&&!preS){pr.closest('.f').classList.add('err');manque=true;}
       if(ty&&d.files.length&&!typ){ty.closest('.f').classList.add('err');manque=true;}
-      d.files.forEach(function(f,i){taches.push({d:d,cat:cat,sal:sal,typ:typ,prec:i===0?prec:'',f:f});});
+      if(da&&d.files.length&&!dat){da.closest('.f').classList.add('err');manque=true;}
+      d.files.forEach(function(f,i){taches.push({d:d,cat:cat,sal:sal,nomS:nomS,preS:preS,typ:typ,dat:dat,prec:i===0?prec:'',f:f});});
       if(!d.files.length&&prec)taches.push({d:d,cat:cat,sal:'',prec:prec,f:null});
       if(d.files.length)recap.push(titre+(sal?' – '+sal:'')+' : '+d.files.length+' fichier'+(d.files.length>1?'s':''));
       else if(prec)recap.push(titre+' : précision transmise');
     });
-    if(manque){$('erreurSoc').textContent='Merci d’indiquer le nom du salarié et de choisir le type, dans les cases en rouge.';return;}
+    if(manque){$('erreurSoc').textContent='Merci de compléter les cases en rouge (nom, prénom, type et date).';return;}
     if(!taches.length)return;
     b.lot=b.lot||('L'+Date.now().toString(36)+Math.random().toString(36).slice(2,8));
     b.disabled=true;
@@ -772,7 +786,7 @@
       if((t.f&&t.f._ok)||(!t.f&&t.d._precOk)){i++;return suivant();}
       b.innerHTML='<span class="rond"></span>Envoi en cours… '+(i+1)+' / '+taches.length;
       (t.f?lire(t.f):Promise.resolve('')).then(function(b64){
-        return poster(avecId({rubrique:'social',lot:b.lot,categorie:t.cat,salarie:t.sal,nature:t.typ||'',precision:t.prec,nom:t.f?t.f.name:'',type:t.f?t.f.type:'',base64:b64}));
+        return poster(avecId({rubrique:'social',lot:b.lot,categorie:t.cat,salarie:t.sal,salNom:t.nomS||'',salPrenom:t.preS||'',dateArret:t.dat||'',nature:t.typ||'',precision:t.prec,nom:t.f?t.f.name:'',type:t.f?t.f.type:'',base64:b64}));
       }).then(function(){if(t.f)t.f._ok=true;else t.d._precOk=true;i++;suivant();}).catch(echec);
     })();
   };
@@ -840,7 +854,9 @@
     if(!PIECES[code]){
       var el=document.createElement('div');el.className='piece';el.setAttribute('data-p',code);
       if(facultatif)el.setAttribute('data-fac','1');
-      el.innerHTML='<div class="pt2">'+lib+(facultatif?' <i>(facultatif)</i>':'')+'</div>'+zoneSoc('Déposez ici le fichier',true);
+      el.innerHTML='<div class="pt2">'+lib+(facultatif?' <i>(facultatif)</i>':'')+'</div>'+
+        (/vitale$/.test(code)?'<div class="pconsigne">Attestation de droits à télécharger sur le compte ameli : la copie de la carte Vitale (verte) ne suffit pas.</div>':'')+
+        zoneSoc('Déposez ici le fichier',true);
       el.lib=lib;brancherZone(el,function(){},'erreurEmb');PIECES[code]=el;
     }
     return PIECES[code];
@@ -855,7 +871,7 @@
     cacher('.enf',!(mut==='Oui'&&/enfants|famille/i.test(cv)));
     cacher('.autreDisp',!(mut==='Non'&&$('e_motifDispense').value==='Autre'));
     var l=[piece('identite','Pièce d’identité du salarié (recto verso)'),piece('vitale','Attestation de carte Vitale du salarié'),
-           piece('rib','RIB du salarié'),piece('sejour','Titre de séjour',true)];
+           piece('rib','RIB du salarié')];
     if(mut==='Oui'&&/conjoint|famille/i.test(cv)){l.push(piece('conjoint_identite','Pièce d’identité du conjoint'));l.push(piece('conjoint_vitale','Attestation de carte Vitale du conjoint'));}
     if(mut==='Oui'&&/enfants|famille/i.test(cv)){
       var n=parseInt($('e_enfantsCouverts').value,10)||0;
