@@ -49,7 +49,7 @@
   table.mt th{background:var(--vert3);color:var(--vert);text-align:left;padding:3px 10px;border-bottom:2px solid var(--vert2)}
   table.mt td{padding:2px 10px;border-bottom:1px solid #eee}
   table.mt td.m{text-align:right;white-space:nowrap}
-  .attente{font-size:13px;color:#555;background:#f6f6f6;border-radius:6px;padding:7px 10px;margin:0 0 12px}
+  .patiente{font-size:13px;color:#555;background:#f6f6f6;border-radius:6px;padding:7px 10px;margin:0 0 12px}
   .attente:before{content:"⏳ "}
   .zone{display:flex;align-items:center;justify-content:center;gap:16px;border:2px dashed #b9cfb9;border-radius:8px;padding:16px;color:#444;background:#fbfdfb;cursor:pointer;transition:background .15s,border-color .15s}
   .zone.survol{background:#e6f1e6;border-color:var(--vert);border-style:solid}
@@ -67,6 +67,13 @@
   .btn{background:var(--vert);color:#fff;border:0;border-bottom:3px solid #1a3d22;border-radius:8px;padding:14px 28px;font-size:16px;font-weight:bold;cursor:pointer}
   .btn:disabled{opacity:.45;cursor:default}
   .erreur{color:#b3261e;font-size:14px;margin-top:12px}
+  .patiente{border:2px solid #ff7043;background:#fff5f1;border-radius:10px;padding:14px 18px;margin:14px 0;text-align:center}
+  .patiente h3{margin:0 0 4px;font-size:18px;color:#bf360c}
+  .patiente p{margin:0 0 10px;font-size:15px;color:#333}
+  .patiente .barre{height:14px;background:#fde0d6;border-radius:7px;overflow:hidden;margin:0 0 6px}
+  .patiente .barre i{display:block;height:100%;width:5%;background:#e64a19;border-radius:7px;transition:width .4s}
+  .patiente .n{font-size:14px;color:#555;word-break:break-word}
+  .patiente .f2{font-size:13px;color:#888;margin-top:6px}
   .rond{display:inline-block;width:22px;height:22px;border:3px solid #f0e6c4;border-top-color:var(--or);border-radius:50%;animation:t 1s linear infinite;vertical-align:middle;margin-right:8px}
   @keyframes t{to{transform:rotate(360deg)}}
   .chargement{text-align:center;padding:40px 20px;color:#555}
@@ -647,16 +654,16 @@
     (function suivant(){
       if(i>=taches.length){
         $('recap').innerHTML=recap.map(function(t){return '<li>'+esc(t)+'</li>';}).join('');
-        $('formulaire').style.display='none';$('merci').style.display='block';window.scrollTo(0,0);return;
+        finAttente();$('formulaire').style.display='none';$('merci').style.display='block';window.scrollTo(0,0);return;
       }
-      var t=taches[i];b.innerHTML='<span class="rond"></span>Envoi en cours… '+(i+1)+' / '+taches.length;
+      var t=taches[i];etat(b,i+1,taches.length,t.f?t.f.name:'');
       var p=(!t.banque&&!precEnvoyee)?prec:'';
       (t.f?lire(t.f):Promise.resolve('')).then(function(b64){
         var o={banque:t.banque,nom:t.f?t.f.name:'',type:t.f?t.f.type:'',base64:b64,precision:p};
         for(var k in ID)o[k]=ID[k];
         return poster(o);
       }).then(function(){if(t.f)t.f._ok=true;if(p)precEnvoyee=true;i++;suivant();}).catch(function(e){
-        b.disabled=false;b.textContent='✔ Envoyer mes documents';
+        finAttente();b.disabled=false;b.textContent='✔ Envoyer mes documents';
         $('erreur').textContent='L’envoi a échoué ('+(e.message||e)+'). Merci de réessayer : les fichiers déjà envoyés ne seront pas perdus.';
       });
     })();
@@ -721,11 +728,11 @@
     b.lot=b.lot||('B'+Date.now().toString(36)+Math.random().toString(36).slice(2,8));
     b.disabled=true;
     var i=0;
-    function echec(e){b.disabled=false;b.textContent='✔ Envoyer mes documents';
+    function echec(e){finAttente();b.disabled=false;b.textContent='✔ Envoyer mes documents';
       $('erreurBil').textContent='L’envoi a échoué ('+(e.message||e)+'). Merci de réessayer : les fichiers déjà envoyés ne seront pas perdus.';}
     (function suivant(){
       if(i>=taches.length){
-        b.innerHTML='<span class="rond"></span>Envoi en cours…';
+        etat(b,0,0,'','Finalisation…');
         poster(avecId({rubrique:'bilan',etape:'fin',lot:b.lot})).then(function(){
           b.lot=null;merci('Nous vous remercions : vos documents ont bien été transmis au cabinet.',recap);
         }).catch(echec);
@@ -733,7 +740,7 @@
       }
       var t=taches[i];
       if((t.f&&t.f._ok)||(!t.f&&t.d._precOk)){i++;return suivant();}
-      b.innerHTML='<span class="rond"></span>Envoi en cours… '+(i+1)+' / '+taches.length;
+      etat(b,i+1,taches.length,t.f?t.f.name:'');
       (t.f?lire(t.f):Promise.resolve('')).then(function(b64){
         return poster(avecId({rubrique:'bilan',lot:b.lot,ref:t.ref,precision:t.prec,nom:t.f?t.f.name:'',type:t.f?t.f.type:'',base64:b64}));
       }).then(function(){if(t.f)t.f._ok=true;else t.d._precOk=true;i++;suivant();}).catch(echec);
@@ -832,7 +839,26 @@
     var n=szones.reduce(function(s,d){return s+d.files.length;},0),p=$('blocsSoc').querySelector('.prec');
     $('envoyerSoc').disabled=!(n||(p&&p.value.trim()));
   }
+  // Encadré d'attente au-dessus du bouton pendant un envoi (barre + « ne fermez pas cette page »)
+  var ENVOI_EN_COURS=false;
+  function etat(b,i,n,nom,texte){
+    ENVOI_EN_COURS=true;
+    b.innerHTML='<span class="rond"></span>'+(texte||'Envoi en cours…');
+    var a=b.previousElementSibling;
+    if(!a||!a.classList||!a.classList.contains('patiente')){
+      a=document.createElement('div');a.className='patiente';
+      a.innerHTML='<h3>⏳ Envoi en cours, merci de patienter</h3><p><b>Ne fermez pas cette page</b> avant le message de confirmation.</p>'+
+        '<div class="barre"><i></i></div><div class="n"></div><div class="f2">Cela peut prendre jusqu’à une minute selon la taille des fichiers.</div>';
+      b.parentNode.insertBefore(a,b);
+      a.scrollIntoView({behavior:'smooth',block:'center'});
+    }
+    var pc=n?Math.max(5,Math.round(100*(i-1)/n)):(texte&&/Finalisation/.test(texte)?95:5);
+    a.querySelector('.barre i').style.width=pc+'%';
+    a.querySelector('.n').textContent=n?('Fichier '+i+' sur '+n+(nom?' : '+nom:'')):(texte||'');
+  }
+  function finAttente(){ENVOI_EN_COURS=false;[].forEach.call(document.querySelectorAll('.patiente'),function(a){a.parentNode.removeChild(a);});}
   function merci(titre,recap){
+    finAttente();
     $('merciTitre').textContent=titre;
     $('recap').innerHTML=recap.map(function(t){return '<li>'+esc(t)+'</li>';}).join('');
     $('revenir').href=lienVue(C?'':'accueil');
@@ -861,11 +887,11 @@
     b.lot=b.lot||('L'+Date.now().toString(36)+Math.random().toString(36).slice(2,8));
     b.disabled=true;
     var i=0;
-    function echec(e){b.disabled=false;b.textContent='✔ Envoyer mes documents';
+    function echec(e){finAttente();b.disabled=false;b.textContent='✔ Envoyer mes documents';
       $('erreurSoc').textContent='L’envoi a échoué ('+(e.message||e)+'). Merci de réessayer : les fichiers déjà envoyés ne seront pas perdus.';}
     (function suivant(){
       if(i>=taches.length){
-        b.innerHTML='<span class="rond"></span>Envoi en cours…';
+        etat(b,0,0,'','Finalisation…');
         poster(avecId({rubrique:'social',etape:'fin',lot:b.lot})).then(function(){
           b.lot=null;merci('Nous vous remercions : vos documents ont bien été transmis au cabinet.',recap);
         }).catch(echec);
@@ -873,7 +899,7 @@
       }
       var t=taches[i];
       if((t.f&&t.f._ok)||(!t.f&&t.d._precOk)){i++;return suivant();}
-      b.innerHTML='<span class="rond"></span>Envoi en cours… '+(i+1)+' / '+taches.length;
+      etat(b,i+1,taches.length,t.f?t.f.name:'');
       (t.f?lire(t.f):Promise.resolve('')).then(function(b64){
         return poster(avecId({rubrique:'social',lot:b.lot,categorie:t.cat,salarie:t.sal,salNom:t.nomS||'',salPrenom:t.preS||'',dateArret:t.dat||'',nature:t.typ||'',precision:t.prec,nom:t.f?t.f.name:'',type:t.f?t.f.type:'',base64:b64}));
       }).then(function(){if(t.f)t.f._ok=true;else t.d._precOk=true;i++;suivant();}).catch(echec);
@@ -927,11 +953,11 @@
     if(!c){$('f_chg').classList.add('err');err.push('si les conditions changent');}
     else if(c.value==='Oui'&&!prec){$('f_cprec').classList.add('err');err.push('ce qui change');}
     if(err.length){$('erreurCdd').textContent='Merci d’indiquer '+err.join(', ')+'.';return;}
-    b.disabled=true;b.innerHTML='<span class="rond"></span>Envoi en cours…';
+    b.disabled=true;etat(b);
     poster(avecId({rubrique:'cdd',ref:x.ref,fin:iso(n),changement:c.value,precision:c.value==='Oui'?prec:''})).then(function(){
       merci('Nous vous remercions : votre demande a bien été transmise au cabinet.',
         ['Renouvellement du CDD de '+x.salarie+' jusqu’au '+fr(n)+(c.value==='Oui'?' (conditions modifiées)':'')]);
-    }).catch(function(e){b.disabled=false;b.textContent='✓ Envoyer la demande';
+    }).catch(function(e){finAttente();b.disabled=false;b.textContent='✓ Envoyer la demande';
       $('erreurCdd').textContent='L’envoi a échoué ('+(e.message||e)+'). Merci de réessayer.';});
   };
 
@@ -1034,25 +1060,25 @@
       if(p.files.length)recap.push(p.lib+' : '+p.files.length+' fichier'+(p.files.length>1?'s':''));
     });
     var qui=v.nom.toUpperCase()+' '+v.prenom.toLowerCase().replace(/(^|[\s-])\S/g,function(m){return m.toUpperCase();});
-    b.disabled=true;b.innerHTML='<span class="rond"></span>Envoi des informations…';
+    b.disabled=true;etat(b,0,0,'','Envoi des informations…');
     (b.ref?Promise.resolve({ref:b.ref}):poster(avecId({rubrique:'embauche',etape:'donnees',donnees:v}))).then(function(r){
       b.ref=r.ref;var i=0;
       return new Promise(function(ok,ko){(function suiv(){
         if(i>=fichiers.length)return ok();
         var t=fichiers[i];if(t.f._ok){i++;return suiv();}
-        b.innerHTML='<span class="rond"></span>Envoi des pièces… '+(i+1)+' / '+fichiers.length;
+        etat(b,i+1,fichiers.length,t.f.name);
         lire(t.f).then(function(b64){
           return poster(avecId({rubrique:'embauche',etape:'fichier',ref:b.ref,piece:t.p,nom:t.f.name,type:t.f.type,base64:b64}));
         }).then(function(){t.f._ok=true;i++;suiv();}).catch(ko);
       })();});
     }).then(function(){
-      b.innerHTML='<span class="rond"></span>Finalisation…';
+      etat(b,0,0,'','Finalisation…');
       return poster(avecId({rubrique:'embauche',etape:'fin',ref:b.ref}));
     }).then(function(){
       b.ref=null;modifie=false;effacerBrouillon();
       merci('Nous vous remercions : les informations concernant l’embauche de '+qui+' ont bien été transmises au cabinet.',recap);
     }).catch(function(e){
-      b.disabled=false;b.textContent='✓ Envoyer les informations';
+      finAttente();b.disabled=false;b.textContent='✓ Envoyer les informations';
       $('erreurEmb').textContent='L’envoi a échoué ('+(e.message||e)+'). Merci de réessayer : les éléments déjà envoyés ne seront pas perdus.';
     });
   };
@@ -1087,7 +1113,7 @@
   // Alerte avant de quitter : formulaire commencé ou fichiers choisis mais pas envoyés
   window.addEventListener('beforeunload',function(e){
     var fic=szones.some(function(d){return d.files&&d.files.length;})||bzones.some(function(d){return d.files&&d.files.length;})||Object.keys(PIECES).some(function(k){return PIECES[k].files&&PIECES[k].files.length;});
-    if((modifie||fic)&&$('merci').style.display!=='block'){e.preventDefault();e.returnValue='';return '';}
+    if(ENVOI_EN_COURS||((modifie||fic)&&$('merci').style.display!=='block')){e.preventDefault();e.returnValue='';return '';}
   });
   charger();
 })();
