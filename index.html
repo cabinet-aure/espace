@@ -409,6 +409,16 @@
     $('chargement').innerHTML='<span class="rond"></span>Chargement du contrat…';
     var appelCt=function(o){return fetch(X,{method:'POST',body:JSON.stringify(o)}).then(function(r){return r.json();});};
     var finCt=function(titre,texte){$('chargement').className='traite';$('chargement').innerHTML='<div class="ok">✔</div><h2>'+titre+'</h2>'+texte+'<p style="color:#777;font-size:13px">Vous pouvez fermer cette page.</p>';};
+    if(P.get('envoi')==='1'){
+      $('chargement').innerHTML='<span class="rond"></span>Envoi du contrat au client…';
+      appelCt({action:'validerContrat',ref:CT,k:K,valeurs:{},autre:'',revoir:true}).then(function(r){
+        if(!r.ok){erreurLien(r.erreur||'Ce lien n’est pas valide.');return;}
+        if(r.societe)$('societe').textContent=r.societe;
+        if(r.deja)finCt('Déjà traité','<p>Ce contrat a déjà été traité ('+esc(r.statut||'')+').</p>');
+        else finCt('Contrat envoyé','<p>Le contrat de '+esc(r.salarie)+' a été envoyé à '+esc(r.dest)+', avec le PDF en pièce jointe.</p>');
+      }).catch(function(){erreurLien('L’envoi a échoué. Merci de réessayer dans quelques instants.');});
+      return;
+    }
     appelCt({action:'contrat',ref:CT,k:K}).then(function(d){
       if(!d.ok){erreurLien(d.erreur||'Ce lien n’est pas valide.');return;}
       $('societe').textContent=d.societe;
