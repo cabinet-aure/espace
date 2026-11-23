@@ -165,6 +165,21 @@
   .traite{text-align:center;padding:34px 24px;color:#333}
   .traite .ok{width:58px;height:58px;border-radius:50%;background:#2e6b3a;color:#fff;font-size:30px;line-height:58px;margin:0 auto 14px}
   .traite h2{font-size:18px;margin:0 0 10px}
+  .cv{padding:22px 28px;text-align:left}
+  .cv h2{font-size:20px;margin:0 0 2px}.cv .sous{color:#666;margin:0 0 14px}
+  .cv .puces{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 10px}.cv .puces span{background:#f3f3f3;border-radius:5px;padding:5px 10px;font-size:14px}
+  .cv .liens{font-size:14px;margin:0 0 6px}.cv .liens a{color:#1a5fb4}
+  .cv h3{font-size:15px;color:#bf360c;margin:18px 0 6px}
+  .cv .grille{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+  @media(max-width:600px){.cv .grille{grid-template-columns:1fr}}
+  .cv label{display:block;font-size:13px;color:#555;margin:10px 0 3px}
+  .cv input,.cv select,.cv textarea{width:100%;padding:8px 9px;border:1px solid #ccc;border-radius:5px;font:15px Arial,Helvetica,sans-serif}
+  .cv .ok2{border-color:#a5d6a7;background:#f6fbf6}.cv .vide{border-color:#f9a825;background:#fffde7}
+  .cv .note{font-size:12px;color:#888;margin-top:3px}
+  .cv .case{display:flex;gap:8px;align-items:center;margin:16px 0;font-size:15px}.cv .case input{width:auto}
+  .cv .valider{background:#2e7d32;color:#fff;border:0;border-bottom:3px solid #1b5e20;border-radius:7px;padding:12px 26px;font-size:16px;font-weight:bold;cursor:pointer}
+  .cv .valider:disabled{opacity:.6;cursor:default}
+  .cv .err{color:#b00020;margin:10px 0 0}
   .bq-tete>div.droite{flex:0 0 auto}
   @media(max-width:600px){.bq-tete>div.droite{flex:1 1 100%;margin-left:58px;justify-content:flex-start}.histo{padding:6px 12px 10px}}
   .rien .pd{display:block;font-weight:normal;color:#333;margin-top:4px}
@@ -385,6 +400,60 @@
         '<p>Le contrat à durée déterminée de '+esc(d.salarie)+' ne sera pas renouvelé : il prend fin le '+esc(d.fin)+'.</p>'+
         '<p>Le cabinet a été informé et préparera les documents de fin de contrat.</p><p style="color:#777;font-size:13px">Vous pouvez fermer cette page.</p>';
     }).catch(function(){erreurLien('L’enregistrement a échoué. Merci de réessayer dans quelques instants.');});
+    return;
+  }
+  var CT=P.get('contrat');
+  if(CT){
+    document.title='Contrat à valider – Cabinet AURE';
+    var lb=document.querySelector('.tete .lib');if(lb)lb.textContent='VALIDATION DU CABINET';var mo=document.querySelector('.tete .moi');if(mo)mo.style.display='none';
+    $('chargement').innerHTML='<span class="rond"></span>Chargement du contrat…';
+    var appelCt=function(o){return fetch(X,{method:'POST',body:JSON.stringify(o)}).then(function(r){return r.json();});};
+    var finCt=function(titre,texte){$('chargement').className='traite';$('chargement').innerHTML='<div class="ok">✔</div><h2>'+titre+'</h2>'+texte+'<p style="color:#777;font-size:13px">Vous pouvez fermer cette page.</p>';};
+    appelCt({action:'contrat',ref:CT,k:K}).then(function(d){
+      if(!d.ok){erreurLien(d.erreur||'Ce lien n’est pas valide.');return;}
+      $('societe').textContent=d.societe;
+      if(!d.aValider){finCt('Déjà traité','<p>Contrat de '+esc(d.salarie)+' ('+esc(d.societe)+') : '+esc(d.statut||'')+'.</p>');return;}
+      var puces=[d.type,'Entrée le '+d.entree+(d.type==='CDD'&&d.fin?' – fin le '+d.fin:''),d.emploi+' – '+d.heures+' h',d.salaire];
+      var h='<div class="cv"><h2>Contrat à valider</h2><p class="sous">'+esc(d.societe)+' – '+esc(d.salarie)+'</p>'+
+        '<div class="puces">'+puces.map(function(t){return '<span>'+esc(t)+'</span>';}).join('')+'</div>'+
+        '<p class="liens">'+(d.pdf?'<a href="'+esc(d.pdf)+'" target="_blank">Voir le PDF</a>':'')+(d.word?' · <a href="'+esc(d.word)+'" target="_blank">Ouvrir le Word</a>':'')+(d.dossier?' · <a href="'+esc(d.dossier)+'" target="_blank">Dossier du salarié</a>':'')+'</p>';
+      if(d.points&&d.points.length){
+        h+='<h3>Points à confirmer</h3><div class="grille">';
+        d.points.forEach(function(p,i){
+          var cl=p.aRemplir&&!p.valeur?'vide':'ok2',id='cvp'+i;
+          h+='<div><label for="'+id+'">'+esc(p.libelle)+'</label>';
+          if(p.choix&&p.choix.length){
+            var ch=p.choix.slice();if(p.valeur&&ch.indexOf(p.valeur)<0)ch.unshift(p.valeur);
+            h+='<select id="'+id+'" class="'+cl+'">'+ch.map(function(c){return '<option'+(c===p.valeur?' selected':'')+'>'+esc(c)+'</option>';}).join('')+'</select>';
+          }else h+='<input id="'+id+'" class="'+cl+'" value="'+esc(p.valeur||'')+'" placeholder="'+esc(p.aide||'')+'">';
+          if(p.note)h+='<div class="note">'+esc(p.note)+'</div>';
+          h+='</div>';
+        });
+        h+='</div>';
+        if(d.points.some(function(p){return p.aRemplir;}))h+='<div class="note">En jaune : absent du formulaire. Laissé vide, le contrat garde « à compléter ».</div>';
+      }
+      h+='<label for="cvautre">Autre correction</label><textarea id="cvautre" rows="2" placeholder="ex. ajouter une prime de panier, lieu de travail à Paris…"></textarea>'+
+        '<label class="case"><input type="checkbox" id="cvrevoir" checked> Me renvoyer le contrat corrigé avant l’envoi au client</label>'+
+        '<button class="valider" id="cvok">✔ Valider et envoyer au client</button><p class="err" id="cverr"></p>'+
+        '<p class="note">Sans correction : envoi immédiat au client. Avec correction : contrat refait au prochain passage (9 h 50, 11 h 50, 14 h 50 ou 17 h 50).</p></div>';
+      $('chargement').className='';$('chargement').innerHTML=h;
+      var maj=function(){
+        var chg=$('cvautre').value.trim()!=='';
+        d.points.forEach(function(p,i){var e=$('cvp'+i);if(e.value.trim()!==String(p.valeur||'').trim())chg=true;});
+        $('cvok').textContent=chg?'✔ Valider les corrections':'✔ Valider et envoyer au client';
+      };
+      Array.prototype.forEach.call(document.querySelectorAll('.cv input,.cv select,.cv textarea'),function(e){e.addEventListener('input',maj);e.addEventListener('change',maj);});
+      $('cvok').onclick=function(){
+        var v={};d.points.forEach(function(p,i){v[p.cle]=$('cvp'+i).value.trim();});
+        $('cvok').disabled=true;$('cverr').textContent='';$('cvok').textContent='Enregistrement…';
+        appelCt({action:'validerContrat',ref:CT,k:K,valeurs:v,autre:$('cvautre').value,revoir:$('cvrevoir').checked}).then(function(r){
+          if(!r.ok)throw new Error(r.erreur||'Erreur');
+          if(r.deja)finCt('Déjà traité','<p>Ce contrat a déjà été traité ('+esc(r.statut||'')+').</p>');
+          else if(r.corrige)finCt('Corrections enregistrées','<p>Le contrat de '+esc(r.salarie)+' sera refait au prochain passage.</p><p>'+(r.revoir?'Vous recevrez un nouveau mail « Contrat à valider » avant tout envoi au client.':'Il sera ensuite envoyé directement au client.')+'</p>');
+          else finCt('Contrat envoyé','<p>Le contrat de '+esc(r.salarie)+' a été envoyé à '+esc(r.dest)+', avec le PDF en pièce jointe.</p>');
+        }).catch(function(e){$('cvok').disabled=false;maj();$('cverr').textContent=e.message||'L’enregistrement a échoué. Merci de réessayer.';});
+      };
+    }).catch(function(){erreurLien('Le chargement a échoué. Merci de réessayer dans quelques instants.');});
     return;
   }
   if(!C&&!(S&&K)){erreurLien('Ce lien n’est pas valide.');return;}
