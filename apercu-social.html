@@ -1221,7 +1221,7 @@
    co.innerHTML=(plus?'<a href="#" class="mautre">← Autres démarches</a>':'')+'<div class="mfiche2"><h3><span class="mic">'+I[f[0]]+'</span>'+e(f[1])+'</h3><ol>'+f[2].map(function(x){return '<li>'+e(x)+'</li>';}).join('')+'</ol>'+
      '<button type="button" class="mdemo">▶ Voir la démonstration</button><div class="manim"></div></div>'+pied;
    if(plus)co.querySelector('.mautre').onclick=function(ev){ev.preventDefault();menu();};
-   var bd=co.querySelector('.mdemo');bd.onclick=function(){co.querySelector('.mfiche2').classList.add('demo');co.querySelector('.manim').innerHTML='<img src="aide/'+(f[0]==='embauche'&&window.ANIM_EMB?window.ANIM_EMB:f[0])+'.gif?v=4" alt="Démonstration">';bd.style.display='none';};
+   var bd=co.querySelector('.mdemo');bd.onclick=function(){co.querySelector('.mfiche2').classList.add('demo');co.querySelector('.manim').innerHTML='<img src="aide/'+(f[0]==='embauche'&&window.ANIM_EMB?window.ANIM_EMB:f[0])+'.gif?v=5" alt="Démonstration">';bd.style.display='none';};
  }
  function ouvrirFiche(g){var k=0;F[t].forEach(function(f,i){if(f[0]===g)k=i;});fiche(k,true);fo.classList.add('ouvert');document.body.style.overflow='hidden';}
  b.classList.remove('vu');
