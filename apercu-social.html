@@ -1380,10 +1380,96 @@
       Cadre:{idcc:'7018',nom:NOMP,base:35,cabinet:true,niveaux:[]}
     };
   }
+  // ===== Autres conventions (test) =====
+  var SMH=function(x){return Math.round(x*151.67*100)/100;};
+  if(CODE==='5FXX-CB6M'){ // PLF : commerce de détail alimentaire spécialisé
+    var S37='avenant n° 10 du 16 juin 2026 (date d’effet à vérifier)',N37='Métiers du commerce de détail alimentaire spécialisé';
+    CLIENT={secteur:'Commerce',region:'National',ccn:'Convention collective : <b>Métiers du commerce de détail alimentaire spécialisé</b> (IDCC 3237)',
+      statuts:[['Employe','Employé'],['Maitrise','Agent de maîtrise'],['Cadre','Cadre']],
+      emplois:{Employe:['Vendeur(se)','Vendeur(se) crémier-fromager','Préparateur(trice)','Caissier(e)','Employé(e) polyvalent(e)'],Maitrise:['Responsable de magasin adjoint','Responsable de magasin'],Cadre:['Gérant(e) de magasin','Directeur / dirigeant salarié']}};
+    GRILLES={
+      Employe:{idcc:'3237',nom:N37,base:35,source:S37,lib:'Niveau du salarié',niveaux:[
+        {c:'E1',t:'Employé – niveau E1',d:'Débutant (6 premiers mois, passage en E2 ensuite) : mise en rayon, encaissement, accueil.',min:1875.01},
+        {c:'E2',t:'Employé – niveau E2',d:'Vente et conseil courants, encaissement.',min:1896.66},
+        {c:'E3',t:'Employé – niveau E3',d:'Vente-conseil avec une bonne connaissance des produits.',min:1913.02},
+        {c:'E4',t:'Employé – niveau E4',d:'Maîtrise des produits et de leur préparation (découpe, affinage…).',min:1940.81},
+        {c:'E5',t:'Employé – niveau E5',d:'Grande expertise des produits, peut former les nouveaux.',min:1970.14},
+        {c:'E6',t:'Employé – niveau E6',d:'Autonomie complète, peut remplacer le responsable.',min:1991.76},
+        {c:'E7',t:'Employé – niveau E7',d:'Premier vendeur : coordonne l’équipe de vente.',min:2047.34}]},
+      Maitrise:{idcc:'3237',nom:N37,base:35,source:S37,lib:'Niveau du salarié',niveaux:[
+        {c:'AM1',t:'Agent de maîtrise – niveau AM1',d:'Responsable adjoint du magasin.',min:2488.93},
+        {c:'AM2',t:'Agent de maîtrise – niveau AM2',d:'Responsable du magasin.',min:2564.58}]},
+      Cadre:{idcc:'3237',nom:N37,base:35,source:S37,lib:'Niveau du cadre',niveaux:[
+        {c:'C1',t:'Cadre – niveau C1',d:'Gérant de magasin, large autonomie.',min:3108.07},
+        {c:'C2',t:'Cadre – niveau C2',d:'Cadre dirigeant (plusieurs magasins, direction).',min:3487.90}]}
+    };
+  }
+  if(CODE==='RMVS-2QGV'){ // COURCIER DISTRIBUTION : commerce à prédominance alimentaire
+    var S22='avenant n° 99 du 17 avril 2026 (niveau « A » = période d’accueil)',N22='Commerce de détail et de gros à prédominance alimentaire';
+    CLIENT={secteur:'Commerce',region:'National',ccn:'Convention collective : <b>Commerce de détail et de gros à prédominance alimentaire</b> (IDCC 2216)',
+      statuts:[['Employe','Employé'],['Maitrise','Agent de maîtrise'],['Cadre','Cadre']],
+      emplois:{Employe:['Vendeur(se)','Serveur(se)','Employé(e) polyvalent(e)','Caissier(e)','Préparateur(trice)'],Maitrise:['Responsable adjoint(e)','Responsable de magasin'],Cadre:['Directeur / dirigeant salarié']}};
+    GRILLES={
+      Employe:{idcc:'2216',nom:N22,base:35,source:S22,lib:'Niveau du salarié (à l’embauche)',niveaux:[
+        {c:'1A',t:'Niveau 1 A',d:'Débutant : tâches simples (mise en rayon, nettoyage, service simple). Passage en 1 B après 4 mois.',min:SMH(12.02),h:12.02},
+        {c:'2A',t:'Niveau 2 A',d:'Employé commercial : vente, service, caisse. Passage en 2 B après 6 mois.',min:SMH(12.04),h:12.04},
+        {c:'3A',t:'Niveau 3 A',d:'Employé qualifié : conseil, préparation, connaissance des produits. Passage en 3 B après 12 mois.',min:SMH(12.14),h:12.14},
+        {c:'4A',t:'Niveau 4 A',d:'Employé très qualifié : référent produits, ouverture et fermeture. Passage en 4 B après 18 mois.',min:SMH(12.27),h:12.27}]},
+      Maitrise:{idcc:'2216',nom:N22,base:35,source:S22,lib:'Niveau du salarié',niveaux:[
+        {c:'5',t:'Niveau 5',d:'Agent de maîtrise : adjoint du responsable, encadre une petite équipe.',min:SMH(13.608),h:13.608},
+        {c:'6',t:'Niveau 6',d:'Agent de maîtrise confirmé : responsable d’un rayon ou du magasin.',min:SMH(14.384),h:14.384}]},
+      Cadre:{idcc:'2216',nom:N22,base:35,source:S22,lib:'Niveau du cadre',niveaux:[
+        {c:'7',t:'Niveau 7',d:'Cadre : responsabilité d’un magasin ou d’un service.',min:SMH(18.672),h:18.672},
+        {c:'8',t:'Niveau 8',d:'Cadre confirmé : direction d’un ensemble de magasins ou de services.',min:SMH(25.096),h:25.096}]}
+    };
+  }
+  if(CODE==='REV6-GTKU'){ // PHD DISTRIBUTION : commerces de gros
+    var S57='accord du 17 mars 2026, au 1er mars 2026',N57='Commerces de gros';
+    var EC=['débutant dans l’emploi','confirmé','expérimenté ou diplômé'];
+    var MI=[[1839.81,1850.85,1861.96],[1873.13,1884.37,1895.67],[1907.05,1918.49,1930.00],[1941.58,1953.23,1964.95],[1973.03,2047.02,2123.78],[2203.43,2286.05,2371.78]];
+    var DN=['Travaux simples : manutention, préparation de commandes, nettoyage.','Travaux qualifiés courants : préparateur, cariste, employé administratif.','Travaux qualifiés variés : vendeur, magasinier confirmé, aide-comptable.','Travaux hautement qualifiés : commercial, comptable, technicien.','Technicien ou agent de maîtrise : encadre une petite équipe ou un domaine technique.','Agent de maîtrise confirmé : responsable d’un service ou d’un entrepôt.'];
+    var RN=['I','II','III','IV','V','VI'],lv=function(a,b){var r=[];for(var i=a;i<=b;i++)for(var e=0;e<3;e++)r.push({c:RN[i]+'.'+(e+1),t:'Niveau '+RN[i]+' – échelon '+(e+1),d:(e===0?DN[i]+' ':'')+'('+EC[e]+')',min:MI[i][e]});return r;};
+    var CA=[['VII.1',30338.30],['VII.2',31855.22],['VII.3',33447.98],['VIII.1',38709.35],['VIII.2',42580.28],['VIII.3',46838.31],['IX.1',51522.14],['IX.2',56674.36],['X.1',65175.51],['X.2',78210.61]];
+    CLIENT={secteur:'Commerce',region:'National',ccn:'Convention collective : <b>Commerces de gros</b> (IDCC 573)',
+      statuts:[['Employe','Ouvrier ou employé'],['Maitrise','Technicien ou agent de maîtrise'],['Cadre','Cadre']],
+      emplois:{Employe:['Préparateur(trice) de commandes','Magasinier(ère)','Cariste','Chauffeur-livreur','Employé(e) administratif(ve)','Vendeur(se)'],Maitrise:['Commercial(e)','Comptable','Responsable d’entrepôt','Technicien(ne)'],Cadre:['Directeur / dirigeant salarié','Responsable commercial(e)']}};
+    GRILLES={
+      Employe:{idcc:'573',nom:N57,base:35,source:S57,lib:'Niveau et échelon',niveaux:lv(0,3)},
+      Maitrise:{idcc:'573',nom:N57,base:35,source:S57,lib:'Niveau et échelon',niveaux:lv(4,5)},
+      Cadre:{idcc:'573',nom:N57,base:35,source:S57+' (minimum annuel, affiché par mois)',lib:'Niveau et échelon',niveaux:CA.map(function(x){return {c:x[0],t:'Niveau '+x[0].replace('.',' – échelon '),d:'Minimum annuel : '+x[1].toLocaleString('fr-FR',{minimumFractionDigits:2})+' EUR',min:Math.round(x[1]/12*100)/100};})}
+    };
+  }
+  if(CODE==='JARJ-Y779'){ // ANIMAUX EN SCENE : production audiovisuelle, salariés permanents
+    CLIENT={secteur:'Audiovisuel',region:'National',ccn:'Convention collective : <b>Production audiovisuelle</b> (IDCC 2642) – salariés permanents',
+      statuts:[['Permanent','Salarié non cadre'],['Cadre','Cadre']],
+      emplois:{Permanent:['Soigneur(se) animalier(ère)','Dresseur(se) d’animaux','Assistant(e) de production','Employé(e) administratif(ve)','Chauffeur'],Cadre:['Directeur / dirigeant salarié','Chargé(e) de production']}};
+    GRILLES={
+      Permanent:{idcc:'2642',nom:'Production audiovisuelle',base:35,source:'avenant n° 20 (salariés permanents, catégories A et B)',lib:'Niveau du salarié',niveaux:[
+        {c:'PERM',t:'Salarié permanent (CDI ou CDD classique)',d:'Le cabinet vérifiera la catégorie de la convention selon l’emploi.',min:1828.83}]},
+      Cadre:{idcc:'2642',nom:'Production audiovisuelle',base:35,cabinet:true,niveaux:[]}
+    };
+  }
+  if(CODE==='5SBE-KP5T'){ // TERRE ET ART : cadres des travaux publics uniquement
+    CLIENT={secteur:'TP',region:'National',ccn:'Convention collective : <b>Cadres des travaux publics</b> (IDCC 3212)',
+      statuts:[['Cadre','Cadre']],emplois:{Cadre:['Directeur / dirigeant salarié','Conducteur de travaux','Ingénieur travaux']}};
+    GRILLES={Cadre:{idcc:'3212',nom:'Cadres des travaux publics',base:35,cabinet:true,niveaux:[]}};
+  }
+  // Bâtiment : effectif et région
+  function regionBTP(region,src,mo,me,idccO,nomO){
+    CLIENT.region=region;
+    GRILLES.Ouvrier.source=src;GRILLES.ETAM.source=src;
+    GRILLES.Ouvrier.niveaux.forEach(function(n,i){n.min=mo[i];});GRILLES.ETAM.niveaux.forEach(function(n,i){n.min=me[i];});
+    if(idccO){GRILLES.Ouvrier.idcc=idccO;GRILLES.Ouvrier.nom=nomO;}
+  }
+  if(CODE==='9KKD-XZTA'){CLIENT.petite=false;GRILLES.Ouvrier.idcc='1597';GRILLES.Ouvrier.nom='Bâtiment – ouvriers (plus de 10 salariés)';} // TDIE
+  if(CODE==='TC9S-Z42D')regionBTP('Normandie','accord régional Normandie du 10 février 2026, au 1er avril 2026',
+    [1823.03,1845.73,1884.22,2065.63,2210.88,2380.23,2527.04],[1833.19,1937.51,2104.47,2324.55,2493.65,2763.06,3082.36,3386.15],'1722','Bâtiment – ouvriers de Haute-Normandie'); // CAPLA
+  if(CODE==='R8DJ-6CE2')regionBTP('Centre-Val de Loire','accord régional Centre-Val de Loire du 10 avril 2026, au 1er mai 2026',
+    [1823,1863,1907,2056,2175,2293,2412],[1830,1930,2074,2211,2448,2810,3079,3351]); // CMD CREATION
   var CHANTIER=CLIENT.secteur==='Bâtiment'||CLIENT.secteur==='Paysage';
   window.PIECES_FAMILLE=CLIENT.secteur==='Bâtiment';window.PIECES_RIB=CLIENT.secteur==='Bâtiment';document.getElementById('embauche').dispatchEvent(new Event('change',{bubbles:true}));
   window.ANIM_EMB=CLIENT.secteur==='Bâtiment'?'embauche-batiment':CLIENT.secteur==='Propreté'?'embauche-proprete':'embauche-bureau';
-  var STATUTS=CLIENT.secteur==='Propreté'
+  var STATUTS=CLIENT.statuts?CLIENT.statuts:CLIENT.secteur==='Propreté'
     ?[['Agent','Agent de propreté'],['ChefEquipe','Chef d’équipe'],['Admin','Employé administratif'],['Encadrement','Maîtrise ou cadre']]
     :CLIENT.secteur==='Syntec'?[['ETAM','ETAM (employé, technicien, agent de maîtrise)'],['Cadre','Ingénieur ou cadre']]
     :CLIENT.secteur==='Paysage'?[['Ouvrier','Ouvrier'],['Employe','Employé'],['TAM','Technicien ou agent de maîtrise'],['Cadre','Cadre']]
@@ -1397,7 +1483,7 @@
   // 2. statut + classification après l'emploi
   var emp=document.getElementById('e_emploi').closest('.f');
   emp.insertAdjacentHTML('afterend',
-    '<div class="ccnfix">'+(CLIENT.secteur==='Propreté'?'Convention collective : <b>Entreprises de propreté et services associés</b> (IDCC 3043)':CLIENT.secteur==='Paysage'?'Convention collective : <b>Entreprises du paysage</b> (IDCC 7018)':CLIENT.secteur==='Immobilier'?'Convention collective : <b>Immobilier</b> – administrateurs de biens, sociétés immobilières, agents immobiliers (IDCC 1527)':CLIENT.secteur==='Syntec'?'Convention collective : <b>Syntec</b> – bureaux d’études techniques, ingénieurs-conseils et sociétés de conseils (IDCC 1486)':'Convention collective : <b>Bâtiment</b> – elle dépend du statut du salarié (ouvriers, ETAM ou cadres)')+'</div>'+
+    '<div class="ccnfix">'+(CLIENT.ccn?CLIENT.ccn:CLIENT.secteur==='Propreté'?'Convention collective : <b>Entreprises de propreté et services associés</b> (IDCC 3043)':CLIENT.secteur==='Paysage'?'Convention collective : <b>Entreprises du paysage</b> (IDCC 7018)':CLIENT.secteur==='Immobilier'?'Convention collective : <b>Immobilier</b> – administrateurs de biens, sociétés immobilières, agents immobiliers (IDCC 1527)':CLIENT.secteur==='Syntec'?'Convention collective : <b>Syntec</b> – bureaux d’études techniques, ingénieurs-conseils et sociétés de conseils (IDCC 1486)':'Convention collective : <b>Bâtiment</b> – elle dépend du statut du salarié (ouvriers, ETAM ou cadres)')+'</div>'+
     '<div class="f large" id="f_statut"><span>Statut</span><div class="choix">'+STATUTS.map(function(x){return '<label><input type="radio" name="statut" value="'+x[0]+'">'+x[1]+'</label>';}).join('')+'</div></div>'+
     '<div class="ccn cache" id="f_conv"></div>'+
     '<div class="f large cache" id="f_niveau"><span id="libNiveau">Niveau du salarié</span><div class="niv" id="niv"></div></div>'+
@@ -1552,6 +1638,7 @@
     Maitrise:['Gestionnaire locatif(ve)','Gestionnaire de copropriété','Comptable confirmé(e)'],
     Cadre:['Responsable d’agence','Responsable de gestion','Directeur / dirigeant salarié'],
     NegoVRP:['Négociateur(trice) immobilier(ère)'],NegoNon:['Négociateur(trice) immobilier(ère)']};
+  if(CLIENT.emplois)EMPLOIS=CLIENT.emplois;
   var fe=document.getElementById('e_emploi').closest('.f');fe.style.display='none';
   document.getElementById('f_conv').insertAdjacentHTML('afterend',
     '<label class="f large cache" id="f_emploiL"><span>Emploi</span><select id="e_emploiL"></select></label>'+
