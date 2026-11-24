@@ -1220,7 +1220,7 @@
    co.innerHTML=(plus?'<a href="#" class="mautre">← Autres démarches</a>':'')+'<div class="mfiche2"><h3><span class="mic">'+I[f[0]]+'</span>'+e(f[1])+'</h3><ol>'+f[2].map(function(x){return '<li>'+e(x)+'</li>';}).join('')+'</ol>'+
      '<button type="button" class="mdemo">▶ Voir la démonstration</button><div class="manim"></div></div>'+pied;
    if(plus)co.querySelector('.mautre').onclick=function(ev){ev.preventDefault();menu();};
-   var bd=co.querySelector('.mdemo');bd.onclick=function(){co.querySelector('.mfiche2').classList.add('demo');co.querySelector('.manim').innerHTML='<img src="aide/'+f[0]+'.gif?v=2" alt="Démonstration">';bd.style.display='none';};
+   var bd=co.querySelector('.mdemo');bd.onclick=function(){co.querySelector('.mfiche2').classList.add('demo');co.querySelector('.manim').innerHTML='<img src="aide/'+(f[0]==='embauche'&&window.ANIM_EMB?window.ANIM_EMB:f[0])+'.gif?v=3" alt="Démonstration">';bd.style.display='none';};
  }
  function ouvrirFiche(g){var k=0;F[t].forEach(function(f,i){if(f[0]===g)k=i;});fiche(k,true);fo.classList.add('ouvert');document.body.style.overflow='hidden';}
  b.classList.remove('vu');
@@ -1356,6 +1356,7 @@
     };
   }
   window.PIECES_FAMILLE=CLIENT.secteur==='Bâtiment';document.getElementById('embauche').dispatchEvent(new Event('change',{bubbles:true}));
+  window.ANIM_EMB=CLIENT.secteur==='Bâtiment'?'embauche-batiment':CLIENT.secteur==='Propreté'?'embauche-proprete':'embauche-bureau';
   var STATUTS=CLIENT.secteur==='Propreté'
     ?[['Agent','Agent de propreté'],['ChefEquipe','Chef d’équipe'],['Admin','Employé administratif'],['Encadrement','Maîtrise ou cadre']]
     :CLIENT.secteur==='Syntec'?[['ETAM','ETAM (employé, technicien, agent de maîtrise)'],['Cadre','Ingénieur ou cadre']]
@@ -1592,9 +1593,11 @@
     var h=sec.querySelector('h3');
     h.insertAdjacentHTML('afterend','<div class="resume"><span class="rtxt"></span><a href="#" class="rmod">Modifier</a></div>');
     sec.querySelector('.rmod').onclick=function(e){e.preventDefault();sec.classList.remove('plie');sec.dataset.ouvert='1';var f=sec.querySelector('input,select');if(f)f.focus();};
+    sec.addEventListener('pointerdown',function(){sec._clic=Date.now();});
     sec.addEventListener('focusout',function(){
       setTimeout(function(){
         if(sec.contains(document.activeElement))return;
+        if(Date.now()-(sec._clic||0)<800&&!(document.activeElement&&document.activeElement!==document.body))return;
         if(complete(sec)){sec.querySelector('.rtxt').textContent='✔ '+RESUMES[i]();sec.classList.add('plie');}
       },250);
     });
