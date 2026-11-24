@@ -602,7 +602,7 @@
       else if(VUE==='social'){afficherSocial(d);$('social').style.display='';}
       else if(VUE==='bilan'&&d.bilan){afficherBilan(d.bilan);$('bilan').style.display='';}
       else if(VUE==='cdd'){$('retourSocCdd').href=lienVue('social');afficherCdd(d.cdd||[]);$('cdd').style.display='';}
-      else if(VUE==='embauche'){$('retourSoc').href=lienVue('social');lireBrouillon();majEmb();$('embauche').style.display='';}
+      else if(VUE==='embauche'){$('retourSoc').href=lienVue('social');if(window.initConv)window.initConv(d.convention);lireBrouillon();majEmb();$('embauche').style.display='';}
       else{tuiles(d);$('accueil').style.display='';}
       $('chargement').style.display='none';
     }).catch(function(){erreurLien('La page n’a pas pu être chargée. Merci de réessayer dans quelques instants.');});
@@ -1237,9 +1237,10 @@
  document.addEventListener('keydown',function(ev){if(ev.key==='Escape')fermer();});
 })();</script>
 <script>
-(function(){
+window.initConv=function(conv){
+  if(window._convFait)return;window._convFait=true;conv=conv||{};
   // ===== PAGE DE TEST : classification selon la convention collective (rien n'est envoyé) =====
-  var SMIC=1867.02; // SMIC mensuel brut 35 h depuis le 01/06/2026
+  var SMIC=+conv.smic||1867.02; // SMIC mensuel brut 35 h (onglet GRILLES, ligne SMIC)
   // Réglage du client (à terme : renseigné par le cabinet dans la fiche du client)
   var CLIENT={secteur:'Bâtiment',region:'Île-de-France',petite:true}; // petite = jusqu'à 10 salariés
   var GRILLES={
@@ -1281,7 +1282,16 @@
   };
   // Réglage du client (à terme : renseigné par le cabinet dans la fiche du client) — test : DGP NETTOYAGE = propreté
   var CODE=new URLSearchParams(location.search).get('c')||'';
-  if(CODE==='NE6G-TDEX'){
+  // Convention du client : Référentiel clients (colonne IDCC), envoyée par le script.
+  // Secours pour la page de test seulement : codes des clients tests.
+  var TESTS={'NE6G-TDEX':'3043','7MQT-DNW8':'1486','2EXS-Z5JG':'1527','EQTZ-XUN8':'7018','5FXX-CB6M':'3237','RMVS-2QGV':'2216','REV6-GTKU':'573','JARJ-Y779':'2642','5SBE-KP5T':'3212',
+    '9KKD-XZTA':'1597 / 2609 / 2420','TC9S-Z42D':'1722 / 2609 / 2420','R8DJ-6CE2':'1596 / 2609 / 2420','CHEG-J5SX':'1596 / 2609 / 2420','8P2D-HJ45':'1596 / 2609 / 2420'};
+  var TREG={'TC9S-Z42D':'Normandie','R8DJ-6CE2':'Centre-Val de Loire'};
+  var IDCC=String(conv.idcc||TESTS[CODE]||''),REG=String(conv.region||TREG[CODE]||'Île-de-France');
+  var a=function(x){return new RegExp('(^|\\D)'+x+'(\\D|$)').test(IDCC);};
+  var K=a('3043')?'proprete':a('1486')?'syntec':a('1527')?'immo':a('7018')?'paysage':a('3237')?'c3237':a('2216')?'c2216':a('573')?'c573':a('2642')?'c2642':a('3212')?'c3212':
+    (a('1596')||a('1597')||a('1722')||a('2609')||a('2420'))?'batiment':'autre';
+  if(K==='proprete'){
     CLIENT={secteur:'Propreté',region:'National'};
     var t=function(x){return Math.round(x*151.67*100)/100;};
     var SRC='avenant n° 27, taux horaires au 1er avril 2026';
@@ -1308,7 +1318,7 @@
       Encadrement:{idcc:'3043',nom:'Entreprises de propreté et services associés',base:35,cabinet:true,niveaux:[]}
     };
   }
-  if(CODE==='7MQT-DNW8'){
+  if(K==='syntec'){
     CLIENT={secteur:'Syntec',region:'National'};
     var SRS='accord du 26 juin 2024, en vigueur depuis le 1er janvier 2025';
     GRILLES={
@@ -1333,7 +1343,7 @@
         {c:'3.3',coef:270,t:'Position 3.3',d:'Cadre de direction, participe à la conduite de l’entreprise.',min:5755}]}
     };
   }
-  if(CODE==='2EXS-Z5JG'){
+  if(K==='immo'){
     CLIENT={secteur:'Immobilier',region:'National'};
     var SRI='avenant n° 110 du 4 mars 2026, au 1er avril 2026 (minimums annuels sur 13 mois)',a13=function(x){return Math.round(x/13*100)/100;};
     var NOMI='Immobilier – administrateurs de biens, sociétés immobilières, agents immobiliers';
@@ -1356,7 +1366,7 @@
         {c:'NVRP',t:'Négociateur immobilier non VRP (non cadre)',d:'Travaille surtout à l’agence, avec des horaires. Minimum : le SMIC, qui peut être une avance sur commissions. Commissions : le cabinet vous contactera.',min:0}]}
     };
   }
-  if(CODE==='EQTZ-XUN8'){
+  if(K==='paysage'){
     CLIENT={secteur:'Paysage',region:'National'};
     var SRP='avenant n° 46 du 17 septembre 2025, au 1er janvier 2026',tp=function(x){return Math.round(x*151.67*100)/100;},NOMP='Entreprises du paysage';
     GRILLES={
@@ -1382,7 +1392,7 @@
   }
   // ===== Autres conventions (test) =====
   var SMH=function(x){return Math.round(x*151.67*100)/100;};
-  if(CODE==='5FXX-CB6M'){ // PLF : commerce de détail alimentaire spécialisé
+  if(K==='c3237'){ // PLF : commerce de détail alimentaire spécialisé
     var S37='avenant n° 10 du 16 juin 2026 (date d’effet à vérifier)',N37='Métiers du commerce de détail alimentaire spécialisé';
     CLIENT={secteur:'Commerce',region:'National',ccn:'Convention collective : <b>Métiers du commerce de détail alimentaire spécialisé</b> (IDCC 3237)',
       statuts:[['Employe','Employé'],['Maitrise','Agent de maîtrise'],['Cadre','Cadre']],
@@ -1404,7 +1414,7 @@
         {c:'C2',t:'Cadre – niveau C2',d:'Cadre dirigeant (plusieurs magasins, direction).',min:3487.90}]}
     };
   }
-  if(CODE==='RMVS-2QGV'){ // COURCIER DISTRIBUTION : commerce à prédominance alimentaire
+  if(K==='c2216'){ // COURCIER DISTRIBUTION : commerce à prédominance alimentaire
     var S22='avenant n° 99 du 17 avril 2026 (niveau « A » = période d’accueil)',N22='Commerce de détail et de gros à prédominance alimentaire';
     CLIENT={secteur:'Commerce',region:'National',ccn:'Convention collective : <b>Commerce de détail et de gros à prédominance alimentaire</b> (IDCC 2216)',
       statuts:[['Employe','Employé'],['Maitrise','Agent de maîtrise'],['Cadre','Cadre']],
@@ -1423,7 +1433,7 @@
         {c:'8',t:'Niveau 8',d:'Cadre confirmé : direction d’un ensemble de magasins ou de services.',min:SMH(25.096),h:25.096}]}
     };
   }
-  if(CODE==='REV6-GTKU'){ // PHD DISTRIBUTION : commerces de gros
+  if(K==='c573'){ // PHD DISTRIBUTION : commerces de gros
     var S57='accord du 17 mars 2026, au 1er mars 2026',N57='Commerces de gros';
     var EC=['débutant dans l’emploi','confirmé','expérimenté ou diplômé'];
     var MI=[[1839.81,1850.85,1861.96],[1873.13,1884.37,1895.67],[1907.05,1918.49,1930.00],[1941.58,1953.23,1964.95],[1973.03,2047.02,2123.78],[2203.43,2286.05,2371.78]];
@@ -1439,7 +1449,7 @@
       Cadre:{idcc:'573',nom:N57,base:35,source:S57+' (minimum annuel, affiché par mois)',lib:'Niveau et échelon',niveaux:CA.map(function(x){return {c:x[0],t:'Niveau '+x[0].replace('.',' – échelon '),d:'Minimum annuel : '+x[1].toLocaleString('fr-FR',{minimumFractionDigits:2})+' EUR',min:Math.round(x[1]/12*100)/100};})}
     };
   }
-  if(CODE==='JARJ-Y779'){ // ANIMAUX EN SCENE : production audiovisuelle, salariés permanents
+  if(K==='c2642'){ // ANIMAUX EN SCENE : production audiovisuelle, salariés permanents
     CLIENT={secteur:'Audiovisuel',region:'National',ccn:'Convention collective : <b>Production audiovisuelle</b> (IDCC 2642) – salariés permanents',
       statuts:[['Permanent','Salarié non cadre'],['Cadre','Cadre']],
       emplois:{Permanent:['Soigneur(se) animalier(ère)','Dresseur(se) d’animaux','Assistant(e) de production','Employé(e) administratif(ve)','Chauffeur'],Cadre:['Directeur / dirigeant salarié','Chargé(e) de production']}};
@@ -1449,10 +1459,17 @@
       Cadre:{idcc:'2642',nom:'Production audiovisuelle',base:35,cabinet:true,niveaux:[]}
     };
   }
-  if(CODE==='5SBE-KP5T'){ // TERRE ET ART : cadres des travaux publics uniquement
+  if(K==='c3212'){ // TERRE ET ART : cadres des travaux publics uniquement
     CLIENT={secteur:'TP',region:'National',ccn:'Convention collective : <b>Cadres des travaux publics</b> (IDCC 3212)',
       statuts:[['Cadre','Cadre']],emplois:{Cadre:['Directeur / dirigeant salarié','Conducteur de travaux','Ingénieur travaux']}};
     GRILLES={Cadre:{idcc:'3212',nom:'Cadres des travaux publics',base:35,cabinet:true,niveaux:[]}};
+  }
+  if(K==='autre'){ // convention pas encore prévue : le cabinet fixe la classification
+    var lib=String(conv.libelle||'').trim();
+    CLIENT={secteur:'Autre',region:'National',ccn:'Convention collective : <b>'+(lib||'celle de votre entreprise')+'</b>'+(IDCC?' (IDCC '+IDCC+')':''),
+      statuts:[['Employe','Ouvrier ou employé'],['Maitrise','Technicien ou agent de maîtrise'],['Cadre','Cadre']],
+      emplois:{Employe:[],Maitrise:[],Cadre:[]}};
+    GRILLES={Employe:{idcc:IDCC,nom:lib,base:35,cabinet:true,niveaux:[]},Maitrise:{idcc:IDCC,nom:lib,base:35,cabinet:true,niveaux:[]},Cadre:{idcc:IDCC,nom:lib,base:35,cabinet:true,niveaux:[]}};
   }
   // Bâtiment : effectif et région
   function regionBTP(region,src,mo,me,idccO,nomO){
@@ -1461,10 +1478,10 @@
     GRILLES.Ouvrier.niveaux.forEach(function(n,i){n.min=mo[i];});GRILLES.ETAM.niveaux.forEach(function(n,i){n.min=me[i];});
     if(idccO){GRILLES.Ouvrier.idcc=idccO;GRILLES.Ouvrier.nom=nomO;}
   }
-  if(CODE==='9KKD-XZTA'){CLIENT.petite=false;GRILLES.Ouvrier.idcc='1597';GRILLES.Ouvrier.nom='Bâtiment – ouvriers (plus de 10 salariés)';} // TDIE
-  if(CODE==='TC9S-Z42D')regionBTP('Normandie','accord régional Normandie du 10 février 2026, au 1er avril 2026',
-    [1823.03,1845.73,1884.22,2065.63,2210.88,2380.23,2527.04],[1833.19,1937.51,2104.47,2324.55,2493.65,2763.06,3082.36,3386.15],'1722','Bâtiment – ouvriers de Haute-Normandie'); // CAPLA
-  if(CODE==='R8DJ-6CE2')regionBTP('Centre-Val de Loire','accord régional Centre-Val de Loire du 10 avril 2026, au 1er mai 2026',
+  if(K==='batiment'&&(a('1597')||conv.plusDe10===true)){CLIENT.petite=false;GRILLES.Ouvrier.idcc='1597';GRILLES.Ouvrier.nom='Bâtiment – ouvriers (plus de 10 salariés)';} // TDIE
+  if(K==='batiment'&&/^Normandie/i.test(REG))regionBTP('Normandie','accord régional Normandie du 10 février 2026, au 1er avril 2026',
+    [1823.03,1845.73,1884.22,2065.63,2210.88,2380.23,2527.04],[1833.19,1937.51,2104.47,2324.55,2493.65,2763.06,3082.36,3386.15],a('1722')?'1722':'',a('1722')?'Bâtiment – ouvriers de Haute-Normandie':''); // CAPLA
+  if(K==='batiment'&&/^Centre/i.test(REG))regionBTP('Centre-Val de Loire','accord régional Centre-Val de Loire du 10 avril 2026, au 1er mai 2026',
     [1823,1863,1907,2056,2175,2293,2412],[1830,1930,2074,2211,2448,2810,3079,3351]); // CMD CREATION
   var CHANTIER=CLIENT.secteur==='Bâtiment'||CLIENT.secteur==='Paysage';
   window.PIECES_FAMILLE=CLIENT.secteur==='Bâtiment';window.PIECES_RIB=CLIENT.secteur==='Bâtiment';document.getElementById('embauche').dispatchEvent(new Event('change',{bubbles:true}));
@@ -1802,7 +1819,7 @@
   // 4. envoi bloqué sur la page de test
   var b=document.getElementById('envoyerEmb');
   b.onclick=function(){document.getElementById('erreurEmb').textContent='Page de test : rien n’a été envoyé.';};
-})();
+};
 </script>
 </body>
 </html>
