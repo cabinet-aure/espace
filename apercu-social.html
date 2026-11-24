@@ -281,6 +281,13 @@
   .site{border:1px solid #f0d5cb;border-radius:10px;padding:8px 12px;margin-bottom:8px;background:#fffaf8}
   .site .stit{font-weight:bold;color:#d84315;font-size:14px;margin-bottom:2px}.site .stit a{font-weight:normal;font-size:12.5px;color:#888;margin-left:8px}
   .addSite{display:inline-block;font-weight:bold;color:#d84315;font-size:14px;margin:2px 0 6px}
+  .cr{display:inline-flex;align-items:center;gap:6px;margin:3px 10px 3px 0;font-size:14.5px}.cr select{width:auto!important;padding:5px 6px;font-size:14px}
+  .supCr{color:#999;font-weight:bold;text-decoration:none;font-size:16px}
+  .addCr{display:inline-block;font-size:13px;color:#d84315;font-weight:bold;margin:2px 0}
+  .sdiffL,.sansfixe{display:block;font-size:14px;margin:6px 0}.sdiffL input,.sansfixe input{width:auto!important;margin-right:4px}
+  .sansfixe{font-weight:bold;margin-bottom:8px}
+  .pj{border-top:1px dashed #eee;padding:3px 0}.pj b{display:inline-block;width:40px}
+  .stot{font-size:13.5px;color:#2e6b3a;font-weight:bold;margin-top:4px}
   .minsal{grid-column:1/-1;font-size:14px;border-radius:8px;padding:9px 12px;background:#eef6ef;color:#2e6b3a}
   .minsal.bas{background:#fdecea;color:#b71c1c;font-weight:bold}
   .testbandeau{position:fixed;top:0;left:0;right:0;background:#333;color:#fff;text-align:center;font:bold 13px Arial;padding:5px;z-index:99}
@@ -1367,7 +1374,7 @@
   document.getElementById('e_horaires').placeholder='ex. : du lundi au vendredi, 8 h – 12 h et 13 h – 16 h';
   // c) Lieu de travail
   fh.insertAdjacentHTML('afterend',
-    (CLIENT.secteur==='Propreté'?'<div class="f large" id="f_sites"><span>Sites d’affectation</span><div class="consigne" style="margin:0 0 6px;font-size:13.5px;color:#666">Indiquez chaque site où travaillera le salarié et ses heures par semaine sur ce site.</div><div id="sites"></div><a href="#" id="addSite" class="addSite">+ Ajouter un site</a><div class="htot cache" id="sitesTot"></div></div>':'')+
+    (CLIENT.secteur==='Propreté'?'<div class="f large" id="f_sites"><span>Sites d’affectation et horaires</span><div class="consigne" style="margin:0 0 6px;font-size:13.5px;color:#666">Indiquez chaque site où travaillera le salarié, avec ses jours et ses horaires sur ce site.</div><div id="sites"></div><a href="#" id="addSite" class="addSite">+ Ajouter un site</a><div class="htot cache" id="sitesTot"></div></div>':'')+
     '<div class="f large" id="f_lieu"'+(CLIENT.secteur==='Propreté'?' style="display:none"':'')+'><span>Lieu de travail</span><div class="choix">'+(CLIENT.secteur==='Bâtiment'
       ?'<label><input type="radio" name="lieu" value="Chantiers">Sur les chantiers</label><label><input type="radio" name="lieu" value="Bureau">Au bureau (siège de l’entreprise)</label>'
       :'<label><input type="radio" name="lieu" value="Siège">Au siège de l’entreprise</label><label><input type="radio" name="lieu" value="Chantiers">Chez les clients</label><label><input type="radio" name="lieu" value="Autre">Autre adresse</label>')+'</div></div>'+
@@ -1518,20 +1525,83 @@
       },250);
     });
   });
-  // ===== Sites d'affectation (propreté, article 7) =====
+  // ===== Sites d'affectation et horaires par site (propreté, article 7) =====
   if(CLIENT.secteur==='Propreté'){
-    var SB=document.getElementById('sites');
-    function ajouterSite(){var n=SB.children.length+1;SB.insertAdjacentHTML('beforeend','<div class="site"><div class="stit">Site '+n+(n>1?' <a href="#" class="supSite">Retirer</a>':'')+'</div><div class="grille"><label class="f"><span>Client (donneur d’ordre)</span><input class="s_client" maxlength="80" autocomplete="off" placeholder="ex. : Résidence Les Tilleuls"></label><label class="f"><span>Heures par semaine sur ce site</span><input class="s_heures" type="number" min="0.5" max="48" step="0.25"></label><label class="f large"><span>Adresse du site</span><input class="s_adr" maxlength="150" autocomplete="off"></label></div></div>');majSites();}
-    document.getElementById('addSite').onclick=function(e){e.preventDefault();ajouterSite();};
-    SB.addEventListener('click',function(e){if(e.target.classList.contains('supSite')){e.preventDefault();e.target.closest('.site').remove();[].forEach.call(SB.querySelectorAll('.stit'),function(t,i){t.firstChild.textContent='Site '+(i+1)+' ';});majSites();}});
-    function majSites(){
-      var tot=0,ok=true;SB.querySelectorAll('.site').forEach(function(x){var h=parseFloat(String(x.querySelector('.s_heures').value).replace(',','.'))||0;tot+=h;});
-      var att=parseFloat(document.getElementById('e_heures').value)||0,el=document.getElementById('sitesTot');
-      var r=Math.round(tot*100)/100;el.classList.toggle('cache',!tot);
-      var ecart=Math.abs(r-att)>0.01;el.classList.toggle('bas',ecart);
-      el.textContent=ecart?'⚠ Total des sites : '+String(r).replace('.',',')+' h par semaine, alors que les horaires donnent '+String(att).replace('.',',')+' h.':'✔ Total des sites : '+String(r).replace('.',',')+' h par semaine, conforme aux horaires.';
+    document.getElementById('f_hor').style.display='none';
+    var JN=['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'],JA=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+    var OP='<option value=""></option>';for(var q=0;q<1440;q+=15){OP+='<option value="'+q+'">'+('0'+Math.floor(q/60)).slice(-2)+':'+('0'+q%60).slice(-2)+'</option>';}
+    function hT(m){m=+m%1440;var h=Math.floor(m/60),mn=m%60;return h+' h'+(mn?' '+('0'+mn).slice(-2):'');}
+    function dur(a,b){a=+a;b=+b;if(a===b)return 0;return b>a?b-a:b+1440-a;}
+    function hS(min){min=Math.round(min);var h=Math.floor(min/60),m=min%60;return h+' h'+(m?' '+('0'+m).slice(-2):'');}
+    function creneau(d,f){return '<span class="cr"><select class="c1">'+OP+'</select> à <select class="c2">'+OP+'</select><a href="#" class="supCr" title="Retirer ce créneau">×</a></span>';}
+    function blocCr(){return '<div class="crx"></div><a href="#" class="addCr">+ Ajouter un créneau</a>';}
+    function ajouterCr(box,d,f){box.insertAdjacentHTML('beforeend',creneau());var c=box.lastChild;c.querySelector('.c1').value=d;c.querySelector('.c2').value=f;}
+    var FS=document.getElementById('f_sites');
+    FS.querySelector('span').insertAdjacentHTML('afterend','<label class="sansfixe"><input type="checkbox" id="p_sansFixe"> Pas d’horaires fixes (remplacements, planning variable)</label>');
+    FS.insertAdjacentHTML('beforeend','<div id="p_var" class="cache"><div class="grille"><label class="f"><span>Heures par semaine</span><input id="p_heures" type="number" min="1" max="48" step="0.5"></label><label class="f large"><span>Secteur d’intervention</span><input id="p_secteur" maxlength="150" placeholder="ex. : sites de Maurepas, Coignières et environs" autocomplete="off"></label></div><div class="htot bas cache" id="p_varMsg">Pour un temps partiel, les horaires doivent être indiqués : le cabinet vous contactera.</div></div>');
+    var SB=document.getElementById('sites');SB.innerHTML='';
+    function ajouterSite(){
+      var n=SB.children.length+1;
+      SB.insertAdjacentHTML('beforeend','<div class="site"><div class="stit">Site '+n+(n>1?' <a href="#" class="supSite">Retirer</a>':'')+'</div>'+
+        '<div class="grille"><label class="f"><span>Client (donneur d’ordre)</span><input class="s_client" maxlength="80" autocomplete="off" placeholder="ex. : Résidence Les Tilleuls"></label><label class="f large"><span>Adresse du site</span><input class="s_adr" maxlength="150" autocomplete="off"></label></div>'+
+        '<div class="jours sj">'+JA.map(function(j,i){return '<label><input type="checkbox" value="'+i+'"'+(i<5?' checked':'')+'>'+j+'</label>';}).join('')+'</div>'+
+        '<div class="scom">'+blocCr()+'</div>'+
+        '<label class="sdiffL"><input type="checkbox" class="sdiff"> Horaires différents selon les jours</label>'+
+        '<div class="sper cache"></div><div class="stot"></div></div>');
+      var s=SB.lastChild;ajouterCr(s.querySelector('.scom .crx'),'360','510');calcP();
     }
-    ['input','change'].forEach(function(ev){document.getElementById('embauche').addEventListener(ev,function(e){if(e.target.type!=='file')majSites();});});
+    function joursS(s){return [].slice.call(s.querySelectorAll('.sj input:checked')).map(function(x){return +x.value;});}
+    function crs(box){return [].slice.call(box.querySelectorAll('.cr')).map(function(c){return [c.querySelector('.c1').value,c.querySelector('.c2').value];});}
+    function construirePer(s){
+      var per=s.querySelector('.sper'),anc={},com=crs(s.querySelector('.scom'));
+      per.querySelectorAll('.pj').forEach(function(p){anc[p.dataset.j]=crs(p);});
+      per.innerHTML=joursS(s).map(function(j){return '<div class="pj" data-j="'+j+'"><b>'+JA[j]+'</b> '+blocCr()+'</div>';}).join('');
+      per.querySelectorAll('.pj').forEach(function(p){(anc[p.dataset.j]||com).forEach(function(c){ajouterCr(p.querySelector('.crx'),c[0],c[1]);});});
+    }
+    function listeJ(js){if(js.length>2&&js.every(function(j,i){return i===0||j===js[i-1]+1;}))return 'du '+JN[js[0]]+' au '+JN[js[js.length-1]];
+      var n=js.map(function(j){return JN[j];});return n.length>1?n.slice(0,-1).join(', ')+' et '+n[n.length-1]:(n[0]||'');}
+    function txtCr(l){return l.filter(function(c){return c[0]!==''&&c[1]!=='';}).map(function(c){return 'de '+hT(c[0])+' à '+hT(c[1]);}).join(' et ');}
+    var enCalc=false;
+    function calcP(){
+      if(enCalc)return;enCalc=true;
+      var sf=document.getElementById('p_sansFixe').checked,fhe=document.getElementById('e_heures'),eh=document.getElementById('e_horaires');
+      SB.classList.toggle('cache',sf);document.getElementById('addSite').classList.toggle('cache',sf);document.getElementById('p_var').classList.toggle('cache',!sf);
+      var tot=0,parts=[],err='',occ={};
+      if(sf){
+        var h=parseFloat(String(document.getElementById('p_heures').value).replace(',','.'))||0;tot=h*60;
+        document.getElementById('p_varMsg').classList.toggle('cache',!(h&&h<35));
+        parts.push('Pas d’horaires fixes : planning communiqué à l’avance, secteur : '+(document.getElementById('p_secteur').value.trim()||'à préciser'));
+      }else SB.querySelectorAll('.site').forEach(function(s,i){
+        var diff=s.querySelector('.sdiff').checked,js=joursS(s),st=0,det='';
+        s.querySelectorAll('.sj label').forEach(function(l){l.classList.toggle('on',l.querySelector('input').checked);});
+        s.querySelector('.scom').classList.toggle('cache',diff);s.querySelector('.sper').classList.toggle('cache',!diff);
+        function compte(j,l){l.forEach(function(c){if(c[0]===''||c[1]==='')return;var d=dur(c[0],c[1]);if(!d)err='Un créneau a la même heure de début et de fin.';st+=d;
+          var a=+c[0],b=a+d;(occ[j]=occ[j]||[]).forEach(function(o){if(a<o[1]&&o[0]<b)err='Deux créneaux se chevauchent le '+JN[j]+'.';});occ[j].push([a,b]);});}
+        if(!diff){var l=crs(s.querySelector('.scom'));js.forEach(function(j){compte(j,l);});det=js.length?listeJ(js)+', '+txtCr(l):'';}
+        else{var dd=[];s.querySelectorAll('.pj').forEach(function(p){var l=crs(p);compte(+p.dataset.j,l);dd.push(JN[+p.dataset.j]+' '+txtCr(l));});det=dd.join(' ; ');}
+        if(!js.length)err='Cochez au moins un jour pour chaque site.';
+        s.querySelector('.stot').textContent='→ '+hS(st)+' par semaine sur ce site';
+        tot+=st;
+        var cl=s.querySelector('.s_client').value.trim(),ad=s.querySelector('.s_adr').value.trim();
+        parts.push('Site '+(i+1)+' : '+(cl||'…')+(ad?', '+ad:'')+' – '+det+' ('+hS(st)+' par semaine)');
+      });
+      var h2=Math.round(tot/60*100)/100;
+      fhe.value=h2?String(h2):'';eh.value=parts.join(' ; ')+(h2?' – soit '+hS(tot)+' par semaine':'');
+      var el=document.getElementById('sitesTot');el.classList.remove('cache');
+      el.classList.toggle('bas',!!err||!h2);
+      el.textContent=err?'⚠ '+err:(h2?'Total : '+hS(tot)+' par semaine'+(h2<35?' – temps partiel':h2>35?' – dont '+hS(tot-2100)+' supplémentaires':' – temps plein'):'⚠ Indiquez les horaires.');
+      fhe.dispatchEvent(new Event('input',{bubbles:true}));
+      enCalc=false;
+    }
+    document.getElementById('addSite').onclick=function(e){e.preventDefault();ajouterSite();};
+    FS.addEventListener('click',function(e){
+      var t=e.target;
+      if(t.classList.contains('supSite')){e.preventDefault();t.closest('.site').remove();[].forEach.call(SB.querySelectorAll('.stit'),function(x,i){x.firstChild.textContent='Site '+(i+1)+' ';});calcP();}
+      if(t.classList.contains('addCr')){e.preventDefault();var box=t.previousElementSibling;var l=crs(box);var last=l[l.length-1];ajouterCr(box,last?last[1]:'',last?String(Math.min(+last[1]+120,1425)):'');calcP();}
+      if(t.classList.contains('supCr')){e.preventDefault();var bx=t.closest('.crx');if(bx.children.length>1)t.closest('.cr').remove();calcP();}
+    });
+    FS.addEventListener('change',function(e){var s=e.target.closest('.site');if(s&&(e.target.classList.contains('sdiff')||e.target.closest('.sj'))&&s.querySelector('.sdiff').checked)construirePer(s);calcP();});
+    FS.addEventListener('input',function(){calcP();});
     ajouterSite();
   }
   // 4. envoi bloqué sur la page de test
