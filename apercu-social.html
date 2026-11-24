@@ -1213,15 +1213,45 @@
 (function(){
   // ===== PAGE DE TEST : classification selon la convention collective (rien n'est envoyé) =====
   var SMIC=1867.02; // SMIC mensuel brut 35 h depuis le 01/06/2026
-  var CONV={nom:'Bâtiment – ouvriers (IDCC 1596 / 1597), Île-de-France',source:'accord régional du 5 novembre 2025',
-    niveaux:[
+  // Réglage du client (à terme : renseigné par le cabinet dans la fiche du client)
+  var CLIENT={secteur:'Bâtiment',region:'Île-de-France',petite:true}; // petite = jusqu'à 10 salariés
+  var GRILLES={
+    Ouvrier:{idcc:CLIENT.petite?'1596':'1597',nom:'Bâtiment – ouvriers ('+(CLIENT.petite?'jusqu’à 10 salariés':'plus de 10 salariés')+')',base:35,
+      source:'accord Île-de-France du 5 novembre 2025',lib:'Niveau du salarié',niveaux:[
       {c:'N1P1',coef:150,t:'Ouvrier d’exécution – débutant',d:'Travaux simples, sous surveillance constante. Pas de diplôme ni d’expérience.',min:1843},
       {c:'N1P2',coef:170,t:'Ouvrier d’exécution',d:'Travaux simples avec une première expérience, sous surveillance régulière.',min:1855},
       {c:'N2',coef:185,t:'Ouvrier professionnel',d:'Travaux courants de son métier. En général CAP ou BEP.',min:1899},
       {c:'N3P1',coef:210,t:'Compagnon professionnel',d:'Autonome sur tous les travaux de son métier, peut guider un apprenti.',min:2038},
       {c:'N3P2',coef:230,t:'Compagnon professionnel confirmé',d:'Haute technicité, travaux complexes, peut remplacer le chef d’équipe.',min:2164},
       {c:'N4P1',coef:250,t:'Chef d’équipe',d:'Dirige une petite équipe sur le chantier.',min:2292},
-      {c:'N4P2',coef:270,t:'Maître ouvrier ou chef d’équipe confirmé',d:'Encadre plusieurs équipes, très grande expérience.',min:2510}]};
+      {c:'N4P2',coef:270,t:'Maître ouvrier ou chef d’équipe confirmé',d:'Encadre plusieurs équipes, très grande expérience.',min:2510}]},
+    ETAM:{idcc:'2609',nom:'Bâtiment – ETAM (employés, techniciens, agents de maîtrise)',base:35,
+      source:'accord Île-de-France du 5 novembre 2025',lib:'Niveau du salarié',niveaux:[
+      {c:'A',t:'Niveau A',d:'Employé débutant : tâches simples d’exécution (accueil, saisie, classement…).',min:1843},
+      {c:'B',t:'Niveau B',d:'Employé qualifié : travaux courants avec une certaine autonomie.',min:1932},
+      {c:'C',t:'Niveau C',d:'Employé ou technicien qualifié : travaux variés, autonome dans son domaine.',min:2057},
+      {c:'D',t:'Niveau D',d:'Technicien ou agent de maîtrise : responsabilités techniques, peut animer une petite équipe.',min:2239},
+      {c:'E',t:'Niveau E',d:'Technicien ou agent de maîtrise confirmé (ex. chef de chantier).',min:2407},
+      {c:'F',t:'Niveau F',d:'Technicien supérieur ou agent de maîtrise expérimenté (ex. conducteur de travaux).',min:2841},
+      {c:'G',t:'Niveau G',d:'Haute technicité ou encadrement de plusieurs chantiers.',min:3119},
+      {c:'H',t:'Niveau H',d:'Plus haut niveau ETAM, proche des responsabilités d’un cadre.',min:3357}]},
+    Cadre:{idcc:'2420',nom:'Bâtiment – ingénieurs et cadres',base:39,
+      source:'avenant national n° 78 du 19 janvier 2026, minimums pour 39 h par semaine',lib:'Position et coefficient',niveaux:[
+      {c:'60',coef:60,t:'Position A – cadre débutant',d:'Jeune diplômé, peu de responsabilités (coefficient selon l’âge et l’expérience).',min:2356},
+      {c:'65',coef:65,t:'Position A – cadre débutant',d:'',min:2553},
+      {c:'70',coef:70,t:'Position A – cadre débutant',d:'',min:2740},
+      {c:'75',coef:75,t:'Position A – cadre débutant',d:'',min:2853},
+      {c:'80',coef:80,t:'Position A – cadre débutant',d:'',min:3036},
+      {c:'85',coef:85,t:'Position A – cadre débutant',d:'',min:3197},
+      {c:'90',coef:90,t:'Position B – cadre confirmé',d:'Autonome, responsabilités réelles (chantiers, service, clients).',min:3353},
+      {c:'95',coef:95,t:'Position B – cadre confirmé',d:'',min:3504},
+      {c:'100',coef:100,t:'Position B – cadre confirmé',d:'',min:3622},
+      {c:'103',coef:103,t:'Position B – cadre confirmé',d:'',min:3693},
+      {c:'108',coef:108,t:'Position B – cadre confirmé',d:'',min:3827},
+      {c:'120',coef:120,t:'Position B – cadre confirmé',d:'',min:4145},
+      {c:'130',coef:130,t:'Position C – cadre supérieur',d:'Très large autonomie, dirige un service ou une agence.',min:4411},
+      {c:'162',coef:162,t:'Position C – cadre dirigeant',d:'Participe à la direction de l’entreprise.',min:5472}]}
+  };
   function eur(x){return x.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})+' EUR';}
   document.body.insertAdjacentHTML('afterbegin','<div class="testbandeau">PAGE DE TEST – rien n’est envoyé au cabinet</div>');
   // 1. bannière 48 h
@@ -1230,30 +1260,41 @@
   // 2. statut + classification après l'emploi
   var emp=document.getElementById('e_emploi').closest('.f');
   emp.insertAdjacentHTML('afterend',
-    '<div class="ccn">Convention collective : <b>'+CONV.nom+'</b></div>'+
+    '<div class="ccn">Secteur : <b>'+CLIENT.secteur+'</b> · '+CLIENT.region+'</div>'+
     '<div class="f large" id="f_statut"><span>Statut</span><div class="choix"><label><input type="radio" name="statut" value="Ouvrier">Ouvrier</label><label><input type="radio" name="statut" value="ETAM">ETAM (employé, technicien, agent de maîtrise)</label><label><input type="radio" name="statut" value="Cadre">Cadre</label></div></div>'+
-    '<div class="f large cache" id="f_niveau"><span>Niveau du salarié</span><div class="niv">'+
-      CONV.niveaux.map(function(n){var m=Math.max(n.min,SMIC);return '<label><input type="radio" name="niveau" value="'+n.c+'"><div><div class="t1">'+n.t+' <span style="color:#999;font-weight:normal">('+n.c+' – coef. '+n.coef+')</span></div><div class="t2">'+n.d+'</div></div><div class="mini">minimum<b>'+eur(m)+'</b>brut / mois</div></label>';}).join('')+
-      '<label><input type="radio" name="niveau" value="?"><div><div class="t1">Je ne sais pas</div><div class="t2">Le cabinet fixera le niveau d’après l’emploi.</div></div></label>'+
-    '</div></div>'+
-    '<div class="ccn cache" id="f_autreStatut">Pour un ETAM ou un cadre, le cabinet fixera la classification d’après l’emploi (version de test).</div>');
+    '<div class="ccn cache" id="f_conv"></div>'+
+    '<div class="f large cache" id="f_niveau"><span id="libNiveau">Niveau du salarié</span><div class="niv" id="niv"></div></div>');
+  function grilleHtml(g){
+    return g.niveaux.map(function(n){var m=Math.max(n.min,g.base===35?SMIC:0);
+      return '<label><input type="radio" name="niveau" value="'+n.c+'"><div><div class="t1">'+n.t+' <span style="color:#999;font-weight:normal">('+(n.coef?((g.idcc==='2420'?'':n.c+' – ')+'coef. '+n.coef):'niveau '+n.c)+')</span></div>'+(n.d?'<div class="t2">'+n.d+'</div>':'')+'</div><div class="mini">minimum<b>'+eur(m)+'</b>brut / mois'+(g.base!==35?' (39 h)':'')+'</div></label>';}).join('')+
+      '<label><input type="radio" name="niveau" value="?"><div><div class="t1">Je ne sais pas</div><div class="t2">Le cabinet fixera le niveau d’après l’emploi.</div></div></label>';
+  }
+  var statutAff='';
   // 3. minimum sous le montant
   var mt=document.getElementById('e_montant').closest('.f');
   mt.insertAdjacentHTML('afterend','<div class="minsal cache" id="minsal"></div>');
   function radioV(n){var x=document.querySelector('input[name="'+n+'"]:checked');return x?x.value:'';}
   function maj(){
-    var st=radioV('statut'),nv=radioV('niveau');
+    var st=radioV('statut');
+    if(st&&st!==statutAff){statutAff=st;var g0=GRILLES[st];
+      document.getElementById('niv').innerHTML=grilleHtml(g0);
+      document.getElementById('libNiveau').textContent=g0.lib;
+      document.getElementById('f_conv').innerHTML='Convention collective : <b>'+g0.nom+'</b> (IDCC '+g0.idcc+')<br><span style="font-size:12.5px;color:#777">Salaires minimums : '+g0.source+'.</span>';}
+    var nv=radioV('niveau');
     document.querySelectorAll('#embauche .choix label,.niv label').forEach(function(l){var i=l.querySelector('input');if(i&&(i.name==='statut'||i.name==='niveau'))l.classList.toggle('on',i.checked);});
-    document.getElementById('f_niveau').classList.toggle('cache',st!=='Ouvrier');
-    document.getElementById('f_autreStatut').classList.toggle('cache',!(st==='ETAM'||st==='Cadre'));
-    var ms=document.getElementById('minsal'),n=CONV.niveaux.filter(function(x){return x.c===nv;})[0];
-    if(st!=='Ouvrier'||!n){ms.classList.add('cache');return;}
+    document.getElementById('f_niveau').classList.toggle('cache',!st);
+    document.getElementById('f_conv').classList.toggle('cache',!st);
+    var ms=document.getElementById('minsal');
+    if(!st){ms.classList.add('cache');return;}
+    var g=GRILLES[st],n=g.niveaux.filter(function(x){return x.c===nv;})[0];
+    if(!n){ms.classList.add('cache');return;}
     var h=parseFloat(String(document.getElementById('e_heures').value).replace(',','.'))||35;
-    var mens=Math.max(n.min,SMIC),minM=mens*h/35,minH=mens/151.67;
+    var mensBase=Math.max(n.min,g.base===35?SMIC:0);
+    var minH=mensBase/(g.base*52/12), minM=g.base===35?minH*h*52/12:mensBase;
     var en=document.getElementById('e_salaireEn').value,v=parseFloat(String(document.getElementById('e_montant').value).replace(/\s/g,'').replace(',','.'));
     var txt,bas=false;
     if(en==='Taux horaire brut'){txt='Taux horaire minimum pour ce niveau : '+eur(minH)+' brut';bas=v>0&&v<minH-0.005;}
-    else{txt='Salaire minimum pour ce niveau'+(h<35?' ('+String(h).replace('.',',')+' h par semaine)':'')+' : '+eur(minM)+' brut par mois';bas=v>0&&v<minM-0.005;}
+    else{txt='Salaire minimum pour ce niveau ('+(g.base===35?String(h).replace('.',',')+' h par semaine':'minimum prévu pour 39 h par semaine, à confirmer par le cabinet pour un autre horaire')+') : '+eur(minM)+' brut par mois';bas=v>0&&v<minM-0.005;}
     ms.textContent=(bas?'⚠ Salaire inférieur au minimum de la convention. ':'✔ ')+txt+'.';
     ms.classList.toggle('bas',bas);ms.classList.remove('cache');
   }
