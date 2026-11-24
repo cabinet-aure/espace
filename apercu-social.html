@@ -263,6 +263,9 @@
   .niv input{width:auto!important;flex:0 0 auto;margin-top:3px;accent-color:#d84315}.niv label>div:not(.mini){flex:1}
   .niv .t1{font-weight:bold}.niv .t2{font-size:13.5px;color:#555;margin-top:2px}
   .niv .mini{margin-left:auto;text-align:right;white-space:nowrap;font-size:13px;color:#555}.niv .mini b{display:block;font-size:15px;color:#222}
+  .niv.replie label:not(.on){display:none}
+  .niv .chg{display:none;margin-left:12px;align-self:center;font-size:13px;font-weight:bold;color:#d84315;text-decoration:underline;cursor:pointer;white-space:nowrap}
+  .niv.replie label.on .chg{display:inline}
   .minsal{grid-column:1/-1;font-size:14px;border-radius:8px;padding:9px 12px;background:#eef6ef;color:#2e6b3a}
   .minsal.bas{background:#fdecea;color:#b71c1c;font-weight:bold}
   .testbandeau{position:fixed;top:0;left:0;right:0;background:#333;color:#fff;text-align:center;font:bold 13px Arial;padding:5px;z-index:99}
@@ -1266,10 +1269,18 @@
     '<div class="f large cache" id="f_niveau"><span id="libNiveau">Niveau du salarié</span><div class="niv" id="niv"></div></div>');
   function grilleHtml(g){
     return g.niveaux.map(function(n){var m=Math.max(n.min,g.base===35?SMIC:0);
-      return '<label><input type="radio" name="niveau" value="'+n.c+'"><div><div class="t1">'+n.t+' <span style="color:#999;font-weight:normal">('+(n.coef?((g.idcc==='2420'?'':n.c+' – ')+'coef. '+n.coef):'niveau '+n.c)+')</span></div>'+(n.d?'<div class="t2">'+n.d+'</div>':'')+'</div><div class="mini">minimum<b>'+eur(m)+'</b>brut / mois'+(g.base!==35?' (39 h)':'')+'</div></label>';}).join('')+
-      '<label><input type="radio" name="niveau" value="?"><div><div class="t1">Je ne sais pas</div><div class="t2">Le cabinet fixera le niveau d’après l’emploi.</div></div></label>';
+      return '<label><input type="radio" name="niveau" value="'+n.c+'"><div><div class="t1">'+n.t+' <span style="color:#999;font-weight:normal">('+(n.coef?((g.idcc==='2420'?'':n.c+' – ')+'coef. '+n.coef):'niveau '+n.c)+')</span></div>'+(n.d?'<div class="t2">'+n.d+'</div>':'')+'</div><div class="mini">minimum<b>'+eur(m)+'</b>brut / mois'+(g.base!==35?' (39 h)':'')+'</div><span class="chg">Changer de niveau</span></label>';}).join('')+
+      '<label><input type="radio" name="niveau" value="?"><div><div class="t1">Je ne sais pas</div><div class="t2">Le cabinet fixera le niveau d’après l’emploi.</div></div><span class="chg">Changer de niveau</span></label>';
   }
   var statutAff='';
+  // Liste repliée sur le niveau choisi ; « Changer de niveau » la rouvre
+  document.addEventListener('click',function(e){
+    if(e.target.classList&&e.target.classList.contains('chg')){e.preventDefault();e.stopPropagation();document.getElementById('niv').classList.remove('replie');}
+  },true);
+  document.addEventListener('change',function(e){
+    if(e.target.name==='niveau'){var n=document.getElementById('niv');n.classList.add('replie');var f=document.getElementById('f_niveau');var r=f.getBoundingClientRect();if(r.top<0)f.scrollIntoView({block:'start'});}
+    if(e.target.name==='statut')document.getElementById('niv').classList.remove('replie');
+  });
   // 3. minimum sous le montant
   var mt=document.getElementById('e_montant').closest('.f');
   mt.insertAdjacentHTML('afterend','<div class="minsal cache" id="minsal"></div>');
