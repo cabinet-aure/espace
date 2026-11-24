@@ -1294,7 +1294,7 @@
     var en=document.getElementById('e_salaireEn').value,v=parseFloat(String(document.getElementById('e_montant').value).replace(/\s/g,'').replace(',','.'));
     var txt,bas=false;
     if(en==='Taux horaire brut'){txt='Taux horaire minimum pour ce niveau : '+eur(minH)+' brut';bas=v>0&&v<minH-0.005;}
-    else{txt='Salaire minimum pour ce niveau ('+(g.base===35?String(h).replace('.',',')+' h par semaine':'minimum prévu pour 39 h par semaine, à confirmer par le cabinet pour un autre horaire')+') : '+eur(minM)+' brut par mois';bas=v>0&&v<minM-0.005;}
+    else{txt='Salaire minimum pour ce niveau'+(g.base===35?' ('+String(h).replace('.',',')+' h par semaine)':'')+' : '+eur(minM)+' brut par mois';bas=v>0&&v<minM-0.005;}
     ms.textContent=(bas?'⚠ Salaire inférieur au minimum de la convention. ':'✔ ')+txt+'.';
     ms.classList.toggle('bas',bas);ms.classList.remove('cache');
   }
@@ -1310,7 +1310,9 @@
   document.getElementById('e_horaires').placeholder='ex. : du lundi au vendredi, 8 h – 12 h et 13 h – 16 h';
   // c) Lieu de travail
   fh.insertAdjacentHTML('afterend',
-    '<div class="f large" id="f_lieu"><span>Lieu de travail</span><div class="choix"><label><input type="radio" name="lieu" value="Siège">Au siège de l’entreprise</label><label><input type="radio" name="lieu" value="Chantiers">Sur chantiers ou chez les clients</label><label><input type="radio" name="lieu" value="Autre">Autre adresse</label></div></div>'+
+    '<div class="f large" id="f_lieu"><span>Lieu de travail</span><div class="choix">'+(CLIENT.secteur==='Bâtiment'
+      ?'<label><input type="radio" name="lieu" value="Chantiers">Sur les chantiers</label><label><input type="radio" name="lieu" value="Bureau">Au bureau (siège de l’entreprise)</label>'
+      :'<label><input type="radio" name="lieu" value="Siège">Au siège de l’entreprise</label><label><input type="radio" name="lieu" value="Chantiers">Chez les clients</label><label><input type="radio" name="lieu" value="Autre">Autre adresse</label>')+'</div></div>'+
     '<label class="f large cache" id="f_lieuAutre"><span>Adresse du lieu de travail</span><input id="e_lieuAutre" maxlength="150" autocomplete="off"></label>');
   // d) CDD de remplacement : personne remplacée
   document.getElementById('e_finCdd').closest('.f').insertAdjacentHTML('afterend',
@@ -1328,6 +1330,8 @@
     var cdd=radioV('contrat')==='CDD',rempl=cdd&&/Remplacement/.test(document.getElementById('e_motifCdd').value);
     document.getElementById('f_remplNom').classList.toggle('cache',!rempl);
     document.getElementById('f_remplPoste').classList.toggle('cache',!rempl);
+    var st0=radioV('statut');
+    if(CLIENT.secteur==='Bâtiment'&&st0&&st0!==majExtra.st){majExtra.st=st0;var def=st0==='Ouvrier'?'Chantiers':'Bureau';var r=document.querySelector('input[name="lieu"][value="'+def+'"]');if(r)r.checked=true;}
     var li=radioV('lieu');
     document.querySelectorAll('#f_lieu label').forEach(function(l){l.classList.toggle('on',l.querySelector('input').checked);});
     document.getElementById('f_lieuAutre').classList.toggle('cache',li!=='Autre');
