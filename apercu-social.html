@@ -269,6 +269,15 @@
   .sect.plie .grille{display:none}
   .resume{display:none;align-items:center;gap:12px;background:#f3f9f4;border:1px solid #cfe3cf;border-radius:8px;padding:9px 12px;font-size:14.5px;color:#2e6b3a;margin-top:6px}
   .sect.plie .resume{display:flex}.resume .rtxt{flex:1}.resume .rmod{color:#d84315;font-weight:bold;font-size:13px}
+  .jours{display:flex;gap:6px;flex-wrap:wrap;margin:2px 0 8px}
+  .jours label{border:1px solid #e3c9bf;border-radius:18px;padding:6px 12px;cursor:pointer;font-weight:bold;font-size:14px;background:#fff}
+  .jours label.on{background:#d84315;color:#fff;border-color:#d84315}.jours input{display:none}
+  #f_hor select{width:auto!important;padding:5px 6px;font-size:14px}
+  .hl{display:inline-block;line-height:2.4;font-size:14.5px}
+  .hopt{display:flex;gap:18px;flex-wrap:wrap;font-size:14px;margin:6px 0}.hopt input{width:auto!important;margin-right:4px}
+  .hj{border-top:1px dashed #eee;padding:2px 0}.hj b{display:inline-block;width:44px}
+  .htot{margin-top:6px;font-size:14px;border-radius:8px;padding:8px 12px;background:#eef6ef;color:#2e6b3a;font-weight:bold}
+  .htot.bas{background:#fdecea;color:#b71c1c}
   .minsal{grid-column:1/-1;font-size:14px;border-radius:8px;padding:9px 12px;background:#eef6ef;color:#2e6b3a}
   .minsal.bas{background:#fdecea;color:#b71c1c;font-weight:bold}
   .testbandeau{position:fixed;top:0;left:0;right:0;background:#333;color:#fff;text-align:center;font:bold 13px Arial;padding:5px;z-index:99}
@@ -1327,6 +1336,57 @@
       ?'<label><input type="radio" name="lieu" value="Chantiers">Sur les chantiers</label><label><input type="radio" name="lieu" value="Bureau">Au bureau (siège de l’entreprise)</label>'
       :'<label><input type="radio" name="lieu" value="Siège">Au siège de l’entreprise</label><label><input type="radio" name="lieu" value="Chantiers">Chez les clients</label><label><input type="radio" name="lieu" value="Autre">Autre adresse</label>')+'</div></div>'+
     '<label class="f large cache" id="f_lieuAutre"><span>Adresse du lieu de travail</span><input id="e_lieuAutre" maxlength="150" autocomplete="off"></label>');
+  // ===== Horaires : jours cochés + horaires en listes déroulantes (test) =====
+  (function(){
+    var J=['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'],JC=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+    var opts='<option value=""></option>';for(var m=5*60;m<=23*60;m+=15){var hh=('0'+Math.floor(m/60)).slice(-2),mm=('0'+m%60).slice(-2);opts+='<option value="'+m+'">'+hh+':'+mm+'</option>';}
+    function ligne(id){return '<span class="hl" data-l="'+id+'">Matin : de <select class="h1">'+opts+'</select> à <select class="h2">'+opts+'</select><span class="apm"> &nbsp; Après-midi : de <select class="h3">'+opts+'</select> à <select class="h4">'+opts+'</select></span></span>';}
+    var fh=document.getElementById('e_horaires').closest('.f');fh.style.display='none';
+    var fhe=document.getElementById('e_heures');fhe.readOnly=true;fhe.style.background='#f3f3f3';
+    fhe.closest('.f').style.display='none'; // le total calculé sous les horaires remplace ce champ
+    fh.insertAdjacentHTML('afterend',
+      '<div class="f large" id="f_hor"><span>Jours et horaires de travail</span>'+
+      '<div class="jours">'+JC.map(function(j,i){return '<label><input type="checkbox" value="'+i+'"'+(i<5?' checked':'')+'>'+j+'</label>';}).join('')+'</div>'+
+      '<div class="hcom">'+ligne('com')+'</div>'+
+      '<div class="hopt"><label><input type="checkbox" id="h_sansCoupure"> Pas de coupure (journée continue)</label><label><input type="checkbox" id="h_diff"> Horaires différents selon les jours</label></div>'+
+      '<div class="hjours cache" id="h_jours"></div>'+
+      '<div class="htot" id="h_tot"></div></div>');
+    var F=document.getElementById('f_hor');
+    function setL(l,v){['h1','h2','h3','h4'].forEach(function(c,i){l.querySelector('.'+c).value=v[i];});}
+    function getL(l){return ['h1','h2','h3','h4'].map(function(c){return l.querySelector('.'+c).value;});}
+    setL(F.querySelector('.hcom .hl'),['480','720','780','960']);
+    function jours(){return [].slice.call(F.querySelectorAll('.jours input:checked')).map(function(x){return +x.value;});}
+    function hTxt(m){m=+m;var h=Math.floor(m/60),mn=m%60;return h+' h'+(mn?' '+('0'+mn).slice(-2):'');}
+    function dureeL(v,sc){var d=0;if(v[0]&&v[1])d+=v[1]-v[0];if(!sc&&v[2]&&v[3])d+=v[3]-v[2];return d;}
+    function plage(v,sc){var t='de '+hTxt(v[0])+' à '+hTxt(v[1]);if(!sc&&v[2]&&v[3])t+=' et de '+hTxt(v[2])+' à '+hTxt(v[3]);return t;}
+    function listeJours(js){if(js.length>1){var suite=js.every(function(j,i){return i===0||j===js[i-1]+1;});if(suite&&js.length>2)return 'du '+J[js[0]]+' au '+J[js[js.length-1]];}
+      var n=js.map(function(j){return J[j];});return n.length>1?n.slice(0,-1).join(', ')+' et '+n[n.length-1]:(n[0]||'');}
+    function construireJours(){
+      var box=document.getElementById('h_jours'),com=getL(F.querySelector('.hcom .hl')),anc={};
+      box.querySelectorAll('.hj').forEach(function(d){anc[d.dataset.j]=getL(d.querySelector('.hl'));});
+      box.innerHTML=jours().map(function(j){return '<div class="hj" data-j="'+j+'"><b>'+JC[j]+'</b> '+ligne(j)+'</div>';}).join('');
+      box.querySelectorAll('.hj').forEach(function(d){setL(d.querySelector('.hl'),anc[d.dataset.j]||com);});
+    }
+    function calc(){
+      var sc=document.getElementById('h_sansCoupure').checked,diff=document.getElementById('h_diff').checked,js=jours();
+      F.querySelectorAll('.apm').forEach(function(a){a.style.display=sc?'none':'';});
+      F.querySelectorAll('.jours label').forEach(function(l){l.classList.toggle('on',l.querySelector('input').checked);});
+      F.querySelector('.hcom').classList.toggle('cache',diff);
+      document.getElementById('h_jours').classList.toggle('cache',!diff);
+      var tot=0,txt='',err=false;
+      if(!diff){var v=getL(F.querySelector('.hcom .hl'));var d=dureeL(v,sc);if(d<=0||(v[2]&&+v[2]<+v[1]))err=true;tot=d*js.length;txt=js.length?listeJours(js)+', '+plage(v,sc):'';}
+      else{var parts=[];F.querySelectorAll('#h_jours .hj').forEach(function(x){var v=getL(x.querySelector('.hl'));var d=dureeL(v,sc);if(d<=0)err=true;tot+=d;parts.push(J[+x.dataset.j]+' : '+plage(v,sc));});txt=parts.join(' ; ');}
+      var h=Math.round(tot/60*100)/100;
+      fhe.value=h?String(h):'';
+      document.getElementById('e_horaires').value=txt?txt+', soit '+String(h).replace('.',',')+' heures par semaine':'';
+      var el=document.getElementById('h_tot');
+      el.className='htot'+(err||!js.length?' bas':'');
+      el.textContent=!js.length?'⚠ Cochez au moins un jour.':err?'⚠ Vérifiez les horaires (une heure de fin est avant l’heure de début).':'Total : '+String(h).replace('.',',')+' h par semaine'+(h<35?' – temps partiel':h>35?' – dont '+String(Math.round((h-35)*100)/100).replace('.',',')+' h supplémentaires':' – temps plein');
+      fhe.dispatchEvent(new Event('input',{bubbles:true}));
+    }
+    F.addEventListener('change',function(e){if(e.target.closest('.jours')||e.target.id==='h_diff'){if(document.getElementById('h_diff').checked)construireJours();}calc();});
+    calc();
+  })();
   // d) CDD de remplacement : personne remplacée
   document.getElementById('e_finCdd').closest('.f').insertAdjacentHTML('afterend',
     '<label class="f cache" id="f_remplNom"><span>Nom et prénom de la personne remplacée</span><input id="e_remplNom" maxlength="80" autocomplete="off"></label>'+
