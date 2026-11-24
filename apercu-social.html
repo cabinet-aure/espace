@@ -1300,6 +1300,43 @@
   }
   document.getElementById('embauche').addEventListener('change',maj);
   document.getElementById('embauche').addEventListener('input',maj);
+  // ===== Rubriques complémentaires (test) =====
+  // a) Nationalité (section 1)
+  document.getElementById('e_enfants').closest('.f').insertAdjacentHTML('afterend',
+    '<label class="f"><span>Nationalité</span><select id="e_nationalite"><option value="">Choisir…</option><option>Française</option><option>Union européenne, EEE ou Suisse</option><option>Autre</option></select></label>');
+  // b) Horaires toujours demandés
+  var fh=document.getElementById('e_horaires').closest('.f');fh.classList.remove('partiel','cache');
+  fh.querySelector('span').textContent='Jours et horaires de travail';
+  document.getElementById('e_horaires').placeholder='ex. : du lundi au vendredi, 8 h – 12 h et 13 h – 16 h';
+  // c) Lieu de travail
+  fh.insertAdjacentHTML('afterend',
+    '<div class="f large" id="f_lieu"><span>Lieu de travail</span><div class="choix"><label><input type="radio" name="lieu" value="Siège">Au siège de l’entreprise</label><label><input type="radio" name="lieu" value="Chantiers">Sur chantiers ou chez les clients</label><label><input type="radio" name="lieu" value="Autre">Autre adresse</label></div></div>'+
+    '<label class="f large cache" id="f_lieuAutre"><span>Adresse du lieu de travail</span><input id="e_lieuAutre" maxlength="150" autocomplete="off"></label>');
+  // d) CDD de remplacement : personne remplacée
+  document.getElementById('e_finCdd').closest('.f').insertAdjacentHTML('afterend',
+    '<label class="f cache" id="f_remplNom"><span>Nom et prénom de la personne remplacée</span><input id="e_remplNom" maxlength="80" autocomplete="off"></label>'+
+    '<label class="f cache" id="f_remplPoste"><span>Son emploi</span><input id="e_remplPoste" maxlength="80" placeholder="ex. : vendeuse" autocomplete="off"></label>');
+  // e) Autres éléments de rémunération (après le minimum)
+  document.getElementById('minsal').insertAdjacentHTML('afterend',
+    '<label class="f large"><span>Autres éléments de rémunération <i style="font-weight:normal;color:#888">(facultatif)</i></span><textarea id="e_autresRem" maxlength="500" rows="2" placeholder="ex. : prime de panier, véhicule de service, 13e mois…"></textarea></label>');
+  // f) Titre de séjour si nationalité « Autre »
+  var titre=document.createElement('div');titre.className='piece';
+  titre.innerHTML='<div class="pt2">Titre de séjour autorisant à travailler (recto verso)</div><div class="pconsigne">À vérifier avant l’embauche : le titre doit être en cours de validité et autoriser à travailler.</div><label class="zone petite" style="display:block;cursor:pointer"><input type="file" style="display:none"><span class="ztxt">Déposez ici le fichier<br><b>ou sélectionnez un fichier</b></span></label><div class="nomf" style="font-size:13px;color:#2e6b3a;margin-top:4px"></div>';
+  titre.querySelector('input').addEventListener('change',function(){titre.querySelector('.nomf').textContent=this.files.length?'✔ '+this.files[0].name:'';});
+  function majExtra(){
+    var cdd=radioV('contrat')==='CDD',rempl=cdd&&/Remplacement/.test(document.getElementById('e_motifCdd').value);
+    document.getElementById('f_remplNom').classList.toggle('cache',!rempl);
+    document.getElementById('f_remplPoste').classList.toggle('cache',!rempl);
+    var li=radioV('lieu');
+    document.querySelectorAll('#f_lieu label').forEach(function(l){l.classList.toggle('on',l.querySelector('input').checked);});
+    document.getElementById('f_lieuAutre').classList.toggle('cache',li!=='Autre');
+    var box=document.getElementById('pieces'),aut=document.getElementById('e_nationalite').value==='Autre';
+    if(aut&&titre.parentNode!==box){var z0=box.querySelector('.zone');var zt=titre.querySelector('.zone');
+      if(z0&&!zt.querySelector('svg')){var ic=z0.querySelector('svg');if(ic)zt.insertBefore(ic.cloneNode(true),zt.firstChild);zt.className=z0.className;zt.style.cssText='';}
+      box.insertBefore(titre,box.children[1]||null);}
+    if(!aut&&titre.parentNode)titre.parentNode.removeChild(titre);
+  }
+  ['change','input'].forEach(function(ev){document.getElementById('embauche').addEventListener(ev,function(e){if(e.target.type!=='file')majExtra();});});
   // 4. envoi bloqué sur la page de test
   var b=document.getElementById('envoyerEmb');
   b.onclick=function(){document.getElementById('erreurEmb').textContent='Page de test : rien n’a été envoyé.';};
