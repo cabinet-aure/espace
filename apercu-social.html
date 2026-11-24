@@ -1349,14 +1349,17 @@
         {c:'C2',t:'Cadre – niveau C2',d:'Cadre confirmé, encadre une équipe.',min:a13(36932),an:36932},
         {c:'C3',t:'Cadre – niveau C3',d:'Responsable d’agence ou de plusieurs services.',min:a13(44221),an:44221},
         {c:'C4',t:'Cadre – niveau C4',d:'Cadre de direction.',min:a13(49800),an:49800}]},
-      Negociateur:{idcc:'1527',nom:NOMI,base:35,cabinet:true,niveaux:[]}
+      NegoVRP:{idcc:'1527',nom:NOMI,base:35,sansSmic:true,source:SRI,lib:'Niveau du salarié',m13:true,niveaux:[
+        {c:'VRP',t:'Négociateur immobilier VRP (non cadre)',d:'Prospecte et négocie surtout à l’extérieur de l’agence, sans horaire fixe. Minimum : 1 540 EUR brut par mois, qui peut être une avance sur commissions. Commissions : le cabinet vous contactera.',min:1540,an:20020}]},
+      NegoNon:{idcc:'1527',nom:NOMI,base:35,source:SRI,lib:'Niveau du salarié',m13:true,niveaux:[
+        {c:'NVRP',t:'Négociateur immobilier non VRP (non cadre)',d:'Travaille surtout à l’agence, avec des horaires. Minimum : le SMIC, qui peut être une avance sur commissions. Commissions : le cabinet vous contactera.',min:0}]}
     };
   }
   window.PIECES_FAMILLE=CLIENT.secteur==='Bâtiment';document.getElementById('embauche').dispatchEvent(new Event('change',{bubbles:true}));
   var STATUTS=CLIENT.secteur==='Propreté'
     ?[['Agent','Agent de propreté'],['ChefEquipe','Chef d’équipe'],['Admin','Employé administratif'],['Encadrement','Maîtrise ou cadre']]
     :CLIENT.secteur==='Syntec'?[['ETAM','ETAM (employé, technicien, agent de maîtrise)'],['Cadre','Ingénieur ou cadre']]
-    :CLIENT.secteur==='Immobilier'?[['Employe','Employé'],['Maitrise','Agent de maîtrise'],['Cadre','Cadre'],['Negociateur','Négociateur (commissions)']]
+    :CLIENT.secteur==='Immobilier'?[['Employe','Employé'],['Maitrise','Agent de maîtrise'],['Cadre','Cadre'],['NegoVRP','Négociateur VRP'],['NegoNon','Négociateur non VRP']]
     :[['Ouvrier','Ouvrier'],['ETAM','ETAM (employé, technicien, agent de maîtrise)'],['Cadre','Cadre']];
   function eur(x){return x.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})+' EUR';}
   document.body.insertAdjacentHTML('afterbegin','<div class="testbandeau">PAGE DE TEST – rien n’est envoyé au cabinet</div>');
@@ -1372,7 +1375,7 @@
     '<div class="f large cache" id="f_niveau"><span id="libNiveau">Niveau du salarié</span><div class="niv" id="niv"></div></div>'+
     (CLIENT.secteur==='Syntec'?'<div class="f large cache" id="f_mod"><span>Organisation du temps de travail</span><div class="choix"><label><input type="radio" name="modalite" value="1">35 h par semaine</label><label><input type="radio" name="modalite" value="2">Forfait 38 h 30 par semaine</label><label><input type="radio" name="modalite" value="3">Forfait 218 jours par an</label></div></div>':''));
   function grilleHtml(g){
-    return g.niveaux.map(function(n){var m=Math.max(n.min,g.base===35?SMIC:0);
+    return g.niveaux.map(function(n){var m=Math.max(n.min,(g.base===35&&!g.sansSmic)?SMIC:0);
       return '<label><input type="radio" name="niveau" value="'+n.c+'"><div><div class="t1">'+n.t+(n.coef?' <span style="color:#999;font-weight:normal">('+((g.idcc==='2420'||g.idcc==='1486')?'':n.c+' – ')+'coef. '+n.coef+')</span>':'')+'</div>'+(n.d?'<div class="t2">'+n.d+'</div>':'')+'</div><div class="mini">minimum<b>'+eur(m)+'</b>brut / mois'+(g.base!==35?' (39 h)':'')+(g.m13?'<br>sur 13 mois':'')+'</div><span class="chg">Changer de niveau</span></label>';}).join('')+
       '<label><input type="radio" name="niveau" value="?"><div><div class="t1">Je ne sais pas</div><div class="t2">Le cabinet fixera le niveau d’après l’emploi.</div></div><span class="chg">Changer de niveau</span></label>';
   }
@@ -1404,7 +1407,7 @@
     var g=GRILLES[st],n=g.niveaux.filter(function(x){return x.c===nv;})[0];
     if(!n){ms.classList.add('cache');return;}
     var h=parseFloat(String(document.getElementById('e_heures').value).replace(',','.'))||35;
-    var mensBase=Math.max(n.min,g.base===35?SMIC:0);
+    var mensBase=Math.max(n.min,(g.base===35&&!g.sansSmic)?SMIC:0);
     var minH=mensBase/(g.base*52/12), minM=g.base===35?minH*h*52/12:mensBase;
     var en=document.getElementById('e_salaireEn').value,v=parseFloat(String(document.getElementById('e_montant').value).replace(/\s/g,'').replace(',','.'));
     var txt,bas=false,modTxt='';
@@ -1418,6 +1421,9 @@
       if(st==='Cadre'&&mod==='3'){if(n.coef<150){ms.textContent='⚠ Le forfait jours n’est possible qu’à partir de la position 2.3 (sauf rémunération supérieure à 2 plafonds de la Sécurité sociale ou mandataire social) : le cabinet vous contactera.';ms.classList.add('bas');ms.classList.remove('cache');return;}
         minM=mensBase*(n.coef>=170?1.20:1.22);modTxt=' (forfait jours : au moins '+(n.coef>=170?'120':'122')+' % du minimum)';}
     }
+    if(CLIENT.secteur==='Immobilier'){var vrp=st==='NegoVRP',fhv=document.getElementById('f_hor');if(fhv)fhv.style.display=vrp?'none':'';
+      if(vrp){document.getElementById('e_horaires').value='Pas d’horaire fixe (négociateur VRP)';document.getElementById('e_heures').value='35';}
+      else if(/négociateur VRP/.test(document.getElementById('e_horaires').value)&&fhv){var sx=fhv.querySelector('select');if(sx)sx.dispatchEvent(new Event('change',{bubbles:true}));}}
     if(en==='Taux horaire brut'){txt='Taux horaire minimum pour ce niveau : '+eur(minH)+' brut';bas=v>0&&v<minH-0.005;}
     if(g.m13)modTxt=(modTxt||'')+' (sur 13 mois, 13e mois en plus)';
     if(en!=='Taux horaire brut'){txt='Salaire minimum pour ce niveau'+(modTxt||(g.base===35?' ('+String(h).replace('.',',')+' h par semaine)':''))+' : '+eur(minM)+' brut par mois';bas=v>0&&v<minM-0.005;}
@@ -1513,7 +1519,7 @@
   if(CLIENT.secteur==='Immobilier')EMPLOIS={Employe:['Secrétaire / assistant(e) administratif(ve)','Chargé(e) d’accueil','Assistant(e) de gestion locative','Assistant(e) de copropriété','Comptable'],
     Maitrise:['Gestionnaire locatif(ve)','Gestionnaire de copropriété','Comptable confirmé(e)'],
     Cadre:['Responsable d’agence','Responsable de gestion','Directeur / dirigeant salarié'],
-    Negociateur:['Négociateur(trice) immobilier(ère)']};
+    NegoVRP:['Négociateur(trice) immobilier(ère)'],NegoNon:['Négociateur(trice) immobilier(ère)']};
   var fe=document.getElementById('e_emploi').closest('.f');fe.style.display='none';
   document.getElementById('f_conv').insertAdjacentHTML('afterend',
     '<label class="f large cache" id="f_emploiL"><span>Emploi</span><select id="e_emploiL"></select></label>'+
