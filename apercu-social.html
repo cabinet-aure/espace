@@ -1280,7 +1280,7 @@
     '<div class="f large cache" id="f_niveau"><span id="libNiveau">Niveau du salarié</span><div class="niv" id="niv"></div></div>');
   function grilleHtml(g){
     return g.niveaux.map(function(n){var m=Math.max(n.min,g.base===35?SMIC:0);
-      return '<label><input type="radio" name="niveau" value="'+n.c+'"><div><div class="t1">'+n.t+' <span style="color:#999;font-weight:normal">('+(n.coef?((g.idcc==='2420'?'':n.c+' – ')+'coef. '+n.coef):'niveau '+n.c)+')</span></div>'+(n.d?'<div class="t2">'+n.d+'</div>':'')+'</div><div class="mini">minimum<b>'+eur(m)+'</b>brut / mois'+(g.base!==35?' (39 h)':'')+'</div><span class="chg">Changer de niveau</span></label>';}).join('')+
+      return '<label><input type="radio" name="niveau" value="'+n.c+'"><div><div class="t1">'+n.t+(n.coef?' <span style="color:#999;font-weight:normal">('+(g.idcc==='2420'?'':n.c+' – ')+'coef. '+n.coef+')</span>':'')+'</div>'+(n.d?'<div class="t2">'+n.d+'</div>':'')+'</div><div class="mini">minimum<b>'+eur(m)+'</b>brut / mois'+(g.base!==35?' (39 h)':'')+'</div><span class="chg">Changer de niveau</span></label>';}).join('')+
       '<label><input type="radio" name="niveau" value="?"><div><div class="t1">Je ne sais pas</div><div class="t2">Le cabinet fixera le niveau d’après l’emploi.</div></div><span class="chg">Changer de niveau</span></label>';
   }
   var statutAff='';
@@ -1354,7 +1354,10 @@
     var F=document.getElementById('f_hor');
     function setL(l,v){['h1','h2','h3','h4'].forEach(function(c,i){l.querySelector('.'+c).value=v[i];});}
     function getL(l){return ['h1','h2','h3','h4'].map(function(c){return l.querySelector('.'+c).value;});}
-    setL(F.querySelector('.hcom .hl'),['510','720','810','1020']);
+    var HDEF={Bureau:['510','720','810','1020'],Chantiers:['480','720','780','960']},hTouche=false;
+    setL(F.querySelector('.hcom .hl'),HDEF.Bureau);
+    var dernierLieu='Bureau';
+    window.horDefaut=function(lieu){if(hTouche||!HDEF[lieu]||lieu===dernierLieu)return;dernierLieu=lieu;setL(F.querySelector('.hcom .hl'),HDEF[lieu]);calc();};
     function jours(){return [].slice.call(F.querySelectorAll('.jours input:checked')).map(function(x){return +x.value;});}
     function hTxt(m){m=+m;var h=Math.floor(m/60),mn=m%60;return h+' h'+(mn?' '+('0'+mn).slice(-2):'');}
     function dureeL(v,sc){var d=0;if(v[0]&&v[1])d+=v[1]-v[0];if(!sc&&v[2]&&v[3])d+=v[3]-v[2];return d;}
@@ -1384,17 +1387,33 @@
       el.textContent=!js.length?'⚠ Cochez au moins un jour.':err?'⚠ Vérifiez les horaires (une heure de fin est avant l’heure de début).':'Total : '+String(h).replace('.',',')+' h par semaine'+(h<35?' – temps partiel':h>35?' – dont '+String(Math.round((h-35)*100)/100).replace('.',',')+' h supplémentaires':' – temps plein');
       fhe.dispatchEvent(new Event('input',{bubbles:true}));
     }
-    F.addEventListener('change',function(e){if(e.target.closest('.jours')||e.target.id==='h_diff'){if(document.getElementById('h_diff').checked)construireJours();}calc();});
+    F.addEventListener('change',function(e){if(e.target.tagName==='SELECT')hTouche=true;if(e.target.closest('.jours')||e.target.id==='h_diff'){if(document.getElementById('h_diff').checked)construireJours();}calc();});
     calc();
   })();
   // d) CDD de remplacement : personne remplacée
   document.getElementById('e_finCdd').closest('.f').insertAdjacentHTML('afterend',
     '<label class="f cache" id="f_remplNom"><span>Nom et prénom de la personne remplacée</span><input id="e_remplNom" maxlength="80" autocomplete="off"></label>'+
     '<label class="f cache" id="f_remplPoste"><span>Son emploi</span><input id="e_remplPoste" maxlength="80" placeholder="ex. : vendeuse" autocomplete="off"></label>');
-  // e) Autres éléments de rémunération (après le minimum)
-  document.getElementById('minsal').insertAdjacentHTML('afterend',
-    '<label class="f large"><span>Autres éléments de rémunération <i style="font-weight:normal;color:#888">(facultatif)</i></span><textarea id="e_autresRem" maxlength="500" rows="2" placeholder="'+(CLIENT.secteur==='Bâtiment'?'ex. : véhicule de service, téléphone, prime sur objectifs…':'ex. : véhicule de service, prime sur objectifs…')+'"></textarea>'+
-    (CLIENT.secteur==='Bâtiment'?'<em class="mention" style="color:#777">Inutile d’indiquer les indemnités de la convention (paniers, trajet, transport) : elles s’appliquent automatiquement.</em>':'')+'</label>');
+  // e) Commentaires supprimés
+  document.getElementById('e_commentaires').closest('.f').style.display='none';
+  // e bis) Emploi choisi dans une liste selon le statut
+  var EMPLOIS={Ouvrier:['Maçon','Coffreur-boiseur','Carreleur','Plâtrier-plaquiste','Peintre','Plombier','Chauffagiste','Électricien','Menuisier','Charpentier','Couvreur','Étancheur','Façadier','Serrurier-métallier','Conducteur d’engins','Manœuvre (aide sur chantier)','Chef d’équipe'],
+    ETAM:['Secrétaire / assistant(e) administratif(ve)','Comptable','Chef de chantier','Conducteur de travaux','Métreur','Dessinateur-projeteur','Technicien d’études','Commercial(e)'],
+    Cadre:['Conducteur de travaux principal','Directeur de travaux','Ingénieur','Responsable administratif et financier','Directeur / dirigeant salarié']};
+  var fe=document.getElementById('e_emploi').closest('.f');fe.style.display='none';
+  document.getElementById('f_conv').insertAdjacentHTML('afterend',
+    '<label class="f large cache" id="f_emploiL"><span>Emploi</span><select id="e_emploiL"></select></label>'+
+    '<div class="ccn cache" id="f_emploiAutre">Le cabinet vous contactera pour préciser l’emploi.</div>');
+  var empStatut='';
+  function majEmploi(){
+    var st=radioV('statut'),sel=document.getElementById('e_emploiL');
+    document.getElementById('f_emploiL').classList.toggle('cache',!st);
+    if(st&&st!==empStatut){empStatut=st;sel.innerHTML='<option value="">Choisir…</option>'+EMPLOIS[st].map(function(x){return '<option>'+x+'</option>';}).join('')+'<option value="autre">Autre emploi</option>';}
+    var v=sel.value;
+    document.getElementById('f_emploiAutre').classList.toggle('cache',v!=='autre');
+    document.getElementById('e_emploi').value=v==='autre'?'Autre emploi (à préciser par le cabinet)':v;
+  }
+  ['change','input'].forEach(function(ev){document.getElementById('embauche').addEventListener(ev,majEmploi);});
   // f) Titre de séjour si nationalité « Autre »
   var titre=document.createElement('div');titre.className='piece';
   titre.innerHTML='<div class="pt2">Titre de séjour autorisant à travailler (recto verso)</div><div class="pconsigne">À vérifier avant l’embauche : le titre doit être en cours de validité et autoriser à travailler.</div><label class="zone petite" style="display:block;cursor:pointer"><input type="file" style="display:none"><span class="ztxt">Déposez ici le fichier<br><b>ou sélectionnez un fichier</b></span></label><div class="nomf" style="font-size:13px;color:#2e6b3a;margin-top:4px"></div>';
@@ -1405,7 +1424,7 @@
     document.getElementById('f_remplPoste').classList.toggle('cache',!rempl);
     var st0=radioV('statut');
     if(CLIENT.secteur==='Bâtiment'&&st0&&st0!==majExtra.st){majExtra.st=st0;var def=st0==='Ouvrier'?'Chantiers':'Bureau';var r=document.querySelector('input[name="lieu"][value="'+def+'"]');if(r)r.checked=true;}
-    var li=radioV('lieu');
+    var li=radioV('lieu');if(window.horDefaut)window.horDefaut(li==='Chantiers'?'Chantiers':'Bureau');
     document.querySelectorAll('#f_lieu label').forEach(function(l){l.classList.toggle('on',l.querySelector('input').checked);});
     document.getElementById('f_lieuAutre').classList.toggle('cache',li!=='Autre');
     var box=document.getElementById('pieces'),aut=document.getElementById('e_nationalite').value==='Autre';
