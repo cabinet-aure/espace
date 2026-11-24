@@ -33,11 +33,12 @@
   .mfiche summary::-webkit-details-marker{display:none}.mfiche summary:before{content:'▸ ';}.mfiche[open] summary:before{content:'▾ ';}
   .mfiche ol{margin:0 14px 10px 0;padding-left:34px}.mfiche li{margin:3px 0;font-size:14.5px}
   .mfiche img{display:block;width:100%;max-width:600px;margin:4px auto 14px;border-radius:6px;border:1px solid #ddd;background:#fff}
-  .mdl{margin-left:auto;align-self:flex-start;white-space:nowrap;font-size:13.5px;font-weight:bold;color:var(--c,#d84315);text-decoration:none;padding:4px 2px}
-  .mdl:hover{text-decoration:underline}.mdl span{font-size:14px}
-  .rub .mdl{color:#fff;align-self:center;margin-left:auto;font-size:13.5px;opacity:.95}
-  .rub .dl+.mdl,.rub .mdl{order:5}
-  @media(max-width:600px){.bq-tete .mdl{flex:1 1 100%;margin:-8px 0 0 58px;padding:0}}
+  .mdl{flex:0 0 auto;margin-left:auto;align-self:center;width:28px;height:28px;border-radius:50%;border:2px solid var(--c,#d84315);color:var(--c,#d84315);display:flex;align-items:center;justify-content:center;font:bold 15px Arial,Helvetica,sans-serif;text-decoration:none;padding:0;background:#fff}
+  .mdl:hover{background:var(--c,#d84315);color:#fff}
+  .rub .mdl{border-color:#fff;color:#fff;background:transparent;order:5}
+  .rub .mdl:hover{background:#fff;color:var(--mc,#2e6b3a)}
+  .qaide{white-space:nowrap}.qrond{display:inline-flex;width:18px;height:18px;border-radius:50%;border:1.5px solid currentColor;align-items:center;justify-content:center;font-size:11px;font-weight:bold;vertical-align:1px}
+  #social .qaide,#embauche .qaide{color:#d84315}#formulaire .qaide{color:#2e6b3a}#bilan .qaide{color:#1f5f6b}
   .mq{font-weight:bold;font-size:16px;margin:14px 0 10px}
   .mchoix{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--mf);border:1px solid var(--mb);border-radius:10px;padding:13px 14px;margin:0 0 9px;font:bold 15.5px Arial,Helvetica,sans-serif;color:var(--mc);cursor:pointer}
   .mchoix:hover{background:#fff}.mchoix .mfl{margin-left:auto;font-size:22px;line-height:1}
@@ -269,7 +270,7 @@
   <div id="formulaire" style="display:none">
    <div class="corps">
     <div class="rub"><h2 id="titre"></h2><span class="dl" id="limite" style="display:none">Date limite : <b id="dateLimite"></b></span></div>
-    <div class="consigne" id="consigne" style="font-size:14px;color:#666">Pour compléter votre dossier, merci de nous transmettre les documents ci-dessous.
+    <div class="consigne" id="consigne" style="font-size:14px;color:#666">Pour compléter votre dossier, merci de nous transmettre les documents ci-dessous. <span class="qaide">Besoin d’aide ? Cliquez sur <span class="qrond">?</span></span>
       <ol>
         <li>Déposez <b>tous les documents d’une même banque</b> dans la zone de cette banque.</li>
         <li>Les documents signalés en orange sont à transmettre uniquement si votre banque vous les a adressés ce mois-ci.</li>
@@ -291,7 +292,7 @@
   <div id="social" style="display:none">
    <div class="corps soc">
     <div class="rub or"><h2>👥 Social</h2></div>
-    <div class="consigne" style="font-size:14px;color:#666">Déposez chaque document dans la zone qui correspond, puis cliquez sur « Envoyer mes documents ».</div>
+    <div class="consigne" style="font-size:14px;color:#666">Déposez chaque document dans la zone qui correspond, puis cliquez sur « Envoyer mes documents ». <span class="qaide">Besoin d’aide ? Cliquez sur <span class="qrond">?</span></span></div>
     <div id="blocsSoc"></div>
    </div>
    <div class="actions"><button class="btn or" id="envoyerSoc" disabled>✔ Envoyer mes documents</button><div class="erreur" id="erreurSoc"></div></div>
@@ -359,7 +360,7 @@
   <div id="bilan" style="display:none">
    <div class="corps bil">
     <div class="rub"><h2 id="bTitre"></h2><span class="dl" id="bLimite" style="display:none">Date limite : <b id="bDate"></b></span></div>
-    <div class="consigne" style="font-size:14px;color:#666">Ces documents nous permettent de préparer votre bilan. Déposez chaque document dans sa zone, puis cliquez sur «&nbsp;Envoyer mes documents&nbsp;».</div>
+    <div class="consigne" style="font-size:14px;color:#666">Ces documents nous permettent de préparer votre bilan. Déposez chaque document dans sa zone, puis cliquez sur «&nbsp;Envoyer mes documents&nbsp;». <span class="qaide">Besoin d’aide ? Cliquez sur <span class="qrond">?</span></span></div>
     <div class="prog" id="bProgL"><div class="bar"><span id="bBar"></span></div><div id="bProg"></div></div>
     <div id="bDocs"></div>
    </div>
@@ -1174,7 +1175,7 @@
  }
  function ouvrirFiche(g){var k=0;F[t].forEach(function(f,i){if(f[0]===g)k=i;});fiche(k,true);fo.classList.add('ouvert');document.body.style.overflow='hidden';}
  b.classList.remove('vu');
- function lien(g,blanc){var a=document.createElement('a');a.href='#';a.className='mdl'+(blanc?' blanc':'');a.innerHTML='<span>📖</span> Mode d’emploi';a.onclick=function(ev){ev.preventDefault();ev.stopPropagation();ouvrirFiche(g);};return a;}
+ function lien(g,blanc){var a=document.createElement('a');a.href='#';a.className='mdl'+(blanc?' blanc':'');a.innerHTML='?';a.title='Mode d’emploi';a.setAttribute('aria-label','Mode d’emploi');a.onclick=function(ev){ev.preventDefault();ev.stopPropagation();ouvrirFiche(g);};return a;}
  function poser(){
    if(t==='social'){[].forEach.call(document.querySelectorAll('[data-cat]'),function(d){var g=d.getAttribute('data-cat');if(!I[g]||d.querySelector('.mdl'))return;var h=d.querySelector('.bq-tete');if(h)h.appendChild(lien(g));});
      [['embauche','#embauche .rub'],['cdd','#cdd .rub']].forEach(function(x){var r=document.querySelector(x[1]);if(r&&!r.querySelector('.mdl'))r.appendChild(lien(x[0],true));});}
