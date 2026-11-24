@@ -376,7 +376,7 @@
       <div class="f large" id="f_mutuelle"><span>Le salarié adhère-t-il à la mutuelle de l’entreprise ?</span><div class="choix"><label><input type="radio" name="mutuelle" value="Oui">Oui</label><label><input type="radio" name="mutuelle" value="Non">Non</label></div></div>
       <label class="f oui cache"><span>Qui est couvert ?</span><select id="e_couverture"><option value="">Choisir…</option><option>Le salarié seul</option><option>Le salarié et son conjoint</option><option>Le salarié et ses enfants</option><option>Toute la famille</option></select></label>
       <label class="f oui enf cache"><span>Nombre d’enfants couverts</span><select id="e_enfantsCouverts"><option value="">Choisir…</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></label>
-      <label class="f non cache"><span>Motif de dispense</span><select id="e_motifDispense"><option value="">Choisir…</option><option>Couvert par la mutuelle de son conjoint</option><option>CDD de moins de 3 mois</option><option>Complémentaire santé solidaire</option><option>Autre</option></select></label>
+      <label class="f non cache"><span>Motif de dispense</span><select id="e_motifDispense"><option value="">Choisir…</option><option>Couvert par la mutuelle obligatoire de son conjoint ou d’un autre employeur</option><option>Bénéficiaire de la Complémentaire santé solidaire</option><option>Mutuelle individuelle en cours (jusqu’à son échéance)</option><option>CDD de moins de 3 mois</option><option>CDD de moins de 12 mois</option><option>Temps partiel : cotisation au moins égale à 10 % du salaire</option><option>Autre motif : le cabinet vous contactera</option></select></label>
       <label class="f non autreDisp cache"><span>Précisez le motif</span><input id="e_dispAutre" maxlength="150" autocomplete="off"></label>
     </div></div>
     <div class="sect"><h3>4. Les pièces à joindre</h3><div id="pieces"></div></div>
@@ -1068,8 +1068,8 @@
     cacher('.autreDisp',!(mut==='Non'&&$('e_motifDispense').value==='Autre'));
     var l=[piece('identite','Pièce d’identité du salarié (recto verso)'),piece('vitale','Attestation de carte Vitale du salarié'),
            piece('rib','RIB du salarié')];
-    if(mut==='Oui'&&/conjoint|famille/i.test(cv)){l.push(piece('conjoint_identite','Pièce d’identité du conjoint'));l.push(piece('conjoint_vitale','Attestation de carte Vitale du conjoint'));}
-    if(mut==='Oui'&&/enfants|famille/i.test(cv)){
+    if(window.PIECES_FAMILLE!==false&&mut==='Oui'&&/conjoint|famille/i.test(cv)){l.push(piece('conjoint_identite','Pièce d’identité du conjoint'));l.push(piece('conjoint_vitale','Attestation de carte Vitale du conjoint'));}
+    if(window.PIECES_FAMILLE!==false&&mut==='Oui'&&/enfants|famille/i.test(cv)){
       var n=parseInt($('e_enfantsCouverts').value,10)||0;
       for(var i=1;i<=n;i++){l.push(piece('enfant'+i+'_identite','Pièce d’identité de l’enfant '+i));l.push(piece('enfant'+i+'_vitale','Attestation de carte Vitale de l’enfant '+i));}
     }
@@ -1352,6 +1352,7 @@
       Negociateur:{idcc:'1527',nom:NOMI,base:35,cabinet:true,niveaux:[]}
     };
   }
+  window.PIECES_FAMILLE=CLIENT.secteur==='Bâtiment';document.getElementById('embauche').dispatchEvent(new Event('change',{bubbles:true}));
   var STATUTS=CLIENT.secteur==='Propreté'
     ?[['Agent','Agent de propreté'],['ChefEquipe','Chef d’équipe'],['Admin','Employé administratif'],['Encadrement','Maîtrise ou cadre']]
     :CLIENT.secteur==='Syntec'?[['ETAM','ETAM (employé, technicien, agent de maîtrise)'],['Cadre','Ingénieur ou cadre']]
