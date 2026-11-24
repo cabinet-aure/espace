@@ -51,7 +51,8 @@
   .mfiche2 h3{margin:0 0 8px;color:var(--mc);font-size:17px;display:flex;align-items:center;gap:8px}
   .mfiche2 ol{margin:0 0 12px;padding-left:22px}.mfiche2 li{margin:4px 0;font-size:14.5px}
   .mdemo{background:#fff;border:1px solid var(--mb);color:var(--mc);border-radius:20px;padding:8px 16px;font:bold 14px Arial,Helvetica,sans-serif;cursor:pointer}
-  .manim img{display:block;width:100%;max-width:600px;margin:4px auto 4px;border-radius:6px;border:1px solid #ddd;background:#fff}
+  .manim img{display:block;width:auto;max-width:100%;max-height:calc(100vh - 190px);margin:4px auto 4px;border-radius:6px;border:1px solid #ddd;background:#fff}
+  .mfiche2.demo ol{display:none}
   .mpied{font-size:13px;color:#666;border-top:1px solid #eee;margin-top:10px;padding-top:10px}
   @media(max-width:600px){.mde{right:16px;font-size:13px}}
   .tete .soc{font-size:19px;font-weight:bold;margin-top:2px}
@@ -1174,7 +1175,7 @@
    co.innerHTML=(plus?'<a href="#" class="mautre">← Autres démarches</a>':'')+'<div class="mfiche2"><h3><span class="mic">'+I[f[0]]+'</span>'+e(f[1])+'</h3><ol>'+f[2].map(function(x){return '<li>'+e(x)+'</li>';}).join('')+'</ol>'+
      '<button type="button" class="mdemo">▶ Voir la démonstration</button><div class="manim"></div></div>'+pied;
    if(plus)co.querySelector('.mautre').onclick=function(ev){ev.preventDefault();menu();};
-   var bd=co.querySelector('.mdemo');bd.onclick=function(){co.querySelector('.manim').innerHTML='<img src="aide/'+f[0]+'.gif" alt="Démonstration">';bd.style.display='none';};
+   var bd=co.querySelector('.mdemo');bd.onclick=function(){co.querySelector('.mfiche2').classList.add('demo');co.querySelector('.manim').innerHTML='<img src="aide/'+f[0]+'.gif?v=2" alt="Démonstration">';bd.style.display='none';};
  }
  function ouvrirFiche(g){var k=0;F[t].forEach(function(f,i){if(f[0]===g)k=i;});fiche(k,true);fo.classList.add('ouvert');document.body.style.overflow='hidden';}
  b.classList.remove('vu');
