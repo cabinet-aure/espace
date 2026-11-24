@@ -1355,11 +1355,37 @@
         {c:'NVRP',t:'Négociateur immobilier non VRP (non cadre)',d:'Travaille surtout à l’agence, avec des horaires. Minimum : le SMIC, qui peut être une avance sur commissions. Commissions : le cabinet vous contactera.',min:0}]}
     };
   }
+  if(CODE==='EQTZ-XUN8'){
+    CLIENT={secteur:'Paysage',region:'National'};
+    var SRP='avenant n° 46 du 17 septembre 2025, au 1er janvier 2026',tp=function(x){return Math.round(x*151.67*100)/100;},NOMP='Entreprises du paysage';
+    GRILLES={
+      Ouvrier:{idcc:'7018',nom:NOMP,base:35,source:SRP,lib:'Niveau du salarié',niveaux:[
+        {c:'O1',t:'Ouvrier d’exécution (O.1)',d:'Travaux simples d’entretien (tonte, ramassage, désherbage) selon des consignes précises. Débutant.',min:tp(12.12),h:12.12},
+        {c:'O2',t:'Ouvrier qualifié – 1er niveau (O.2)',d:'Travaux courants d’entretien et de plantation, avec une première expérience.',min:tp(12.18),h:12.18},
+        {c:'O3',t:'Ouvrier qualifié – 2e niveau (O.3)',d:'Travaux variés de création et d’entretien, utilise le matériel courant. En général CAPA.',min:tp(12.30),h:12.30},
+        {c:'O4',t:'Ouvrier hautement qualifié (O.4)',d:'Travaux complexes (maçonnerie paysagère, élagage, arrosage automatique), autonome sur le chantier.',min:tp(12.59),h:12.59},
+        {c:'O5',t:'Chef d’équipe (O.5)',d:'Organise le travail d’une petite équipe sur le chantier.',min:tp(12.95),h:12.95},
+        {c:'O6',t:'Maître ouvrier (O.6)',d:'Très grande expérience, encadre plusieurs équipes ou les chantiers délicats.',min:tp(13.56),h:13.56}]},
+      Employe:{idcc:'7018',nom:NOMP,base:35,source:SRP,lib:'Niveau du salarié',niveaux:[
+        {c:'E1',t:'Employé d’exécution (E.1)',d:'Tâches simples (accueil, classement, saisie) selon des consignes précises.',min:tp(12.12),h:12.12},
+        {c:'E2',t:'Employé qualifié (E.2)',d:'Travaux administratifs courants avec une certaine autonomie (secrétariat, devis, factures).',min:tp(12.30),h:12.30},
+        {c:'E3',t:'Employé hautement qualifié (E.3)',d:'Travaux variés en autonomie (comptabilité, suivi des chantiers, relation clients).',min:tp(12.67),h:12.67},
+        {c:'E4',t:'Employé principal (E.4)',d:'Responsabilité d’un domaine (administration, comptabilité) avec une grande autonomie.',min:tp(13.56),h:13.56}]},
+      TAM:{idcc:'7018',nom:NOMP,base:35,source:SRP,lib:'Niveau du salarié',niveaux:[
+        {c:'TAM1',t:'Technicien (TAM.1)',d:'Études, métrés ou conduite de petits chantiers, avec une formation technique.',min:2242},
+        {c:'TAM2',t:'Technicien confirmé (TAM.2)',d:'Conduite de chantiers ou études plus complexes, en autonomie.',min:2352},
+        {c:'TAM3',t:'Agent de maîtrise (TAM.3)',d:'Encadre des équipes et organise plusieurs chantiers (ex. conducteur de travaux).',min:2535},
+        {c:'TAM4',t:'Agent de maîtrise principal (TAM.4)',d:'Responsabilités étendues sur l’ensemble des chantiers ou d’un service.',min:2756}]},
+      Cadre:{idcc:'7018',nom:NOMP,base:35,cabinet:true,niveaux:[]}
+    };
+  }
+  var CHANTIER=CLIENT.secteur==='Bâtiment'||CLIENT.secteur==='Paysage';
   window.PIECES_FAMILLE=CLIENT.secteur==='Bâtiment';document.getElementById('embauche').dispatchEvent(new Event('change',{bubbles:true}));
   window.ANIM_EMB=CLIENT.secteur==='Bâtiment'?'embauche-batiment':CLIENT.secteur==='Propreté'?'embauche-proprete':'embauche-bureau';
   var STATUTS=CLIENT.secteur==='Propreté'
     ?[['Agent','Agent de propreté'],['ChefEquipe','Chef d’équipe'],['Admin','Employé administratif'],['Encadrement','Maîtrise ou cadre']]
     :CLIENT.secteur==='Syntec'?[['ETAM','ETAM (employé, technicien, agent de maîtrise)'],['Cadre','Ingénieur ou cadre']]
+    :CLIENT.secteur==='Paysage'?[['Ouvrier','Ouvrier'],['Employe','Employé'],['TAM','Technicien ou agent de maîtrise'],['Cadre','Cadre']]
     :CLIENT.secteur==='Immobilier'?[['Employe','Employé'],['Maitrise','Agent de maîtrise'],['Cadre','Cadre'],['NegoVRP','Négociateur VRP'],['NegoNon','Négociateur non VRP']]
     :[['Ouvrier','Ouvrier'],['ETAM','ETAM (employé, technicien, agent de maîtrise)'],['Cadre','Cadre']];
   function eur(x){return x.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})+' EUR';}
@@ -1370,7 +1396,7 @@
   // 2. statut + classification après l'emploi
   var emp=document.getElementById('e_emploi').closest('.f');
   emp.insertAdjacentHTML('afterend',
-    '<div class="ccnfix">'+(CLIENT.secteur==='Propreté'?'Convention collective : <b>Entreprises de propreté et services associés</b> (IDCC 3043)':CLIENT.secteur==='Immobilier'?'Convention collective : <b>Immobilier</b> – administrateurs de biens, sociétés immobilières, agents immobiliers (IDCC 1527)':CLIENT.secteur==='Syntec'?'Convention collective : <b>Syntec</b> – bureaux d’études techniques, ingénieurs-conseils et sociétés de conseils (IDCC 1486)':'Convention collective : <b>Bâtiment</b> – elle dépend du statut du salarié (ouvriers, ETAM ou cadres)')+'</div>'+
+    '<div class="ccnfix">'+(CLIENT.secteur==='Propreté'?'Convention collective : <b>Entreprises de propreté et services associés</b> (IDCC 3043)':CLIENT.secteur==='Paysage'?'Convention collective : <b>Entreprises du paysage</b> (IDCC 7018)':CLIENT.secteur==='Immobilier'?'Convention collective : <b>Immobilier</b> – administrateurs de biens, sociétés immobilières, agents immobiliers (IDCC 1527)':CLIENT.secteur==='Syntec'?'Convention collective : <b>Syntec</b> – bureaux d’études techniques, ingénieurs-conseils et sociétés de conseils (IDCC 1486)':'Convention collective : <b>Bâtiment</b> – elle dépend du statut du salarié (ouvriers, ETAM ou cadres)')+'</div>'+
     '<div class="f large" id="f_statut"><span>Statut</span><div class="choix">'+STATUTS.map(function(x){return '<label><input type="radio" name="statut" value="'+x[0]+'">'+x[1]+'</label>';}).join('')+'</div></div>'+
     '<div class="ccn cache" id="f_conv"></div>'+
     '<div class="f large cache" id="f_niveau"><span id="libNiveau">Niveau du salarié</span><div class="niv" id="niv"></div></div>'+
@@ -1444,7 +1470,7 @@
   // c) Lieu de travail
   fh.insertAdjacentHTML('afterend',
     (CLIENT.secteur==='Propreté'?'<div class="f large" id="f_sites"><span>Sites d’affectation et horaires</span><div class="consigne" style="margin:0 0 6px;font-size:13.5px;color:#666">Indiquez chaque site où travaillera le salarié, avec ses jours et ses horaires sur ce site.</div><div id="sites"></div><a href="#" id="addSite" class="addSite">+ Ajouter un site</a><div class="htot cache" id="sitesTot"></div></div>':'')+
-    '<div class="f large" id="f_lieu"'+(CLIENT.secteur!=='Bâtiment'?' style="display:none"':'')+'><span>Lieu de travail</span><div class="choix">'+(CLIENT.secteur==='Bâtiment'
+    '<div class="f large" id="f_lieu"'+(!CHANTIER?' style="display:none"':'')+'><span>Lieu de travail</span><div class="choix">'+(CHANTIER
       ?'<label><input type="radio" name="lieu" value="Chantiers">Sur les chantiers</label><label><input type="radio" name="lieu" value="Bureau">Au bureau (siège de l’entreprise)</label>'
       :'<label><input type="radio" name="lieu" value="Siège">Au siège de l’entreprise</label><label><input type="radio" name="lieu" value="Chantiers">Chez les clients</label><label><input type="radio" name="lieu" value="Autre">Autre adresse</label>')+'</div></div>'+
     '<label class="f large cache" id="f_lieuAutre"><span>Adresse du lieu de travail</span><input id="e_lieuAutre" maxlength="150" autocomplete="off"></label>');
@@ -1517,6 +1543,10 @@
     Encadrement:['Chef de site','Responsable de secteur','Responsable d’exploitation','Directeur / dirigeant salarié']};
   if(CLIENT.secteur==='Syntec')EMPLOIS={ETAM:['Secrétaire / assistant(e) administratif(ve)','Assistant(e) de direction','Comptable','Assistant(e) commercial(e)','Chargé(e) d’accueil','Technicien(ne)'],
     Cadre:['Directeur / dirigeant salarié','Directeur administratif et financier','Responsable comptable','Responsable commercial(e)','Consultant(e)','Ingénieur d’études']};
+  if(CLIENT.secteur==='Paysage')EMPLOIS={Ouvrier:['Ouvrier paysagiste (création et entretien)','Jardinier d’entretien','Élagueur','Maçon paysagiste','Arroseur (arrosage automatique)','Conducteur d’engins','Chef d’équipe'],
+    Employe:['Secrétaire / assistant(e) administratif(ve)','Comptable','Assistant(e) commercial(e)'],
+    TAM:['Conducteur de travaux','Technicien(ne) bureau d’études','Chef de chantier'],
+    Cadre:['Directeur / dirigeant salarié','Responsable d’agence']};
   if(CLIENT.secteur==='Immobilier')EMPLOIS={Employe:['Secrétaire / assistant(e) administratif(ve)','Chargé(e) d’accueil','Assistant(e) de gestion locative','Assistant(e) de copropriété','Comptable'],
     Maitrise:['Gestionnaire locatif(ve)','Gestionnaire de copropriété','Comptable confirmé(e)'],
     Cadre:['Responsable d’agence','Responsable de gestion','Directeur / dirigeant salarié'],
@@ -1556,8 +1586,8 @@
     document.getElementById('f_remplNom').classList.toggle('cache',!rempl);
     document.getElementById('f_remplPoste').classList.toggle('cache',!rempl);
     var st0=radioV('statut');
-    if(CLIENT.secteur==='Bâtiment'&&st0&&st0!==majExtra.st){majExtra.st=st0;var def=st0==='Ouvrier'?'Chantiers':'Bureau';var r=document.querySelector('input[name="lieu"][value="'+def+'"]');if(r)r.checked=true;}
-    var li=radioV('lieu');if(window.horDefaut&&CLIENT.secteur==='Bâtiment')window.horDefaut(li==='Chantiers'?'Chantiers':'Bureau');
+    if(CHANTIER&&st0&&st0!==majExtra.st){majExtra.st=st0;var def=st0==='Ouvrier'?'Chantiers':'Bureau';var r=document.querySelector('input[name="lieu"][value="'+def+'"]');if(r)r.checked=true;}
+    var li=radioV('lieu');if(window.horDefaut&&CHANTIER)window.horDefaut(li==='Chantiers'?'Chantiers':'Bureau');
     document.querySelectorAll('#f_lieu label').forEach(function(l){l.classList.toggle('on',l.querySelector('input').checked);});
     document.getElementById('f_lieuAutre').classList.toggle('cache',li!=='Autre');
     var box=document.getElementById('pieces'),aut=document.getElementById('e_nationalite').value==='Autre';
