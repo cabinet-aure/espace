@@ -130,7 +130,7 @@
   .t .b .st{font-weight:bold;color:var(--c)}
   .t .b .dl{display:block;margin-top:6px;color:#c0392b;font-weight:bold}
   .t .go{margin:0 14px 14px;text-align:center;background:var(--c);color:#fff;border-radius:8px;padding:11px;font-weight:bold}
-  .t.inactif{cursor:default}.t.inactif .b{color:#6b6b6b}.t.inactif .go{background:#fff;color:var(--c);border:1px solid var(--c)}
+  .t.inactif{cursor:default;border-color:#d6d6d6;background:#fafafa}.t.inactif .h{background:#b5b5b5}.t.inactif .b{color:#777}.t.inactif .go{background:#fff;color:#888;border:1px solid #ccc}
   .t.ok{border-color:#cfd8cf}.t.ok .h{background:#9aa59a}.t.ok .go{background:#fff;color:#6b6b6b;border:1px solid #ccc}
 .tete .moi{position:relative;flex:none;align-self:flex-end;margin-bottom:2px}
   .ic{width:52px;height:52px;border-radius:50%;background:#f6efd9;border:2px solid #b8961e;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
@@ -386,6 +386,8 @@
   var P=new URLSearchParams(location.search), C=P.get('c'), S=P.get('s'), K=P.get('k');
   var ID=C?{code:C}:{s:S,k:K}; // vers le script : « code » (le paramètre « c » y est refusé par Google)
   var VUE=(P.get('r')||(C?'':'banque')).toLowerCase();
+  // Rubrique Social : passer à true quand les clients auront été informés (prévu en janvier 2027)
+  var SOCIAL_OUVERT=false;
   function lienVue(v){var q=new URLSearchParams(C?{c:C}:{s:S,k:K});if(v)q.set('r',v);return '?'+q.toString();}
   var MAX=10*1024*1024, zones=[];
   var NUAGE='<svg class="ico" viewBox="0 0 64 48" aria-hidden="true"><path d="M51 20.5A15 15 0 0 0 22.5 15 11.5 11.5 0 0 0 12.5 37.5h37A8.6 8.6 0 0 0 51 20.5z" fill="#2e6b3a"/><path d="M32 31V18" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M24 23.5 32 15.5l8 8" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -553,6 +555,7 @@
       $('titre').textContent=aFaire?((d.periode||'').replace(/^Relevés/i,'Documents bancaires')||'Documents bancaires'):'Documents bancaires';
       if(d.dateLimite&&aFaire){$('dateLimite').textContent=d.dateLimite;$('limite').style.display='';}else{$('limite').style.display='none';}
       $('rien').innerHTML='✔ Vos documents bancaires sont à jour.<span class="pd">Prochaine demande&nbsp;: '+prochaineDemande()+'.</span>';
+      if(!SOCIAL_OUVERT&&/^(social|cdd|embauche)$/.test(VUE))VUE='';
       [].forEach.call(document.querySelectorAll('.retour'),function(a){a.href=lienVue(C?'':'accueil');a.style.display=(VUE&&VUE!=='accueil')?'inline-block':'none';});
       if(VUE==='banque'){afficher(d.documents||[],d.attente||[]);$('formulaire').style.display='';}
       else if(VUE==='social'){afficherSocial(d);$('social').style.display='';}
@@ -584,13 +587,14 @@
     $('tuiles').innerHTML='<a class="t" style="--c:#2e6b3a" href="'+lienVue('banque')+'"><div class="h"><span>🏦</span>Banque</div>'+
       '<div class="b">'+corpsB+'</div>'+
       '<div class="go">'+(n?'✓ Déposer':'Consulter')+'</div></a>'+
-      '<a class="t" style="--c:#d84315" href="'+lienVue('social')+'"><div class="h"><span>👥</span>Social</div>'+
-      '<div class="b">Éléments de paie, embauches, arrêts de travail, départs…</div><div class="go">✓ Déposer un document</div></a>'+tuileBilan(d.bilan);
+      (SOCIAL_OUVERT?'<a class="t" style="--c:#d84315" href="'+lienVue('social')+'"><div class="h"><span>👥</span>Social</div>'+
+      '<div class="b">Éléments de paie, embauches, arrêts de travail, départs…</div><div class="go">✓ Déposer un document</div></a>'
+      :inactive('👥','Social','Éléments de paie, embauches, arrêts de travail, départs','#d84315'))+tuileBilan(d.bilan);
   }
   // Rubriques prévues, pas encore ouvertes : affichées en gris, sans lien
   function inactive(i,t,l,c){
     return '<div class="t inactif" style="--c:'+c+'" aria-disabled="true"><div class="h"><span>'+i+'</span>'+t+'</div>'+
-      '<div class="b">'+l+'<br>Rubrique disponible prochainement</div><div class="go">Prochainement</div></div>';
+      '<div class="b">'+l+'</div><div class="go">Bientôt disponible</div></div>';
   }
   function etiquette(x){
     if(x.montants&&x.montants.length)return '';
