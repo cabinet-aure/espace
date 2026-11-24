@@ -1414,6 +1414,18 @@
     document.getElementById('e_emploi').value=v==='autre'?'Autre emploi (à préciser par le cabinet)':v;
   }
   ['change','input'].forEach(function(ev){document.getElementById('embauche').addEventListener(ev,majEmploi);});
+  // e ter) Apprentissage : géré par le cabinet
+  var fc=document.getElementById('f_contrat');
+  fc.querySelector('.choix').insertAdjacentHTML('beforeend','<label><input type="radio" name="contrat" value="Apprentissage">Apprentissage</label>');
+  fc.insertAdjacentHTML('afterend','<div class="ccn cache" id="f_appMsg">Le cabinet vous contactera pour préparer le contrat d’apprentissage.</div>');
+  function majApp(){
+    var app=radioV('contrat')==='Apprentissage';
+    document.getElementById('f_appMsg').classList.toggle('cache',!app);
+    document.getElementById('f_niveau').style.display=app?'none':'';
+    ['e_salaireEn','e_montant'].forEach(function(id){document.getElementById(id).closest('.f').style.display=app?'none':'';});
+    if(app)document.getElementById('minsal').classList.add('cache');
+  }
+  ['change','input'].forEach(function(ev){document.getElementById('embauche').addEventListener(ev,majApp);});
   // f) Titre de séjour si nationalité « Autre »
   var titre=document.createElement('div');titre.className='piece';
   titre.innerHTML='<div class="pt2">Titre de séjour autorisant à travailler (recto verso)</div><div class="pconsigne">À vérifier avant l’embauche : le titre doit être en cours de validité et autoriser à travailler.</div><label class="zone petite" style="display:block;cursor:pointer"><input type="file" style="display:none"><span class="ztxt">Déposez ici le fichier<br><b>ou sélectionnez un fichier</b></span></label><div class="nomf" style="font-size:13px;color:#2e6b3a;margin-top:4px"></div>';
@@ -1447,7 +1459,8 @@
   function complete(sec){
     var ok=true;
     sec.querySelectorAll('input,select').forEach(function(e){
-      if(e.closest('.cache')||e.type==='file'||e.type==='hidden')return;
+      if(e.closest('.cache')||e.type==='file'||e.type==='hidden'||e.type==='checkbox')return;
+      var ff=e.closest('.f');if(ff&&ff.style.display==='none')return;
       if(e.type==='radio'){if(!sec.querySelector('input[name="'+e.name+'"]:checked'))ok=false;return;}
       if(!String(e.value).trim())ok=false;
     });
