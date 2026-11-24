@@ -1318,7 +1318,8 @@
     '<label class="f cache" id="f_remplPoste"><span>Son emploi</span><input id="e_remplPoste" maxlength="80" placeholder="ex. : vendeuse" autocomplete="off"></label>');
   // e) Autres éléments de rémunération (après le minimum)
   document.getElementById('minsal').insertAdjacentHTML('afterend',
-    '<label class="f large"><span>Autres éléments de rémunération <i style="font-weight:normal;color:#888">(facultatif)</i></span><textarea id="e_autresRem" maxlength="500" rows="2" placeholder="ex. : prime de panier, véhicule de service, 13e mois…"></textarea></label>');
+    '<label class="f large"><span>Autres éléments de rémunération <i style="font-weight:normal;color:#888">(facultatif)</i></span><textarea id="e_autresRem" maxlength="500" rows="2" placeholder="'+(CLIENT.secteur==='Bâtiment'?'ex. : véhicule de service, téléphone, prime sur objectifs…':'ex. : véhicule de service, prime sur objectifs…')+'"></textarea>'+
+    (CLIENT.secteur==='Bâtiment'?'<em class="mention" style="color:#777">Inutile d’indiquer les indemnités de la convention (paniers, trajet, transport) : elles s’appliquent automatiquement.</em>':'')+'</label>');
   // f) Titre de séjour si nationalité « Autre »
   var titre=document.createElement('div');titre.className='piece';
   titre.innerHTML='<div class="pt2">Titre de séjour autorisant à travailler (recto verso)</div><div class="pconsigne">À vérifier avant l’embauche : le titre doit être en cours de validité et autoriser à travailler.</div><label class="zone petite" style="display:block;cursor:pointer"><input type="file" style="display:none"><span class="ztxt">Déposez ici le fichier<br><b>ou sélectionnez un fichier</b></span></label><div class="nomf" style="font-size:13px;color:#2e6b3a;margin-top:4px"></div>';
