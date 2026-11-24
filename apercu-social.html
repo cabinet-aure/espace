@@ -1307,8 +1307,34 @@
       Encadrement:{idcc:'3043',nom:'Entreprises de propreté et services associés',base:35,cabinet:true,niveaux:[]}
     };
   }
+  if(CODE==='7MQT-DNW8'){
+    CLIENT={secteur:'Syntec',region:'National'};
+    var SRS='accord du 26 juin 2024, en vigueur depuis le 1er janvier 2025';
+    GRILLES={
+      ETAM:{idcc:'1486',nom:'Bureaux d’études techniques, cabinets d’ingénieurs-conseils et sociétés de conseils (Syntec)',base:35,source:SRS,lib:'Position du salarié',niveaux:[
+        {c:'1.1',coef:240,t:'Position 1.1 – exécution',d:'Travaux simples d’exécution selon des consignes précises (accueil, saisie, classement).',min:1815},
+        {c:'1.2',coef:250,t:'Position 1.2 – exécution',d:'Travaux d’exécution avec une première expérience.',min:1845},
+        {c:'2.1',coef:275,t:'Position 2.1 – études ou préparation',d:'Travaux qualifiés courants (secrétariat, comptabilité, technique), avec une certaine autonomie.',min:1875},
+        {c:'2.2',coef:310,t:'Position 2.2 – études ou préparation',d:'Travaux qualifiés variés, en autonomie dans son domaine.',min:1905},
+        {c:'2.3',coef:355,t:'Position 2.3 – études ou préparation',d:'Travaux qualifiés complexes, expérience confirmée.',min:2045},
+        {c:'3.1',coef:400,t:'Position 3.1 – conception ou gestion',d:'Prend en charge un domaine (comptabilité, gestion, technique) et peut encadrer.',min:2185},
+        {c:'3.2',coef:450,t:'Position 3.2 – conception ou gestion',d:'Responsabilités étendues, encadrement d’une équipe.',min:2340},
+        {c:'3.3',coef:500,t:'Position 3.3 – conception ou gestion',d:'Plus haut niveau ETAM, très large autonomie.',min:2490}]},
+      Cadre:{idcc:'1486',nom:'Bureaux d’études techniques, cabinets d’ingénieurs-conseils et sociétés de conseils (Syntec)',base:35,source:SRS,lib:'Position du cadre',niveaux:[
+        {c:'1.1',coef:95,t:'Position 1.1 – cadre débutant',d:'Jeune diplômé, première fonction de cadre.',min:2135},
+        {c:'1.2',coef:100,t:'Position 1.2 – cadre débutant',d:'Jeune diplômé avec une première expérience.',min:2240},
+        {c:'2.1a',coef:105,t:'Position 2.1 – moins de 26 ans',d:'Cadre ayant au moins deux ans de pratique, de moins de 26 ans.',min:2315},
+        {c:'2.1',coef:115,t:'Position 2.1 – 26 ans et plus',d:'Cadre ayant au moins deux ans de pratique, de 26 ans et plus.',min:2530},
+        {c:'2.2',coef:130,t:'Position 2.2',d:'Cadre autonome sur des missions complètes.',min:2850},
+        {c:'2.3',coef:150,t:'Position 2.3',d:'Cadre confirmé, au moins six ans de pratique, peut encadrer.',min:3275},
+        {c:'3.1',coef:170,t:'Position 3.1',d:'Responsable d’un service ou d’une activité.',min:3650},
+        {c:'3.2',coef:210,t:'Position 3.2',d:'Responsabilités importantes, dirige plusieurs services.',min:4495},
+        {c:'3.3',coef:270,t:'Position 3.3',d:'Cadre de direction, participe à la conduite de l’entreprise.',min:5755}]}
+    };
+  }
   var STATUTS=CLIENT.secteur==='Propreté'
     ?[['Agent','Agent de propreté'],['ChefEquipe','Chef d’équipe'],['Admin','Employé administratif'],['Encadrement','Maîtrise ou cadre']]
+    :CLIENT.secteur==='Syntec'?[['ETAM','ETAM (employé, technicien, agent de maîtrise)'],['Cadre','Ingénieur ou cadre']]
     :[['Ouvrier','Ouvrier'],['ETAM','ETAM (employé, technicien, agent de maîtrise)'],['Cadre','Cadre']];
   function eur(x){return x.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})+' EUR';}
   document.body.insertAdjacentHTML('afterbegin','<div class="testbandeau">PAGE DE TEST – rien n’est envoyé au cabinet</div>');
@@ -1318,13 +1344,14 @@
   // 2. statut + classification après l'emploi
   var emp=document.getElementById('e_emploi').closest('.f');
   emp.insertAdjacentHTML('afterend',
-    '<div class="ccnfix">'+(CLIENT.secteur==='Propreté'?'Convention collective : <b>Entreprises de propreté et services associés</b> (IDCC 3043)':'Convention collective : <b>Bâtiment</b> – elle dépend du statut du salarié (ouvriers, ETAM ou cadres)')+'</div>'+
+    '<div class="ccnfix">'+(CLIENT.secteur==='Propreté'?'Convention collective : <b>Entreprises de propreté et services associés</b> (IDCC 3043)':CLIENT.secteur==='Syntec'?'Convention collective : <b>Syntec</b> – bureaux d’études techniques, ingénieurs-conseils et sociétés de conseils (IDCC 1486)':'Convention collective : <b>Bâtiment</b> – elle dépend du statut du salarié (ouvriers, ETAM ou cadres)')+'</div>'+
     '<div class="f large" id="f_statut"><span>Statut</span><div class="choix">'+STATUTS.map(function(x){return '<label><input type="radio" name="statut" value="'+x[0]+'">'+x[1]+'</label>';}).join('')+'</div></div>'+
     '<div class="ccn cache" id="f_conv"></div>'+
-    '<div class="f large cache" id="f_niveau"><span id="libNiveau">Niveau du salarié</span><div class="niv" id="niv"></div></div>');
+    '<div class="f large cache" id="f_niveau"><span id="libNiveau">Niveau du salarié</span><div class="niv" id="niv"></div></div>'+
+    (CLIENT.secteur==='Syntec'?'<div class="f large cache" id="f_mod"><span>Organisation du temps de travail</span><div class="choix"><label><input type="radio" name="modalite" value="1">35 h par semaine</label><label><input type="radio" name="modalite" value="2">Forfait 38 h 30 par semaine</label><label><input type="radio" name="modalite" value="3">Forfait 218 jours par an</label></div></div>':''));
   function grilleHtml(g){
     return g.niveaux.map(function(n){var m=Math.max(n.min,g.base===35?SMIC:0);
-      return '<label><input type="radio" name="niveau" value="'+n.c+'"><div><div class="t1">'+n.t+(n.coef?' <span style="color:#999;font-weight:normal">('+(g.idcc==='2420'?'':n.c+' – ')+'coef. '+n.coef+')</span>':'')+'</div>'+(n.d?'<div class="t2">'+n.d+'</div>':'')+'</div><div class="mini">minimum<b>'+eur(m)+'</b>brut / mois'+(g.base!==35?' (39 h)':'')+'</div><span class="chg">Changer de niveau</span></label>';}).join('')+
+      return '<label><input type="radio" name="niveau" value="'+n.c+'"><div><div class="t1">'+n.t+(n.coef?' <span style="color:#999;font-weight:normal">('+((g.idcc==='2420'||g.idcc==='1486')?'':n.c+' – ')+'coef. '+n.coef+')</span>':'')+'</div>'+(n.d?'<div class="t2">'+n.d+'</div>':'')+'</div><div class="mini">minimum<b>'+eur(m)+'</b>brut / mois'+(g.base!==35?' (39 h)':'')+'</div><span class="chg">Changer de niveau</span></label>';}).join('')+
       '<label><input type="radio" name="niveau" value="?"><div><div class="t1">Je ne sais pas</div><div class="t2">Le cabinet fixera le niveau d’après l’emploi.</div></div><span class="chg">Changer de niveau</span></label>';
   }
   var statutAff='';
@@ -1345,7 +1372,7 @@
     if(st&&st!==statutAff){statutAff=st;var g0=GRILLES[st];
       document.getElementById('niv').innerHTML=g0.cabinet?'':grilleHtml(g0);
       document.getElementById('libNiveau').textContent=g0.lib;
-      document.getElementById('f_conv').innerHTML=CLIENT.secteur==='Propreté'?(g0.cabinet?'Le cabinet fixera la classification.':''):'Convention collective : <b>'+g0.nom+'</b> (IDCC '+g0.idcc+')'+(g0.cabinet?'<br>Le cabinet fixera la classification.':'');}
+      document.getElementById('f_conv').innerHTML=CLIENT.secteur!=='Bâtiment'?(g0.cabinet?'Le cabinet fixera la classification.':''):'Convention collective : <b>'+g0.nom+'</b> (IDCC '+g0.idcc+')'+(g0.cabinet?'<br>Le cabinet fixera la classification.':'');}
     var nv=radioV('niveau');
     document.querySelectorAll('#embauche .choix label,.niv label').forEach(function(l){var i=l.querySelector('input');if(i&&(i.name==='statut'||i.name==='niveau'))l.classList.toggle('on',i.checked);});
     document.getElementById('f_niveau').classList.toggle('cache',!st||!!(GRILLES[st]&&GRILLES[st].cabinet));
@@ -1358,9 +1385,19 @@
     var mensBase=Math.max(n.min,g.base===35?SMIC:0);
     var minH=mensBase/(g.base*52/12), minM=g.base===35?minH*h*52/12:mensBase;
     var en=document.getElementById('e_salaireEn').value,v=parseFloat(String(document.getElementById('e_montant').value).replace(/\s/g,'').replace(',','.'));
-    var txt,bas=false;
+    var txt,bas=false,modTxt='';
+    if(CLIENT.secteur==='Syntec'){
+      var fm=document.getElementById('f_mod'),mod=radioV('modalite');
+      fm.classList.toggle('cache',st!=='Cadre');
+      fm.querySelectorAll('label').forEach(function(l){l.classList.toggle('on',l.querySelector('input').checked);});
+      var forf=st==='Cadre'&&(mod==='2'||mod==='3'),fhx=document.getElementById('f_hor');if(fhx)fhx.style.display=forf?'none':'';
+      if(forf)document.getElementById('e_horaires').value=mod==='3'?'Forfait de 218 jours travaillés par an':'Forfait de 38 h 30 par semaine (réalisation de missions)';
+      if(st==='Cadre'&&mod==='2'){minM=Math.max(mensBase*1.15,48060/12);modTxt=' (forfait 38 h 30 : au moins 115 % du minimum et le plafond de la Sécurité sociale)';}
+      if(st==='Cadre'&&mod==='3'){if(n.coef<150){ms.textContent='⚠ Le forfait jours n’est possible qu’à partir de la position 2.3 (sauf rémunération supérieure à 2 plafonds de la Sécurité sociale ou mandataire social) : le cabinet vous contactera.';ms.classList.add('bas');ms.classList.remove('cache');return;}
+        minM=mensBase*(n.coef>=170?1.20:1.22);modTxt=' (forfait jours : au moins '+(n.coef>=170?'120':'122')+' % du minimum)';}
+    }
     if(en==='Taux horaire brut'){txt='Taux horaire minimum pour ce niveau : '+eur(minH)+' brut';bas=v>0&&v<minH-0.005;}
-    else{txt='Salaire minimum pour ce niveau'+(g.base===35?' ('+String(h).replace('.',',')+' h par semaine)':'')+' : '+eur(minM)+' brut par mois';bas=v>0&&v<minM-0.005;}
+    else{txt='Salaire minimum pour ce niveau'+(modTxt||(g.base===35?' ('+String(h).replace('.',',')+' h par semaine)':''))+' : '+eur(minM)+' brut par mois';bas=v>0&&v<minM-0.005;}
     ms.textContent=(bas?'⚠ Salaire inférieur au minimum de la convention. ':'✔ ')+txt+'.';
     ms.classList.toggle('bas',bas);ms.classList.remove('cache');
   }
@@ -1377,7 +1414,7 @@
   // c) Lieu de travail
   fh.insertAdjacentHTML('afterend',
     (CLIENT.secteur==='Propreté'?'<div class="f large" id="f_sites"><span>Sites d’affectation et horaires</span><div class="consigne" style="margin:0 0 6px;font-size:13.5px;color:#666">Indiquez chaque site où travaillera le salarié, avec ses jours et ses horaires sur ce site.</div><div id="sites"></div><a href="#" id="addSite" class="addSite">+ Ajouter un site</a><div class="htot cache" id="sitesTot"></div></div>':'')+
-    '<div class="f large" id="f_lieu"'+(CLIENT.secteur==='Propreté'?' style="display:none"':'')+'><span>Lieu de travail</span><div class="choix">'+(CLIENT.secteur==='Bâtiment'
+    '<div class="f large" id="f_lieu"'+(CLIENT.secteur!=='Bâtiment'?' style="display:none"':'')+'><span>Lieu de travail</span><div class="choix">'+(CLIENT.secteur==='Bâtiment'
       ?'<label><input type="radio" name="lieu" value="Chantiers">Sur les chantiers</label><label><input type="radio" name="lieu" value="Bureau">Au bureau (siège de l’entreprise)</label>'
       :'<label><input type="radio" name="lieu" value="Siège">Au siège de l’entreprise</label><label><input type="radio" name="lieu" value="Chantiers">Chez les clients</label><label><input type="radio" name="lieu" value="Autre">Autre adresse</label>')+'</div></div>'+
     '<label class="f large cache" id="f_lieuAutre"><span>Adresse du lieu de travail</span><input id="e_lieuAutre" maxlength="150" autocomplete="off"></label>');
@@ -1448,6 +1485,8 @@
   if(CLIENT.secteur==='Propreté')EMPLOIS={Agent:['Agent de propreté','Agent machiniste','Laveur de vitres','Agent de propreté en milieu sensible (hôpital, laboratoire)','Agent polyvalent (propreté et petits travaux)'],
     ChefEquipe:['Chef d’équipe'],Admin:['Secrétaire / assistant(e) administratif(ve)','Comptable','Assistant(e) d’exploitation / planning'],
     Encadrement:['Chef de site','Responsable de secteur','Responsable d’exploitation','Directeur / dirigeant salarié']};
+  if(CLIENT.secteur==='Syntec')EMPLOIS={ETAM:['Secrétaire / assistant(e) administratif(ve)','Assistant(e) de direction','Comptable','Assistant(e) commercial(e)','Chargé(e) d’accueil','Technicien(ne)'],
+    Cadre:['Directeur / dirigeant salarié','Directeur administratif et financier','Responsable comptable','Responsable commercial(e)','Consultant(e)','Ingénieur d’études']};
   var fe=document.getElementById('e_emploi').closest('.f');fe.style.display='none';
   document.getElementById('f_conv').insertAdjacentHTML('afterend',
     '<label class="f large cache" id="f_emploiL"><span>Emploi</span><select id="e_emploiL"></select></label>'+
