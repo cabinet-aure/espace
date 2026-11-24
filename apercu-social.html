@@ -1332,9 +1332,30 @@
         {c:'3.3',coef:270,t:'Position 3.3',d:'Cadre de direction, participe à la conduite de l’entreprise.',min:5755}]}
     };
   }
+  if(CODE==='2EXS-Z5JG'){
+    CLIENT={secteur:'Immobilier',region:'National'};
+    var SRI='avenant n° 110 du 4 mars 2026, au 1er avril 2026 (minimums annuels sur 13 mois)',a13=function(x){return Math.round(x/13*100)/100;};
+    var NOMI='Immobilier – administrateurs de biens, sociétés immobilières, agents immobiliers';
+    GRILLES={
+      Employe:{idcc:'1527',nom:NOMI,base:35,source:SRI,lib:'Niveau du salarié',m13:true,niveaux:[
+        {c:'E1',t:'Employé – niveau E1',d:'Tâches simples d’exécution (accueil, classement, saisie) selon des consignes précises.',min:a13(23700),an:23700},
+        {c:'E2',t:'Employé – niveau E2',d:'Travaux courants avec une certaine autonomie (secrétariat, suivi de dossiers simples).',min:a13(24428),an:24428},
+        {c:'E3',t:'Employé – niveau E3',d:'Travaux qualifiés variés (assistanat de gestion locative ou de copropriété, comptabilité).',min:a13(25080),an:25080}]},
+      Maitrise:{idcc:'1527',nom:NOMI,base:35,source:SRI,lib:'Niveau du salarié',m13:true,niveaux:[
+        {c:'AM1',t:'Agent de maîtrise – niveau AM1',d:'Gère un portefeuille ou un domaine en autonomie (gestionnaire locatif, de copropriété).',min:a13(25569),an:25569},
+        {c:'AM2',t:'Agent de maîtrise – niveau AM2',d:'Responsabilités élargies, peut animer une petite équipe.',min:a13(26415),an:26415}]},
+      Cadre:{idcc:'1527',nom:NOMI,base:35,source:SRI,lib:'Niveau du cadre',m13:true,niveaux:[
+        {c:'C1',t:'Cadre – niveau C1',d:'Premier niveau cadre : responsabilité d’un service ou d’une activité.',min:a13(28333),an:28333},
+        {c:'C2',t:'Cadre – niveau C2',d:'Cadre confirmé, encadre une équipe.',min:a13(36932),an:36932},
+        {c:'C3',t:'Cadre – niveau C3',d:'Responsable d’agence ou de plusieurs services.',min:a13(44221),an:44221},
+        {c:'C4',t:'Cadre – niveau C4',d:'Cadre de direction.',min:a13(49800),an:49800}]},
+      Negociateur:{idcc:'1527',nom:NOMI,base:35,cabinet:true,niveaux:[]}
+    };
+  }
   var STATUTS=CLIENT.secteur==='Propreté'
     ?[['Agent','Agent de propreté'],['ChefEquipe','Chef d’équipe'],['Admin','Employé administratif'],['Encadrement','Maîtrise ou cadre']]
     :CLIENT.secteur==='Syntec'?[['ETAM','ETAM (employé, technicien, agent de maîtrise)'],['Cadre','Ingénieur ou cadre']]
+    :CLIENT.secteur==='Immobilier'?[['Employe','Employé'],['Maitrise','Agent de maîtrise'],['Cadre','Cadre'],['Negociateur','Négociateur (commissions)']]
     :[['Ouvrier','Ouvrier'],['ETAM','ETAM (employé, technicien, agent de maîtrise)'],['Cadre','Cadre']];
   function eur(x){return x.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})+' EUR';}
   document.body.insertAdjacentHTML('afterbegin','<div class="testbandeau">PAGE DE TEST – rien n’est envoyé au cabinet</div>');
@@ -1344,14 +1365,14 @@
   // 2. statut + classification après l'emploi
   var emp=document.getElementById('e_emploi').closest('.f');
   emp.insertAdjacentHTML('afterend',
-    '<div class="ccnfix">'+(CLIENT.secteur==='Propreté'?'Convention collective : <b>Entreprises de propreté et services associés</b> (IDCC 3043)':CLIENT.secteur==='Syntec'?'Convention collective : <b>Syntec</b> – bureaux d’études techniques, ingénieurs-conseils et sociétés de conseils (IDCC 1486)':'Convention collective : <b>Bâtiment</b> – elle dépend du statut du salarié (ouvriers, ETAM ou cadres)')+'</div>'+
+    '<div class="ccnfix">'+(CLIENT.secteur==='Propreté'?'Convention collective : <b>Entreprises de propreté et services associés</b> (IDCC 3043)':CLIENT.secteur==='Immobilier'?'Convention collective : <b>Immobilier</b> – administrateurs de biens, sociétés immobilières, agents immobiliers (IDCC 1527)':CLIENT.secteur==='Syntec'?'Convention collective : <b>Syntec</b> – bureaux d’études techniques, ingénieurs-conseils et sociétés de conseils (IDCC 1486)':'Convention collective : <b>Bâtiment</b> – elle dépend du statut du salarié (ouvriers, ETAM ou cadres)')+'</div>'+
     '<div class="f large" id="f_statut"><span>Statut</span><div class="choix">'+STATUTS.map(function(x){return '<label><input type="radio" name="statut" value="'+x[0]+'">'+x[1]+'</label>';}).join('')+'</div></div>'+
     '<div class="ccn cache" id="f_conv"></div>'+
     '<div class="f large cache" id="f_niveau"><span id="libNiveau">Niveau du salarié</span><div class="niv" id="niv"></div></div>'+
     (CLIENT.secteur==='Syntec'?'<div class="f large cache" id="f_mod"><span>Organisation du temps de travail</span><div class="choix"><label><input type="radio" name="modalite" value="1">35 h par semaine</label><label><input type="radio" name="modalite" value="2">Forfait 38 h 30 par semaine</label><label><input type="radio" name="modalite" value="3">Forfait 218 jours par an</label></div></div>':''));
   function grilleHtml(g){
     return g.niveaux.map(function(n){var m=Math.max(n.min,g.base===35?SMIC:0);
-      return '<label><input type="radio" name="niveau" value="'+n.c+'"><div><div class="t1">'+n.t+(n.coef?' <span style="color:#999;font-weight:normal">('+((g.idcc==='2420'||g.idcc==='1486')?'':n.c+' – ')+'coef. '+n.coef+')</span>':'')+'</div>'+(n.d?'<div class="t2">'+n.d+'</div>':'')+'</div><div class="mini">minimum<b>'+eur(m)+'</b>brut / mois'+(g.base!==35?' (39 h)':'')+'</div><span class="chg">Changer de niveau</span></label>';}).join('')+
+      return '<label><input type="radio" name="niveau" value="'+n.c+'"><div><div class="t1">'+n.t+(n.coef?' <span style="color:#999;font-weight:normal">('+((g.idcc==='2420'||g.idcc==='1486')?'':n.c+' – ')+'coef. '+n.coef+')</span>':'')+'</div>'+(n.d?'<div class="t2">'+n.d+'</div>':'')+'</div><div class="mini">minimum<b>'+eur(m)+'</b>brut / mois'+(g.base!==35?' (39 h)':'')+(g.m13?'<br>sur 13 mois':'')+'</div><span class="chg">Changer de niveau</span></label>';}).join('')+
       '<label><input type="radio" name="niveau" value="?"><div><div class="t1">Je ne sais pas</div><div class="t2">Le cabinet fixera le niveau d’après l’emploi.</div></div><span class="chg">Changer de niveau</span></label>';
   }
   var statutAff='';
@@ -1372,7 +1393,7 @@
     if(st&&st!==statutAff){statutAff=st;var g0=GRILLES[st];
       document.getElementById('niv').innerHTML=g0.cabinet?'':grilleHtml(g0);
       document.getElementById('libNiveau').textContent=g0.lib;
-      document.getElementById('f_conv').innerHTML=CLIENT.secteur!=='Bâtiment'?(g0.cabinet?'Le cabinet fixera la classification.':''):'Convention collective : <b>'+g0.nom+'</b> (IDCC '+g0.idcc+')'+(g0.cabinet?'<br>Le cabinet fixera la classification.':'');}
+      document.getElementById('f_conv').innerHTML=CLIENT.secteur!=='Bâtiment'?(g0.cabinet?(CLIENT.secteur==='Immobilier'?'Négociateur : le cabinet vous contactera pour fixer la rémunération (fixe et commissions).':'Le cabinet fixera la classification.'):''):'Convention collective : <b>'+g0.nom+'</b> (IDCC '+g0.idcc+')'+(g0.cabinet?'<br>Le cabinet fixera la classification.':'');}
     var nv=radioV('niveau');
     document.querySelectorAll('#embauche .choix label,.niv label').forEach(function(l){var i=l.querySelector('input');if(i&&(i.name==='statut'||i.name==='niveau'))l.classList.toggle('on',i.checked);});
     document.getElementById('f_niveau').classList.toggle('cache',!st||!!(GRILLES[st]&&GRILLES[st].cabinet));
@@ -1397,7 +1418,8 @@
         minM=mensBase*(n.coef>=170?1.20:1.22);modTxt=' (forfait jours : au moins '+(n.coef>=170?'120':'122')+' % du minimum)';}
     }
     if(en==='Taux horaire brut'){txt='Taux horaire minimum pour ce niveau : '+eur(minH)+' brut';bas=v>0&&v<minH-0.005;}
-    else{txt='Salaire minimum pour ce niveau'+(modTxt||(g.base===35?' ('+String(h).replace('.',',')+' h par semaine)':''))+' : '+eur(minM)+' brut par mois';bas=v>0&&v<minM-0.005;}
+    if(g.m13)modTxt=(modTxt||'')+' (sur 13 mois, 13e mois en plus)';
+    if(en!=='Taux horaire brut'){txt='Salaire minimum pour ce niveau'+(modTxt||(g.base===35?' ('+String(h).replace('.',',')+' h par semaine)':''))+' : '+eur(minM)+' brut par mois';bas=v>0&&v<minM-0.005;}
     ms.textContent=(bas?'⚠ Salaire inférieur au minimum de la convention. ':'✔ ')+txt+'.';
     ms.classList.toggle('bas',bas);ms.classList.remove('cache');
   }
@@ -1487,6 +1509,10 @@
     Encadrement:['Chef de site','Responsable de secteur','Responsable d’exploitation','Directeur / dirigeant salarié']};
   if(CLIENT.secteur==='Syntec')EMPLOIS={ETAM:['Secrétaire / assistant(e) administratif(ve)','Assistant(e) de direction','Comptable','Assistant(e) commercial(e)','Chargé(e) d’accueil','Technicien(ne)'],
     Cadre:['Directeur / dirigeant salarié','Directeur administratif et financier','Responsable comptable','Responsable commercial(e)','Consultant(e)','Ingénieur d’études']};
+  if(CLIENT.secteur==='Immobilier')EMPLOIS={Employe:['Secrétaire / assistant(e) administratif(ve)','Chargé(e) d’accueil','Assistant(e) de gestion locative','Assistant(e) de copropriété','Comptable'],
+    Maitrise:['Gestionnaire locatif(ve)','Gestionnaire de copropriété','Comptable confirmé(e)'],
+    Cadre:['Responsable d’agence','Responsable de gestion','Directeur / dirigeant salarié'],
+    Negociateur:['Négociateur(trice) immobilier(ère)']};
   var fe=document.getElementById('e_emploi').closest('.f');fe.style.display='none';
   document.getElementById('f_conv').insertAdjacentHTML('afterend',
     '<label class="f large cache" id="f_emploiL"><span>Emploi</span><select id="e_emploiL"></select></label>'+
