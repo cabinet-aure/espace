@@ -251,6 +251,7 @@
   #embauche .grille{gap:9px 16px}
   #embauche .f>span{margin-bottom:2px;font-size:13.5px}
   #embauche .f input,#embauche .f select{padding:6px 9px}
+.cal{flex:none;margin-right:10px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.18))}.calL{display:flex;align-items:center;margin-top:8px}.calL b{color:#2e6b3a}
 </style>
 </head>
 <body>
@@ -554,7 +555,7 @@
       var aFaire=(d.documents||[]).some(function(x){return x.statut!=='Reçu';});
       $('titre').textContent=aFaire?((d.periode||'').replace(/^Relevés/i,'Documents bancaires')||'Documents bancaires'):'Documents bancaires';
       if(d.dateLimite&&aFaire){$('dateLimite').textContent=d.dateLimite;$('limite').style.display='';}else{$('limite').style.display='none';}
-      $('rien').innerHTML='✔ Vos documents bancaires sont à jour.<span class="pd">Prochaine demande&nbsp;: '+prochaineDemande()+'.</span>';
+      $('rien').innerHTML='✔ Tout est à jour.<span class="pd calL" style="display:flex;align-items:center;margin-top:8px">'+calendrier(46)+'<span>Prochaine demande le <b>'+prochaineDemande()+'</b>, par e-mail.</span></span>';
       if(!SOCIAL_OUVERT&&/^(social|cdd|embauche)$/.test(VUE))VUE='';
       [].forEach.call(document.querySelectorAll('.retour'),function(a){a.href=lienVue(C?'':'accueil');a.style.display=(VUE&&VUE!=='accueil')?'inline-block':'none';});
       if(VUE==='banque'){afficher(d.documents||[],d.attente||[]);$('formulaire').style.display='';}
@@ -567,6 +568,18 @@
     }).catch(function(){erreurLien('La page n’a pas pu être chargée. Merci de réessayer dans quelques instants.');});
   }
 
+  // Petit calendrier (prochaine demande bancaire, le 2 du mois)
+  var nCal=0;
+  function calendrier(px){
+    var id='gcal'+(++nCal),pts='';
+    for(var j=0;j<3;j++)for(var i=0;i<5;i++){if(i===1&&j===0)continue;pts+='<circle cx="'+(14+i*9)+'" cy="'+(32+j*9)+'" r="2.6"/>';}
+    return '<svg class="cal" width="'+px+'" height="'+px+'" viewBox="0 0 64 64" aria-hidden="true">'+
+      '<defs><linearGradient id="'+id+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff6f61"/><stop offset="1" stop-color="#e53935"/></linearGradient></defs>'+
+      '<rect x="5" y="8" width="54" height="52" rx="9" fill="#fff"/><path d="M5 17a9 9 0 0 1 9-9h36a9 9 0 0 1 9 9v6H5z" fill="url(#'+id+')"/>'+
+      '<rect x="17" y="3" width="4" height="11" rx="2" fill="#78909c"/><rect x="43" y="3" width="4" height="11" rx="2" fill="#78909c"/>'+
+      '<g fill="#cfd8dc">'+pts+'</g><circle cx="23" cy="32" r="6" fill="#2e6b3a"/>'+
+      '<text x="23" y="35.6" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="9.5" fill="#fff">2</text></svg>';
+  }
   // Date de la prochaine demande bancaire : le 2 du mois (ce mois-ci si on est le 1er)
   function prochaineDemande(){
     var a=new Date(),pr=new Date(a.getFullYear(),a.getMonth()+(a.getDate()<2?0:1),2);
@@ -582,7 +595,7 @@
       corpsB='<span class="st">'+esc(mois?mois.charAt(0).toUpperCase()+mois.slice(1):'Documents bancaires')+'</span>'+
         (d.dateLimite?'<span class="dl" style="margin-top:2px">Avant le '+esc(d.dateLimite)+'</span>':'');
     }else{
-      corpsB='<span class="st">✔ À jour</span><br>Prochaine demande&nbsp;: '+prochaineDemande();
+      corpsB='<span class="st">✔ À jour</span><span class="calL" style="margin-top:6px">'+calendrier(38)+'<span>Prochaine demande&nbsp;:<br><b>'+prochaineDemande()+'</b></span></span>';
     }
     $('tuiles').innerHTML='<a class="t" style="--c:#2e6b3a" href="'+lienVue('banque')+'"><div class="h"><span>🏦</span>Banque</div>'+
       '<div class="b">'+corpsB+'</div>'+
