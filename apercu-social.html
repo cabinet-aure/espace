@@ -1354,7 +1354,7 @@
     var F=document.getElementById('f_hor');
     function setL(l,v){['h1','h2','h3','h4'].forEach(function(c,i){l.querySelector('.'+c).value=v[i];});}
     function getL(l){return ['h1','h2','h3','h4'].map(function(c){return l.querySelector('.'+c).value;});}
-    setL(F.querySelector('.hcom .hl'),['480','720','780','960']);
+    setL(F.querySelector('.hcom .hl'),['510','720','810','1020']);
     function jours(){return [].slice.call(F.querySelectorAll('.jours input:checked')).map(function(x){return +x.value;});}
     function hTxt(m){m=+m;var h=Math.floor(m/60),mn=m%60;return h+' h'+(mn?' '+('0'+mn).slice(-2):'');}
     function dureeL(v,sc){var d=0;if(v[0]&&v[1])d+=v[1]-v[0];if(!sc&&v[2]&&v[3])d+=v[3]-v[2];return d;}
