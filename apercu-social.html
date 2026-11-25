@@ -1541,6 +1541,15 @@ window.initConv=function(conv){
     [1823.03,1845.73,1884.22,2065.63,2210.88,2380.23,2527.04],[1833.19,1937.51,2104.47,2324.55,2493.65,2763.06,3082.36,3386.15],a('1722')?'1722':'',a('1722')?'Bâtiment – ouvriers de Haute-Normandie':''); // CAPLA
   if(K==='batiment'&&/^Centre/i.test(REG))regionBTP('Centre-Val de Loire','accord régional Centre-Val de Loire du 10 avril 2026, au 1er mai 2026',
     [1823,1863,1907,2056,2175,2293,2412],[1830,1930,2074,2211,2448,2810,3079,3351]); // CMD CREATION
+  // Grilles tenues par le cabinet dans l'onglet GRILLES (envoyées par le script) : elles remplacent les valeurs ci-dessus, gardées en secours.
+  if(conv.niveaux&&conv.niveaux.length)Object.keys(GRILLES).forEach(function(st){
+    var reg=(K==='batiment'&&st!=='Cadre')?CLIENT.region:'National';
+    var l=conv.niveaux.filter(function(n){return n.cle===K&&n.statut===st&&n.region===reg;});
+    if(!l.length)return;
+    GRILLES[st].niveaux=l.map(function(n){var o={c:String(n.c),t:n.t||'',d:n.d||'',min:+n.min||0};
+      if(n.coef!==''&&n.coef!=null&&!isNaN(+n.coef))o.coef=+n.coef;return o;});
+  });
+  window._GR=GRILLES;window._K=K;
   var CHANTIER=CLIENT.secteur==='Bâtiment'||CLIENT.secteur==='Paysage';
   window.PIECES_FAMILLE=CLIENT.secteur==='Bâtiment';window.PIECES_RIB=CLIENT.secteur==='Bâtiment';document.getElementById('embauche').dispatchEvent(new Event('change',{bubbles:true}));
   window.ANIM_EMB=CLIENT.secteur==='Bâtiment'?'embauche-batiment':CLIENT.secteur==='Propreté'?'embauche-proprete':'embauche-bureau';
