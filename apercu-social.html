@@ -368,7 +368,7 @@
     <div class="sect"><h3>2. Le contrat</h3><div class="grille">
       <label class="f"><span>Date d’embauche</span><input id="e_dateEmbauche" type="date"></label>
       <label class="f"><span>Heure d’arrivée le 1er jour</span><input id="e_heureArrivee" type="time"></label>
-      <div class="f large" id="avJourJ" style="display:none"><div class="avjj"><div class="avjjT">⛔ ATTENTION : embauche <span id="avJourJQuand">aujourd’hui</span></div>Le cabinet risque de ne pas pouvoir faire la déclaration d’embauche avant l’arrivée du salarié.<br><b>Un salarié qui travaille sans déclaration préalable, c’est du travail dissimulé.</b><br>Appelez immédiatement le cabinet au <b style="white-space:nowrap">01 30 49 50 05</b>.</div></div>
+      <div class="f large" id="avJourJ" style="display:none"><div class="avjj" id="avJourJTexte"></div></div>
       <label class="f large"><span>Emploi</span><input id="e_emploi" maxlength="80" placeholder="ex. : maçon, secrétaire, vendeur…" autocomplete="off"></label>
       <div class="f large" id="f_contrat"><span>Type de contrat</span><div class="choix"><label><input type="radio" name="contrat" value="CDI">CDI</label><label><input type="radio" name="contrat" value="CDD">CDD</label></div></div>
       <label class="f cdd cache"><span>Motif du CDD</span><select id="e_motifCdd"><option value="">Choisir…</option><option>Surcroît temporaire d’activité</option><option>Remplacement d’un salarié absent</option><option>Emploi saisonnier</option><option>Autre</option></select></label>
@@ -1162,9 +1162,18 @@
     var d=dateEmb();if(!d)return '';var t=new Date();t.setHours(0,0,0,0);
     return d<t?'passee':(d.getTime()===t.getTime()?'aujourdhui':'');
   }
+  var TEL='<b style="white-space:nowrap">01 30 49 50 05</b>';
+  var JJ={
+    aujourdhui:{t:'Embauche prévue aujourd’hui',
+      cadre:'La déclaration préalable à l’embauche (DPAE) doit être effectuée avant la prise de poste du salarié. Le cabinet ne peut pas garantir son dépôt dans ce délai.<br><b>À défaut de déclaration, l’entreprise s’expose aux sanctions prévues en cas de travail dissimulé.</b><br>Contactez le cabinet sans attendre au '+TEL+'.',
+      fen:'La déclaration préalable à l’embauche doit être effectuée avant la prise de poste. Le cabinet ne peut pas garantir son dépôt dans ce délai. <b>L’absence de déclaration expose l’entreprise aux sanctions prévues en cas de travail dissimulé.</b><br><br>Contactez le cabinet au '+TEL+'.'},
+    passee:{t:'Date d’embauche déjà passée',
+      cadre:'La prise de poste a eu lieu avant la déclaration préalable à l’embauche.<br>Contactez le cabinet sans attendre au '+TEL+' afin de régulariser la situation.',
+      fen:'La prise de poste a eu lieu avant la déclaration préalable à l’embauche.<br><br>Contactez le cabinet sans attendre au '+TEL+' afin de régulariser la situation.'}
+  };
   function majJourJ(){
     var e=etatJourJ();$('avJourJ').style.display=e?'':'none';
-    $('avJourJQuand').textContent=e==='passee'?'à une date déjà passée':'aujourd’hui';
+    if(e)$('avJourJTexte').innerHTML='<div class="avjjT">⛔ '+JJ[e].t+'</div>'+JJ[e].cadre;
   }
   ['input','change'].forEach(function(ev){$('e_dateEmbauche').addEventListener(ev,majJourJ);});
   function alerteJourJ(b){
@@ -1172,9 +1181,9 @@
     var h=($('e_heureArrivee').value||'').trim(),d=dateEmb();
     var jour=d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
     var m=document.createElement('div');m.className='mjj';
-    m.innerHTML='<div class="mjjB"><div class="mjjT">⛔ Embauche '+(e==='passee'?'à une date déjà passée':'aujourd’hui')+'</div>'+
-      '<div class="mjjC">Le salarié arrive le <b>'+jour+(h?' à '+h:'')+'</b>.<br><br>Le cabinet risque de ne pas pouvoir faire la déclaration d’embauche avant son arrivée. <b>Sans déclaration préalable, c’est du travail dissimulé</b>, sous votre responsabilité.<br><br>Appelez le cabinet au <b style="white-space:nowrap">01 30 49 50 05</b>.</div>'+
-      '<div class="mjjA"><button type="button" class="mjjM">Modifier la date</button><button type="button" class="mjjE">J’ai compris, envoyer</button></div></div>';
+    m.innerHTML='<div class="mjjB"><div class="mjjT">⛔ '+JJ[e].t+'</div>'+
+      '<div class="mjjC">Prise de poste : <b>'+jour+(h?' à '+h:'')+'</b>.<br><br>'+JJ[e].fen+'</div>'+
+      '<div class="mjjA"><button type="button" class="mjjM">Modifier la date</button><button type="button" class="mjjE">Envoyer malgré tout</button></div></div>';
     document.body.appendChild(m);
     m.querySelector('.mjjM').onclick=function(){m.remove();var x=$('e_dateEmbauche');x.scrollIntoView({block:'center'});x.focus();};
     m.querySelector('.mjjE').onclick=function(){m.remove();b.jourJOk=true;b.click();};
