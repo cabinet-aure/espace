@@ -1179,7 +1179,7 @@
   function alerteJourJ(b){
     var e=etatJourJ();if(!e)return false;
     var h=($('e_heureArrivee').value||'').trim(),d=dateEmb();
-    var jour=d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+    var jour=d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
     var m=document.createElement('div');m.className='mjj';
     m.innerHTML='<div class="mjjB"><div class="mjjT"><svg width="22" height="22" viewBox="0 0 24 24" style="vertical-align:-4px;margin-right:8px"><circle cx="12" cy="12" r="11" fill="#fff"/><rect x="6" y="10.2" width="12" height="3.6" rx="1.2" fill="#c62828"/></svg>'+JJ[e].t+'</div>'+
       '<div class="mjjC">Prise de poste : <b>'+jour+(h?' à '+h:'')+'</b>.<br><br>'+JJ[e].fen+'</div>'+
