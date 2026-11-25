@@ -293,6 +293,10 @@
   .minsal.bas{background:#fdecea;color:#b71c1c;font-weight:bold}
   .testbandeau{position:fixed;top:0;left:0;right:0;background:#333;color:#fff;text-align:center;font:bold 13px Arial;padding:5px;z-index:99}
 .cal{flex:none;margin-right:10px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.18))}.calL{display:flex;align-items:center;margin-top:8px}.calL b{color:#2e6b3a}
+.avjj{border:2px solid #c62828;background:#ffebee;border-radius:10px;padding:14px 16px;color:#b71c1c;font-size:15px;line-height:1.45}.avjjT{font-size:18px;font-weight:bold;margin-bottom:6px}
+.mjj{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:1000}.mjjB{background:#fff;border-radius:14px;max-width:460px;margin:20px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.mjjT{background:#c62828;color:#fff;font-weight:bold;font-size:19px;padding:14px 18px}.mjjC{padding:16px 18px;font-size:15px;line-height:1.5;color:#222}.mjjA{display:flex;gap:10px;padding:0 18px 18px}
+.mjjA button{flex:1;padding:11px;border-radius:8px;font-weight:bold;font-size:14px;cursor:pointer}.mjjM{border:1px solid #bbb;background:#fff}.mjjE{border:0;background:#c62828;color:#fff}
 </style>
 </head>
 <body>
@@ -364,6 +368,7 @@
     <div class="sect"><h3>2. Le contrat</h3><div class="grille">
       <label class="f"><span>Date d’embauche</span><input id="e_dateEmbauche" type="date"></label>
       <label class="f"><span>Heure d’arrivée le 1er jour</span><input id="e_heureArrivee" type="time"></label>
+      <div class="f large" id="avJourJ" style="display:none"><div class="avjj"><div class="avjjT">⛔ ATTENTION : embauche <span id="avJourJQuand">aujourd’hui</span></div>Le cabinet risque de ne pas pouvoir faire la déclaration d’embauche avant l’arrivée du salarié.<br><b>Un salarié qui travaille sans déclaration préalable, c’est du travail dissimulé.</b><br>Appelez immédiatement le cabinet au <b style="white-space:nowrap">01 30 49 50 05</b>.</div></div>
       <label class="f large"><span>Emploi</span><input id="e_emploi" maxlength="80" placeholder="ex. : maçon, secrétaire, vendeur…" autocomplete="off"></label>
       <div class="f large" id="f_contrat"><span>Type de contrat</span><div class="choix"><label><input type="radio" name="contrat" value="CDI">CDI</label><label><input type="radio" name="contrat" value="CDD">CDD</label></div></div>
       <label class="f cdd cache"><span>Motif du CDD</span><select id="e_motifCdd"><option value="">Choisir…</option><option>Surcroît temporaire d’activité</option><option>Remplacement d’un salarié absent</option><option>Emploi saisonnier</option><option>Autre</option></select></label>
@@ -1146,9 +1151,40 @@
     $('alerteEmb').style.display='none';
     return v;
   }
+  // Embauche le jour même (ou date passée) : avertissement, sans blocage (décision de Mario du 25/11/2026)
+  function dateEmb(){
+    var v=($('e_dateEmbauche').value||'').trim(),m;
+    if((m=v.match(/^(\d{4})-(\d{2})-(\d{2})$/)))return new Date(+m[1],m[2]-1,+m[3]);
+    if((m=v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/)))return new Date(+m[3],m[2]-1,+m[1]);
+    return null;
+  }
+  function etatJourJ(){ // '' / 'aujourdhui' / 'passee'
+    var d=dateEmb();if(!d)return '';var t=new Date();t.setHours(0,0,0,0);
+    return d<t?'passee':(d.getTime()===t.getTime()?'aujourdhui':'');
+  }
+  function majJourJ(){
+    var e=etatJourJ();$('avJourJ').style.display=e?'':'none';
+    $('avJourJQuand').textContent=e==='passee'?'à une date déjà passée':'aujourd’hui';
+  }
+  ['input','change'].forEach(function(ev){$('e_dateEmbauche').addEventListener(ev,majJourJ);});
+  function alerteJourJ(b){
+    var e=etatJourJ();if(!e)return false;
+    var h=($('e_heureArrivee').value||'').trim(),d=dateEmb();
+    var jour=d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+    var m=document.createElement('div');m.className='mjj';
+    m.innerHTML='<div class="mjjB"><div class="mjjT">⛔ Embauche '+(e==='passee'?'à une date déjà passée':'aujourd’hui')+'</div>'+
+      '<div class="mjjC">Le salarié arrive le <b>'+jour+(h?' à '+h:'')+'</b>.<br><br>Le cabinet risque de ne pas pouvoir faire la déclaration d’embauche avant son arrivée. <b>Sans déclaration préalable, c’est du travail dissimulé</b>, sous votre responsabilité.<br><br>Appelez le cabinet au <b style="white-space:nowrap">01 30 49 50 05</b>.</div>'+
+      '<div class="mjjA"><button type="button" class="mjjM">Modifier la date</button><button type="button" class="mjjE">J’ai compris, envoyer</button></div></div>';
+    document.body.appendChild(m);
+    m.querySelector('.mjjM').onclick=function(){m.remove();var x=$('e_dateEmbauche');x.scrollIntoView({block:'center'});x.focus();};
+    m.querySelector('.mjjE').onclick=function(){m.remove();b.jourJOk=true;b.click();};
+    return true;
+  }
+  window.alerteJourJ=alerteJourJ;
   $('envoyerEmb').onclick=function(){
     $('erreurEmb').textContent='';
     var b=this,v=valEmb();if(!v)return;
+    if(!b.jourJOk&&alerteJourJ(b))return;b.jourJOk=false;
     var fichiers=[],recap=[];
     piecesVues.forEach(function(p){
       p.files.forEach(function(f){fichiers.push({p:p.getAttribute('data-p'),f:f});});
@@ -1831,7 +1867,7 @@ window.initConv=function(conv){
   }
   // 4. envoi bloqué sur la page de test
   var b=document.getElementById('envoyerEmb');
-  b.onclick=function(){document.getElementById('erreurEmb').textContent='Page de test : rien n’a été envoyé.';};
+  b.onclick=function(){if(!b.jourJOk&&window.alerteJourJ&&window.alerteJourJ(b))return;b.jourJOk=false;document.getElementById('erreurEmb').textContent='Page de test : rien n’a été envoyé.';};
 };
 </script>
 </body>
