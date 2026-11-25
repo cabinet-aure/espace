@@ -918,7 +918,7 @@
       poster0({action:'envoyerCode',cabinet:CAB,renvoi:!!renvoi}).then(function(r){
         if(!r.ok){err.textContent=r.erreur;return;}
         var h=new Date(),hm=h.getHours()+'h'+('0'+h.getMinutes()).slice(-2);
-        $('cxt').textContent=(renvoi?'Nouveau code envoyé à ':'Code envoyé à ')+hm;
+        $('cxt').textContent=r.dejaEnvoye?'Code déjà envoyé il y a moins de 2 minutes':(renvoi?'Nouveau code envoyé à ':'Code envoyé à ')+hm;
         var bx=$('cxbox');bx.classList.remove('anim');void bx.offsetWidth;bx.classList.add('anim');
         inp.focus();
       }).catch(function(){err.textContent='L’envoi du code a échoué. Merci de réessayer.';});
