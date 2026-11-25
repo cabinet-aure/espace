@@ -263,6 +263,8 @@
   .niv input{width:auto!important;flex:0 0 auto;margin-top:3px;accent-color:#d84315}.niv label>div:not(.mini){flex:1}
   .niv .t1{font-weight:bold}.niv .t2{font-size:13.5px;color:#555;margin-top:2px}
   .niv .mini{margin-left:auto;text-align:right;white-space:nowrap;font-size:13px;color:#555}.niv .mini b{display:block;font-size:15px;color:#222}
+  .essai{display:flex;align-items:center;gap:8px;font-size:14.5px;color:#222;padding:9px 11px;border:1px solid #e6e6e6;border-radius:6px;background:#fafafa}
+  .essai a{margin-left:auto;color:#d84315;font-size:13.5px}.essai .essaiG{color:#777;font-size:13px}
   .niv.replie label:not(.on){display:none}
   .niv .chg{display:none;margin-left:12px;align-self:center;font-size:13px;font-weight:bold;color:#d84315;text-decoration:underline;cursor:pointer;white-space:nowrap}
   .niv.replie label.on .chg{display:inline}
@@ -1070,6 +1072,7 @@
       if(facultatif)el.setAttribute('data-fac','1');
       el.innerHTML='<div class="pt2">'+lib+(facultatif?' <i>(facultatif)</i>':'')+'</div>'+
         (/vitale$/.test(code)?'<div class="pconsigne">Attestation de droits à télécharger sur le compte ameli : la copie de la carte Vitale (verte) ne suffit pas.</div>':'')+
+        (code==='sejour'?'<div class="pconsigne">À vérifier avant l’embauche : le titre doit être en cours de validité et autoriser à travailler.</div>':'')+
         zoneSoc('Déposez ici le fichier',true);
       el.lib=lib;brancherZone(el,function(){},'erreurEmb');PIECES[code]=el;
     }
@@ -1093,6 +1096,7 @@
       for(var i=1;i<=n;i++){l.push(piece('enfant'+i+'_identite','Pièce d’identité de l’enfant '+i));l.push(piece('enfant'+i+'_vitale','Attestation de carte Vitale de l’enfant '+i));}
     }
     if(mut==='Non')l.push(piece('dispense','Justificatif de dispense de mutuelle'));
+    if($('e_nationalite')&&$('e_nationalite').value==='Autre')l.splice(1,0,piece('sejour','Titre de séjour autorisant à travailler (recto verso)'));
     var box=$('pieces');box.innerHTML='';l.forEach(function(e){box.appendChild(e);});
     piecesVues=l;
   }
@@ -1130,16 +1134,20 @@
     if(v.contrat==='CDD'){lit('motifCdd','motif du CDD');lit('finCdd','date de fin du CDD');}else{v.motifCdd='';v.finCdd='';}
     var h=parseFloat(lit('heures','heures par semaine').replace(',','.'));
     if(v.heures&&!(h>0&&h<=48))marque($('e_heures'),'heures par semaine');
-    if(h&&h<35)lit('horaires','jours et horaires travaillés');else v.horaires='';
-    lit('salaireEn','salaire exprimé en');
-    var m=lit('montant','montant du salaire').replace(/\s/g,'');
-    if(m&&!/^\d+([.,]\d{1,2})?$/.test(m))marque($('e_montant'),'montant du salaire');
+    if(window.extraEmb)v.horaires=String($('e_horaires').value).trim(); // fiche par convention : horaires toujours demandés
+    else if(h&&h<35)lit('horaires','jours et horaires travaillés');else v.horaires='';
+    if(v.contrat!=='Apprentissage'){ // apprentissage : le cabinet fixe la rémunération
+      lit('salaireEn','salaire exprimé en');
+      var m=lit('montant','montant du salaire').replace(/\s/g,'');
+      if(m&&!/^\d+([.,]\d{1,2})?$/.test(m))marque($('e_montant'),'montant du salaire');
+    }else{v.salaireEn='';v.montant='';}
     v.mutuelle=radio('mutuelle');if(!v.mutuelle)marque($('f_mutuelle'),'mutuelle');
     v.couverture='';v.enfantsCouverts='';v.motifDispense='';
     if(v.mutuelle==='Oui'){lit('couverture','personnes couvertes');if(/enfants|famille/i.test(v.couverture))lit('enfantsCouverts','nombre d’enfants couverts');}
     if(v.mutuelle==='Non'){var md=lit('motifDispense','motif de dispense');if(md==='Autre'){var a=lit('dispAutre','motif de dispense');v.motifDispense=a?'Autre : '+a:'';}}
     delete v.dispAutre;
     v.commentaires=$('e_commentaires').value.trim();
+    if(window.extraEmb){var x=window.extraEmb();x.err.forEach(function(e){marque(e[0],e[1]);});for(var k in x.v)v[k]=x.v[k];}
     piecesVues.forEach(function(p){if(!p.getAttribute('data-fac')&&!p.files.length){p.classList.add('err');if(!premier)premier=p;var t=p.lib.replace(/ \(recto verso\)/,'');err.push(/^RIB/.test(t)?t:t.charAt(0).toLowerCase()+t.slice(1));}});
     if(err.length){
       $('alerteListe').innerHTML=err.map(function(t){return '<li>'+esc(t.charAt(0).toUpperCase()+t.slice(1))+'</li>';}).join('');
@@ -1190,6 +1198,7 @@
     return true;
   }
   window.alerteJourJ=alerteJourJ;
+  window._valEmb=valEmb; // tests
   $('envoyerEmb').onclick=function(){
     $('erreurEmb').textContent='';
     var b=this,v=valEmb();if(!v)return;
@@ -1546,7 +1555,7 @@ window.initConv=function(conv){
     var reg=(K==='batiment'&&st!=='Cadre')?CLIENT.region:'National';
     var l=conv.niveaux.filter(function(n){return n.cle===K&&n.statut===st&&n.region===reg;});
     if(!l.length)return;
-    GRILLES[st].niveaux=l.map(function(n){var o={c:String(n.c),t:n.t||'',d:n.d||'',min:+n.min||0};
+    GRILLES[st].niveaux=l.map(function(n){var o={c:String(n.c),t:n.t||'',d:n.d||'',min:+n.min||0,essai:n.essai||'',renouv:n.renouv||''};
       if(n.coef!==''&&n.coef!=null&&!isNaN(+n.coef))o.coef=+n.coef;return o;});
   });
   window._GR=GRILLES;window._K=K;
@@ -1703,6 +1712,49 @@ window.initConv=function(conv){
   document.getElementById('e_finCdd').closest('.f').insertAdjacentHTML('afterend',
     '<label class="f cache" id="f_remplNom"><span>Nom et prénom de la personne remplacée</span><input id="e_remplNom" maxlength="80" autocomplete="off"></label>'+
     '<label class="f cache" id="f_remplPoste"><span>Son emploi</span><input id="e_remplPoste" maxlength="80" placeholder="ex. : vendeuse" autocomplete="off"></label>');
+  // d bis) Période d'essai : maximum de la convention (onglet GRILLES) pré-rempli, « Modifier » ouvre une liste de durées plus courtes
+  document.getElementById('f_remplPoste').insertAdjacentHTML('afterend',
+    '<div class="f large cache" id="f_essai"><span>Période d’essai</span>'+
+    '<div class="essai" id="essaiL"><span id="essaiT"></span><a href="#" id="essaiMod">Modifier</a></div>'+
+    '<select id="e_essai" class="cache"></select></div>');
+  window.essaiChoisi='';
+  function dureeCdd(){ // nombre de jours du CDD (dates incluses)
+    var a=document.getElementById('e_dateEmbauche').value,b=document.getElementById('e_finCdd').value;
+    if(!a||!b)return 0;var d=(new Date(b)-new Date(a))/86400000+1;return d>0?d:0;}
+  function essaiMax(){ // → {txt:'2 mois', liste:[…]} ou null (pas encore calculable) ; {cab:true} si fixée par le cabinet
+    var st=radioV('statut'),ct=radioV('contrat'),nv=radioV('niveau');
+    if(!st||!ct||ct==='Apprentissage')return null;
+    var g=GRILLES[st];if(!g)return null;
+    if(g.cabinet||nv==='?')return {cab:true};
+    var n=g.niveaux.filter(function(x){return String(x.c)===nv;})[0];if(!n)return null;
+    if(ct==='CDD'){var j=dureeCdd();if(!j)return null;
+      // 6 mois de calendrier : fin du CDD au plus tard la veille de (date d'embauche + 6 mois)
+      var d1=new Date(document.getElementById('e_dateEmbauche').value),d2=new Date(document.getElementById('e_finCdd').value);
+      var lim=new Date(d1);lim.setUTCMonth(lim.getUTCMonth()+6);lim.setUTCDate(lim.getUTCDate()-1); // dates saisies = minuit UTC
+      var mx=d2<=lim?Math.min(Math.floor(j/7),14):'1 mois';
+      if(mx==='1 mois')return {txt:'1 mois',liste:['2 semaines','1 semaine'],loi:true};
+      if(mx<1)return {txt:'Pas de période d’essai',liste:[],aucune:true};
+      var t=mx===14?'2 semaines':mx===7?'1 semaine':mx+' jour'+(mx>1?'s':'');
+      return {txt:t,liste:mx>7?['1 semaine']:[],loi:true};}
+    if(!n.essai)return {cab:true};
+    if(/cabinet/i.test(n.essai))return {cab:true};
+    var m=parseInt(n.essai,10)||0;
+    var L={4:['3 mois','2 mois','1 mois','15 jours'],3:['2 mois','1 mois','15 jours'],2:['1 mois','15 jours','1 semaine'],1:['15 jours','1 semaine']}[m]||[];
+    return {txt:n.essai,liste:L};
+  }
+  function majEssai(){
+    var f=document.getElementById('f_essai'),e=essaiMax(),sel=document.getElementById('e_essai');
+    f.classList.toggle('cache',!e);if(!e){window.essaiChoisi='';return;}
+    if(e.cab){document.getElementById('essaiT').innerHTML='Fixée par le cabinet';document.getElementById('essaiMod').style.display='none';sel.classList.add('cache');document.getElementById('essaiL').classList.remove('cache');window.essaiChoisi='Fixée par le cabinet';return;}
+    var opts=[e.txt].concat(e.liste).concat(e.aucune?[]:['Pas de période d’essai']);
+    var cle=opts.join('|');
+    if(sel.dataset.cle!==cle){sel.dataset.cle=cle;sel.innerHTML=opts.map(function(o,i){return '<option value="'+o+'">'+o+(i===0&&!e.aucune?' (maximum prévu par '+(e.loi?'la loi':'la convention')+')':'')+'</option>';}).join('');sel.classList.add('cache');document.getElementById('essaiL').classList.remove('cache');}
+    document.getElementById('essaiMod').style.display=opts.length>1?'':'none';
+    document.getElementById('essaiT').innerHTML='✔ <b>'+e.txt+'</b>'+(e.aucune?'':' <span class="essaiG">(maximum prévu par '+(e.loi?'la loi pour ce CDD':'la convention')+')</span>');
+    window.essaiChoisi=sel.classList.contains('cache')?e.txt:sel.value;
+  }
+  document.getElementById('essaiMod').onclick=function(ev){ev.preventDefault();document.getElementById('essaiL').classList.add('cache');var s=document.getElementById('e_essai');s.classList.remove('cache');s.focus();};
+  ['change','input'].forEach(function(ev){document.getElementById('embauche').addEventListener(ev,majEssai);});
   // e) Commentaires supprimés
   document.getElementById('e_commentaires').closest('.f').style.display='none';
   // e bis) Emploi choisi dans une liste selon le statut
@@ -1749,10 +1801,7 @@ window.initConv=function(conv){
     if(app)document.getElementById('minsal').classList.add('cache');
   }
   ['change','input'].forEach(function(ev){document.getElementById('embauche').addEventListener(ev,majApp);});
-  // f) Titre de séjour si nationalité « Autre »
-  var titre=document.createElement('div');titre.className='piece';
-  titre.innerHTML='<div class="pt2">Titre de séjour autorisant à travailler (recto verso)</div><div class="pconsigne">À vérifier avant l’embauche : le titre doit être en cours de validité et autoriser à travailler.</div><label class="zone petite" style="display:block;cursor:pointer"><input type="file" style="display:none"><span class="ztxt">Déposez ici le fichier<br><b>ou sélectionnez un fichier</b></span></label><div class="nomf" style="font-size:13px;color:#2e6b3a;margin-top:4px"></div>';
-  titre.querySelector('input').addEventListener('change',function(){titre.querySelector('.nomf').textContent=this.files.length?'✔ '+this.files[0].name:'';});
+  // f) Titre de séjour si nationalité « Autre » : pièce « sejour » ajoutée dans majEmb, envoyée avec les autres
   function majExtra(){
     var cdd=radioV('contrat')==='CDD',rempl=cdd&&/Remplacement/.test(document.getElementById('e_motifCdd').value);
     document.getElementById('f_remplNom').classList.toggle('cache',!rempl);
@@ -1762,13 +1811,43 @@ window.initConv=function(conv){
     var li=radioV('lieu');if(window.horDefaut&&CHANTIER)window.horDefaut(li==='Chantiers'?'Chantiers':'Bureau');
     document.querySelectorAll('#f_lieu label').forEach(function(l){l.classList.toggle('on',l.querySelector('input').checked);});
     document.getElementById('f_lieuAutre').classList.toggle('cache',li!=='Autre');
-    var box=document.getElementById('pieces'),aut=document.getElementById('e_nationalite').value==='Autre';
-    if(aut&&titre.parentNode!==box){var z0=box.querySelector('.zone');var zt=titre.querySelector('.zone');
-      if(z0&&!zt.querySelector('svg')){var ic=z0.querySelector('svg');if(ic)zt.insertBefore(ic.cloneNode(true),zt.firstChild);zt.className=z0.className;zt.style.cssText='';}
-      box.insertBefore(titre,box.children[1]||null);}
-    if(!aut&&titre.parentNode)titre.parentNode.removeChild(titre);
   }
   ['change','input'].forEach(function(ev){document.getElementById('embauche').addEventListener(ev,function(e){if(e.target.type!=='file')majExtra();});});
+  // ===== Rubriques de la fiche par convention, envoyées avec le formulaire (colonnes ajoutées dans EMBAUCHES) =====
+  window.extraEmb=function(){
+    var err=[],v={},el=function(id){return document.getElementById(id);};
+    var st=radioV('statut'),app=radioV('contrat')==='Apprentissage',g=st?GRILLES[st]:null;
+    v.nationalite=valeur('e_nationalite');if(!v.nationalite)err.push([el('e_nationalite'),'nationalité']);
+    v.statut=st?radioT('statut'):'';if(!st)err.push([el('f_statut'),'statut']);
+    v.convention=g?String(g.nom||'')+(g.idcc?' (IDCC '+g.idcc+')':''):'';
+    v.niveau='';v.minimumNiveau='';
+    if(g&&!app){
+      if(g.cabinet)v.niveau='Fixé par le cabinet';
+      else{var nv=radioV('niveau');
+        if(!nv)err.push([el('f_niveau'),'niveau du salarié']);
+        else if(nv==='?')v.niveau='Je ne sais pas (le cabinet fixera le niveau)';
+        else{var n=g.niveaux.filter(function(x){return String(x.c)===nv;})[0];
+          if(n){v.niveau=n.c+' – '+n.t+(n.coef?' (coef. '+n.coef+')':'');
+            v.minimumNiveau=eur(Math.max(n.min,(g.base===35&&!g.sansSmic)?SMIC:0))+' brut par mois'+(g.base!==35?' pour '+g.base+' h':'');}}}
+    }
+    v.modalite='';
+    if(CLIENT.secteur==='Syntec'&&st==='Cadre'){v.modalite=radioT('modalite');if(!v.modalite)err.push([el('f_mod'),'organisation du temps de travail']);}
+    var li=radioV('lieu');v.lieu='';
+    if(CLIENT.secteur==='Propreté')v.lieu='Sites indiqués avec les horaires';
+    else if(CHANTIER){if(!li)err.push([el('f_lieu'),'lieu de travail']);else v.lieu=radioT('lieu');}
+    else if(li){v.lieu=radioT('lieu');if(li==='Autre'){var ad=valeur('e_lieuAutre');if(!ad)err.push([el('e_lieuAutre'),'adresse du lieu de travail']);v.lieu+=' : '+ad;}}
+    v.essai=window.essaiChoisi||'';
+    if(!app&&!v.essai&&!el('f_essai').classList.contains('cache'))err.push([el('f_essai'),'période d’essai']);
+    v.remplace='';
+    if(!el('f_remplNom').classList.contains('cache')){
+      var rn=valeur('e_remplNom'),rp=valeur('e_remplPoste');
+      if(!rn)err.push([el('e_remplNom'),'personne remplacée']);if(!rp)err.push([el('e_remplPoste'),'emploi de la personne remplacée']);
+      v.remplace=rn+(rp?' ('+rp+')':'');
+    }
+    var tot=el(CLIENT.secteur==='Propreté'?'sitesTot':'h_tot');
+    if(!String(el('e_horaires').value).trim()||(tot&&tot.classList.contains('bas')))err.push([tot?tot.closest('.f'):el('e_horaires'),'jours et horaires de travail']);
+    return {v:v,err:err};
+  };
   // ===== Sections repliées une fois complètes (test) =====
   function valeur(id){var e=document.getElementById(id);return e?String(e.value||'').trim():'';}
   function radioT(n){var x=document.querySelector('input[name="'+n+'"]:checked');return x?x.closest('label').textContent.trim():'';}
