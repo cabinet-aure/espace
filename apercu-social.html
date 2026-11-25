@@ -1862,7 +1862,10 @@ window.initConv=function(conv){
         else if(nv==='?')v.niveau='Je ne sais pas (le cabinet fixera le niveau)';
         else{var n=g.niveaux.filter(function(x){return String(x.c)===nv;})[0];
           if(n){v.niveau=n.c+' – '+n.t+(n.coef?' (coef. '+n.coef+')':'');
-            v.minimumNiveau=eur(Math.max(n.min,(g.base===35&&!g.sansSmic)?SMIC:0))+' brut par mois'+(g.base!==35?' pour '+g.base+' h':'');}}}
+            var mb=Math.max(n.min,(g.base===35&&!g.sansSmic)?SMIC:0),hh=parseFloat(String(el('e_heures').value).replace(',','.'))||35;
+            if(g.base===35&&hh!==35&&!el('f_hor').style.display.match(/none/)){ // durée du travail : minimum proratisé, heures supplémentaires majorées de 25 %
+              var he=hh>35?35+(hh-35)*1.25:hh;v.minimumNiveau=eur(mb*he/35)+' brut par mois pour '+String(hh).replace('.',',')+' h par semaine'+(hh>35?' (heures supplémentaires majorées comprises)':'');}
+            else v.minimumNiveau=eur(mb)+' brut par mois'+(g.base!==35?' pour '+g.base+' h':'');}}}
     }
     v.modalite='';
     if(CLIENT.secteur==='Syntec'&&st==='Cadre'){v.modalite=radioT('modalite');if(!v.modalite)err.push([el('f_mod'),'organisation du temps de travail']);}
