@@ -864,7 +864,7 @@
       bt='<button type="button" class="hist">🕘 Historique ('+l.length+')'+(enc?'<span class="enc"> · '+enc+' en cours</span>':'')+'</button>';
       hi='<div class="histo"><div class="ht">Vos envois des 12 derniers mois</div>'+l.map(function(x){
         return '<div class="hl"><div><b>'+esc(x.libelle)+'</b><div class="qd">Envoyé le '+esc(x.envoye)+'</div></div>'+
-          (x.traite?'<span class="stt fait">✔ Traité le '+esc(x.traite)+'</span>':'<span class="stt enc">⏳ En cours de traitement</span>')+'</div>';
+          (x.traite?'<span class="stt fait">✔ Traité le '+esc(x.traite)+'</span>':'<span class="stt enc"><span class="sab">⏳</span> En cours de traitement</span>')+'</div>';
       }).join('')+'</div>';
     }
     return '<div class="banque" data-cat="'+cat+'" style="--c:'+OR+'"><div class="bq-tete"><div class="pastille" style="background:'+OR+';font-size:20px">'+ic+'</div>'+
