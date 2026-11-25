@@ -87,6 +87,8 @@
   table.mt td{padding:2px 10px;border-bottom:1px solid #eee}
   table.mt td.m{text-align:right;white-space:nowrap}
   .patiente{font-size:13px;color:#555;background:#f6f6f6;border-radius:6px;padding:7px 10px;margin:0 0 12px}
+  .occ{display:flex;gap:12px;align-items:flex-start;border:2px solid #e6a23c;background:#fff8ec;border-radius:10px;padding:12px 14px;color:#222;font-size:14.5px;line-height:1.5;text-align:left;margin-top:6px}
+  .occ b{color:#a15c00}.occi{font-size:22px;line-height:1}.occp{font-size:13px;color:#6b6b6b;margin-top:4px}
   .attente:before{content:"⏳";display:inline-block;width:1.2em;height:1.2em;line-height:1.2em;text-align:center;vertical-align:-.25em;transform-origin:50% 50%;animation:sab 3s ease-in-out infinite;margin-right:.3em}
   .sab{display:inline-block;width:1.2em;height:1.2em;line-height:1.2em;text-align:center;vertical-align:-.25em;transform-origin:50% 50%;animation:sab 3s ease-in-out infinite}
   @keyframes sab{0%{transform:rotate(0)}20%{transform:rotate(180deg)}50%{transform:rotate(180deg)}70%{transform:rotate(360deg)}100%{transform:rotate(360deg)}}
@@ -743,7 +745,24 @@
   $('precision').addEventListener('input',maj);
 
   function lire(f){return new Promise(function(ok,ko){var r=new FileReader();r.onload=function(){ok(String(r.result).split(',')[1]||'');};r.onerror=ko;r.readAsDataURL(f);});}
-  function poster(o){return fetch(X,{method:'POST',body:JSON.stringify(o)}).then(function(r){return r.json();}).then(function(d){if(!d.ok)throw new Error(d.erreur||'Erreur');return d;});}
+  // Envoi au script avec deux nouveaux essais automatiques (service occupé ou réseau), puis message « occupé »
+  function poster(o){
+    var n=0;
+    function attendre(){n++;return new Promise(function(r){setTimeout(r,n*4000);}).then(essai);}
+    function essai(){
+      return fetch(X,{method:'POST',body:JSON.stringify(o)}).then(function(r){return r.json();}).then(function(d){
+        
+        if(!d.ok&&d.occupe&&n<2)return attendre();
+        if(!d.ok){var er=new Error(d.erreur||'Erreur');if(d.occupe)er.occupe=true;throw er;}
+        return d;
+      },function(){if(n<2)return attendre();var er=new Error('Service occupé');er.occupe=true;throw er;});
+    }
+    return essai();
+  }
+  function afficherEchec(el,e,txt){
+    if(e&&e.occupe){el.innerHTML='<div class="occ"><span class="occi">⏳</span><div><b>Le service est momentanément occupé.</b><br>Vos fichiers déjà envoyés sont bien reçus. Merci de réessayer dans une minute en cliquant de nouveau sur « Envoyer ».<div class="occp">Si le problème persiste : 01 30 49 50 05.</div></div></div>';}
+    else el.textContent=txt;
+  }
 
   $('envoyer').onclick=function(){
     var b=this,taches=[],recap=[],prec=$('precision').value.trim();
@@ -769,7 +788,7 @@
         return poster(o);
       }).then(function(){if(t.f)t.f._ok=true;if(p)precEnvoyee=true;i++;suivant();}).catch(function(e){
         finAttente();b.disabled=false;b.textContent='✔ Envoyer mes documents';
-        $('erreur').textContent='L’envoi a échoué ('+(e.message||e)+'). Merci de réessayer : les fichiers déjà envoyés ne seront pas perdus.';
+        afficherEchec($('erreur'),e,'L’envoi a échoué ('+(e.message||e)+'). Merci de réessayer : les fichiers déjà envoyés ne seront pas perdus.');
       });
     })();
   };
@@ -834,7 +853,7 @@
     b.disabled=true;
     var i=0;
     function echec(e){finAttente();b.disabled=false;b.textContent='✔ Envoyer mes documents';
-      $('erreurBil').textContent='L’envoi a échoué ('+(e.message||e)+'). Merci de réessayer : les fichiers déjà envoyés ne seront pas perdus.';}
+      afficherEchec($('erreurBil'),e,'L’envoi a échoué ('+(e.message||e)+'). Merci de réessayer : les fichiers déjà envoyés ne seront pas perdus.');}
     (function suivant(){
       if(i>=taches.length){
         etat(b,0,0,'','Finalisation…');
@@ -992,7 +1011,7 @@
     b.disabled=true;
     var i=0;
     function echec(e){finAttente();b.disabled=false;b.textContent='✔ Envoyer mes documents';
-      $('erreurSoc').textContent='L’envoi a échoué ('+(e.message||e)+'). Merci de réessayer : les fichiers déjà envoyés ne seront pas perdus.';}
+      afficherEchec($('erreurSoc'),e,'L’envoi a échoué ('+(e.message||e)+'). Merci de réessayer : les fichiers déjà envoyés ne seront pas perdus.');}
     (function suivant(){
       if(i>=taches.length){
         etat(b,0,0,'','Finalisation…');
@@ -1062,7 +1081,7 @@
       merci('Nous vous remercions : votre demande a bien été transmise au cabinet.',
         ['Renouvellement du CDD de '+x.salarie+' jusqu’au '+fr(n)+(c.value==='Oui'?' (conditions modifiées)':'')]);
     }).catch(function(e){finAttente();b.disabled=false;b.textContent='✓ Envoyer la demande';
-      $('erreurCdd').textContent='L’envoi a échoué ('+(e.message||e)+'). Merci de réessayer.';});
+      afficherEchec($('erreurCdd'),e,'L’envoi a échoué ('+(e.message||e)+'). Merci de réessayer.');});
   };
 
   // ===================== FORMULAIRE D'EMBAUCHE =====================
@@ -1232,7 +1251,7 @@
       merci('Nous vous remercions : les informations concernant l’embauche de '+qui+' ont bien été transmises au cabinet.',recap);
     }).catch(function(e){
       finAttente();b.disabled=false;b.textContent='✓ Envoyer les informations';
-      $('erreurEmb').textContent='L’envoi a échoué ('+(e.message||e)+'). Merci de réessayer : les éléments déjà envoyés ne seront pas perdus.';
+      afficherEchec($('erreurEmb'),e,'L’envoi a échoué ('+(e.message||e)+'). Merci de réessayer : les éléments déjà envoyés ne seront pas perdus.');
     });
   };
 
