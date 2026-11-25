@@ -87,8 +87,8 @@
   table.mt td{padding:2px 10px;border-bottom:1px solid #eee}
   table.mt td.m{text-align:right;white-space:nowrap}
   .patiente{font-size:13px;color:#555;background:#f6f6f6;border-radius:6px;padding:7px 10px;margin:0 0 12px}
-  .attente:before{content:"⏳";display:inline-block;margin-right:.3em;animation:sab 3s ease-in-out infinite}
-  .sab{display:inline-block;animation:sab 3s ease-in-out infinite}
+  .attente:before{content:"⏳";display:inline-block;width:1.2em;height:1.2em;line-height:1.2em;text-align:center;vertical-align:-.25em;transform-origin:50% 50%;animation:sab 3s ease-in-out infinite;margin-right:.3em}
+  .sab{display:inline-block;width:1.2em;height:1.2em;line-height:1.2em;text-align:center;vertical-align:-.25em;transform-origin:50% 50%;animation:sab 3s ease-in-out infinite}
   @keyframes sab{0%{transform:rotate(0)}20%{transform:rotate(180deg)}50%{transform:rotate(180deg)}70%{transform:rotate(360deg)}100%{transform:rotate(360deg)}}
   .zone{display:flex;align-items:center;justify-content:center;gap:16px;border:2px dashed #b9cfb9;border-radius:8px;padding:16px;color:#444;background:#fbfdfb;cursor:pointer;transition:background .15s,border-color .15s}
   .zone.survol{background:#e6f1e6;border-color:var(--vert);border-style:solid}
