@@ -1727,7 +1727,7 @@ window.initConv=function(conv){
     var g=GRILLES[st];if(!g)return null;
     if(g.cabinet||nv==='?')return {cab:true};
     var n=g.niveaux.filter(function(x){return String(x.c)===nv;})[0];if(!n)return null;
-    if(ct==='CDD'){var j=dureeCdd();if(!j)return null;
+    if(ct==='CDD'){var j=dureeCdd();if(!j)return {attente:true};
       // 6 mois de calendrier : fin du CDD au plus tard la veille de (date d'embauche + 6 mois)
       var d1=new Date(document.getElementById('e_dateEmbauche').value),d2=new Date(document.getElementById('e_finCdd').value);
       var lim=new Date(d1);lim.setUTCMonth(lim.getUTCMonth()+6);lim.setUTCDate(lim.getUTCDate()-1); // dates saisies = minuit UTC
@@ -1744,7 +1744,8 @@ window.initConv=function(conv){
   }
   function majEssai(){
     var f=document.getElementById('f_essai'),e=essaiMax(),sel=document.getElementById('e_essai');
-    f.classList.toggle('cache',!e);if(!e){window.essaiChoisi='';return;}
+    f.classList.toggle('cache',!e);f.classList.toggle('attente',!!(e&&e.attente));if(!e){window.essaiChoisi='';return;}
+    if(e.attente){document.getElementById('essaiT').innerHTML='<span class="essaiG">Indiquez la date d’embauche et la date de fin du CDD : la période d’essai sera calculée automatiquement.</span>';document.getElementById('essaiMod').style.display='none';sel.classList.add('cache');sel.dataset.cle='';document.getElementById('essaiL').classList.remove('cache');window.essaiChoisi='';return;}
     if(e.cab){document.getElementById('essaiT').innerHTML='Fixée par le cabinet';document.getElementById('essaiMod').style.display='none';sel.classList.add('cache');document.getElementById('essaiL').classList.remove('cache');window.essaiChoisi='Fixée par le cabinet';return;}
     var opts=[e.txt].concat(e.liste).concat(e.aucune?[]:['Pas de période d’essai']);
     var cle=opts.join('|');
@@ -1837,7 +1838,7 @@ window.initConv=function(conv){
     else if(CHANTIER){if(!li)err.push([el('f_lieu'),'lieu de travail']);else v.lieu=radioT('lieu');}
     else if(li){v.lieu=radioT('lieu');if(li==='Autre'){var ad=valeur('e_lieuAutre');if(!ad)err.push([el('e_lieuAutre'),'adresse du lieu de travail']);v.lieu+=' : '+ad;}}
     v.essai=window.essaiChoisi||'';
-    if(!app&&!v.essai&&!el('f_essai').classList.contains('cache'))err.push([el('f_essai'),'période d’essai']);
+    if(!app&&!v.essai&&!el('f_essai').classList.contains('cache')&&!el('f_essai').classList.contains('attente'))err.push([el('f_essai'),'période d’essai']);
     v.remplace='';
     if(!el('f_remplNom').classList.contains('cache')){
       var rn=valeur('e_remplNom'),rp=valeur('e_remplPoste');
