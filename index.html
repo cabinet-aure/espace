@@ -105,6 +105,40 @@
   .tete .rd .bulle:before{content:"";position:absolute;top:-6px;right:22px;border:6px solid transparent;border-top:0;border-bottom-color:#3d3216}
   .tete .rd:hover .bulle{opacity:1;transform:translateY(0)}
   .tete .mde{right:110px!important}
+  .tete .rd.vu{box-shadow:0 0 0 3px #fff,0 0 0 5px #c0392b}.tete .rd.vu .bulle{opacity:1;transform:translateY(0)}
+  .cxfin{max-width:460px;margin:8px auto;text-align:center}
+  .cxcad{width:56px;height:56px;border-radius:50%;background:#f8f4e8;border:2px solid #e6dcc0;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:24px}
+  .cxft{font-size:20px;font-weight:bold;color:#3d3216}
+  .cxfin p{font-size:15px;color:#555;line-height:1.5;margin:8px 0 18px}
+  .cxrec{width:auto;padding:13px 30px}
+  #cx{padding:22px 30px 26px}
+  .cxb{max-width:460px;margin:0 auto}
+  .encx .tete{display:none!important}
+  .cxs1{font-size:14px;color:#444;line-height:1.55;margin:0 0 16px}
+  .cxq{text-align:center;font-weight:bold;font-size:14px;margin:2px 0 10px;color:#3d3216}
+  .cxqui{display:flex;justify-content:center;gap:22px;margin:0 0 14px}
+  .cxqui .cxr{width:46px!important;height:46px!important;min-width:46px;padding:0!important;border-radius:50%!important;background:#f8f4e8;color:#8a6d1c;border:1px solid #d9cfae;font:bold 17px Arial,sans-serif;cursor:pointer;transition:box-shadow .2s,background .2s}
+  .cxqui .cxr.on{background:#8a6d1c;color:#fff;border-color:#8a6d1c;box-shadow:0 0 0 3px #fff,0 0 0 5px #b8961e}
+  .cxid{display:flex;align-items:center;gap:14px;background:#f8f4e8;border:1px solid #e6dcc0;border-radius:10px;padding:14px 16px;margin-bottom:16px}
+  .cxini{width:50px;height:50px;border-radius:50%;background:#8a6d1c;color:#fff;font-weight:bold;font-size:18px;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+  .cxlib{font-size:11px;letter-spacing:1.5px;color:#8a6d1c;font-weight:bold}
+  .cxsoc{font-size:21px;font-weight:bold;color:#3d3216;line-height:1.25}
+  .cxsir{font-size:12.5px;color:#6b6b6b;margin-top:2px}
+  .cxenv{border:2px solid #b8961e;background:#f8f4e8;border-radius:10px;padding:12px 14px;display:flex;gap:12px;align-items:center;margin:0 0 16px;font-size:14.5px;line-height:1.45}
+  .cxenv .cxt{color:#8a6d1c}.cxenv.ko{border-color:#c0392b;background:#fdf1ef}.cxenv.ko .cxt{color:#c0392b}.cxsp{font-size:13px;color:#6b6b6b}
+  .cxic{font-size:28px;line-height:1;flex:0 0 auto;display:inline-block}
+  .cxenv.anim{animation:cxeclat 1.6s ease-out 2}.cxenv.anim .cxic{animation:cxvol .9s ease-in-out 3}
+  @keyframes cxeclat{0%{background:#ffe9a8;box-shadow:0 0 0 0 rgba(184,150,30,.55)}60%{box-shadow:0 0 0 10px rgba(184,150,30,0)}100%{background:#f8f4e8;box-shadow:0 0 0 0 rgba(184,150,30,0)}}
+  @keyframes cxvol{0%{transform:translateY(0)}25%{transform:translateY(-6px) rotate(-8deg)}50%{transform:translateY(0)}75%{transform:translateY(-3px) rotate(5deg)}100%{transform:translateY(0)}}
+  .cxl{display:block;font-size:13px;color:#4a4a4a;font-weight:bold}
+  #cxcode{display:block;width:100%;box-sizing:border-box;margin:6px 0 4px;letter-spacing:8px;font-size:22px;text-align:center;border:2px solid #e6dcc0;border-radius:8px;height:50px;font-family:Arial,sans-serif;outline:none}
+  #cxcode:focus{border-color:#b8961e}#cxcode.ko{border-color:#c0392b}
+  .cxerr{font-size:13.5px;color:#c0392b;min-height:19px;margin-bottom:8px}.cxerr.vert{color:#8a6d1c}
+  .cxm{display:flex;gap:8px;align-items:center;font-size:14px;margin-bottom:16px;cursor:pointer}.cxm input{accent-color:#8a6d1c;width:17px;height:17px}
+  .cxok{width:100%;background:#8a6d1c;color:#fff;border:0;border-bottom:3px solid #5e4a12;border-radius:8px;padding:14px;font-size:16px;font-weight:bold;cursor:pointer}
+  .cxok:disabled{opacity:.7;cursor:wait}
+  .cxpied{font-size:13px;color:#666;margin-top:12px;text-align:center;line-height:1.6}.cxpied a{color:#8a6d1c;font-weight:bold}
+  @media(max-width:600px){#cx{padding:18px 16px 22px}.cxsoc{font-size:18px}}
   /* Version aérée, sur PC seulement */
   @media(min-width:700px){
     .tete{padding:26px 30px 8px!important}
@@ -299,6 +333,7 @@
       <div class="pt">Aide</div>
       <div class="pl">Documents au format PDF de préférence.<br>Taille maximale : 10 Mo par fichier.</div>
     </div></div></div>
+  <div id="cx" style="display:none"></div>
   <div class="chargement" id="chargement"><span class="rond"></span>Chargement de votre espace…</div>
   <div id="accueil" style="display:none"><div class="tuiles" id="tuiles"></div></div>
   <div id="formulaire" style="display:none">
@@ -417,6 +452,11 @@
   var ID=C?{code:C}:{s:S,k:K}; // vers le script : « code » (le paramètre « c » y est refusé par Google)
   var VUE=(P.get('r')||(C?'':'banque')).toLowerCase();
   // Rubrique Social : passer à true quand les clients auront été informés (prévu en janvier 2027)
+  // Connexion sécurisée : jeton de l'appareil pour ce client, et jeton « accès cabinet » s'il existe
+  var CAB=P.get('cabinet')==='1', CLE_JT='aure_jeton_'+(C||'');
+  function lit(k){try{return localStorage.getItem(k)||sessionStorage.getItem(k)||'';}catch(e){return '';}}
+  if(lit(CLE_JT))ID.jeton=lit(CLE_JT);
+  if(lit('aure_cabinet'))ID.jc=lit('aure_cabinet');
   var SOCIAL_OUVERT=false;
   function lienVue(v){var q=new URLSearchParams(C?{c:C}:{s:S,k:K});if(v)q.set('r',v);return '?'+q.toString();}
   var MAX=10*1024*1024, zones=[];
@@ -578,7 +618,9 @@
     $('chargement').style.display='';$('chargement').innerHTML='<span class="rond"></span>Chargement de votre espace…';
     $('formulaire').style.display='none';$('merci').style.display='none';$('accueil').style.display='none';$('social').style.display='none';$('embauche').style.display='none';$('bilan').style.display='none';$('cdd').style.display='none';
     lireDonnees().then(function(d){
+      if(!d.ok&&d.connexion){ecranConnexion(d);return;}
       if(!d.ok){erreurLien(d.erreur||'Ce lien n’est pas valide.');return;}
+      $('cx').style.display='none';document.body.classList.remove('encx');
       $('societe').textContent=d.societe;$('pSoc').textContent=d.societe;if($('rd')){$('rdini').textContent=initiales0(d.societe);$('rd').style.display='';}if($('sirenT'))$('sirenT').textContent=d.siren?'SIREN '+String(d.siren).replace(/\D/g,'').replace(/^(\d{3})(\d{3})(\d{3})$/,'$1 $2 $3'):'';
       if(d.mail){$('pMail').textContent=d.mail;}else{$('pMailL').style.display='none';}
       var aFaire=(d.documents||[]).some(function(x){return x.statut!=='Reçu';});
@@ -727,7 +769,7 @@
     function attendre(){n++;return new Promise(function(r){setTimeout(r,n*4000);}).then(essai);}
     function essai(){
       return fetch(X,{method:'POST',body:JSON.stringify(o)}).then(function(r){return r.json();}).then(function(d){
-        
+        if(!d.ok&&d.connexion){location.reload();throw new Error(d.erreur);}
         if(!d.ok&&d.occupe&&n<2)return attendre();
         if(!d.ok){var er=new Error(d.erreur||'Erreur');if(d.occupe)er.occupe=true;throw er;}
         return d;
@@ -858,6 +900,95 @@
     return mots.length===1?mots[0].slice(0,2):mots[0].charAt(0)+mots[1].charAt(0);
   }
   function avecId(o){for(var k in ID)o[k]=ID[k];return o;}
+  function sirenLisible(x){return String(x||'').replace(/\D/g,'').replace(/^(\d{3})(\d{3})(\d{3})$/,'$1 $2 $3');}
+  // Accès cabinet : M, I, T (adresses des postes, affichées masquées)
+  var QUI='M',MASQUE_CAB={M:'m•••••@aure-expert.fr',I:'c•••••@aure-expert.fr',T:'c•••••@aure-expert.fr'};
+  function carteCx(d){
+    return '<div class="cxid"><div class="cxini">'+esc(initiales0(d.societe))+'</div><div>'+
+      '<div class="cxlib">'+(CAB?'ACCÈS CABINET':'ESPACE CLIENT')+'</div><div class="cxsoc">'+esc(d.societe)+'</div>'+
+      '<div class="cxsir">SIREN '+esc(sirenLisible(d.siren))+'</div></div></div>';
+  }
+  // Étape 1 : rien n'est envoyé tant que la personne ne clique pas sur « Recevoir mon code par mail ».
+  function ecranConnexion(d){
+    $('chargement').style.display='none';document.body.classList.add('encx');
+    var choix=CAB?'<div class="cxq">Qui êtes-vous ?</div><div class="cxqui">'+['M','I','T'].map(function(k){
+      return '<button type="button" class="cxr'+(k===QUI?' on':'')+'" data-q="'+k+'" aria-label="'+k+'">'+k+'</button>';}).join('')+'</div>':'';
+    var dest1=function(){return CAB?MASQUE_CAB[QUI]:(d.mailMasque||'votre adresse e-mail');};
+    $('cx').innerHTML='<div class="cxb">'+carteCx(d)+choix+
+      '<p class="cxs1"><b>Connexion sécurisée.</b><br>Pour accéder à '+(CAB?'cet espace':'votre espace')+', un code à 6 chiffres va vous être envoyé à l’adresse <b id="cxd1">'+esc(dest1())+'</b>.</p>'+
+      '<button type="button" class="cxok" id="cxgo">✓ Recevoir mon code par mail</button></div>';
+    $('cx').style.display='';
+    Array.prototype.forEach.call(document.querySelectorAll('.cxqui .cxr'),function(b){b.onclick=function(){
+      QUI=b.getAttribute('data-q');
+      Array.prototype.forEach.call(document.querySelectorAll('.cxqui .cxr'),function(x){x.classList.toggle('on',x===b);});
+      $('cxd1').textContent=dest1();};});
+    $('cxgo').onclick=function(){etape2(d);};
+  }
+  // Étape 2 : saisie du code (le premier code part au moment où l'écran s'affiche).
+  function etape2(d){
+    var dest=CAB?MASQUE_CAB[QUI]:(d.mailMasque||'votre adresse e-mail');
+    $('cx').innerHTML='<div class="cxb">'+
+      carteCx(d)+
+      '<div class="cxenv" id="cxbox"><span class="cxic" aria-hidden="true">✉️</span><div><b class="cxt" id="cxt">Envoi du code en cours…</b><br>Consultez votre boîte mail <b>'+esc(dest)+'</b><br><span class="cxsp">Pensez à vérifier les courriers indésirables.</span></div></div>'+
+      '<label class="cxl" for="cxcode">Code reçu par mail (6 chiffres)</label>'+
+      '<input id="cxcode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="••••••">'+
+      '<div class="cxerr" id="cxerr"></div>'+
+      (CAB?'':'<label class="cxm"><input type="checkbox" id="cxmem" checked> Se souvenir de cet appareil pendant 90 jours</label>')+
+      '<button type="button" class="cxok" id="cxok">✓ Accéder à mon espace</button>'+
+      '<div class="cxpied">Vous n’avez pas reçu le code ? <a href="#" id="cxrenv">Renvoyer un code</a><br>Le code est valable 15 minutes.</div></div>';
+    $('cx').style.display='';
+    var inp=$('cxcode'),err=$('cxerr'),btn=$('cxok');
+    function envoi(renvoi){
+      err.textContent='';err.className='cxerr';
+      poster0({action:'envoyerCode',cabinet:CAB,qui:QUI,renvoi:!!renvoi}).then(function(r){
+        if(!r.ok){$('cxt').textContent='Le code n’a pas pu être envoyé';$('cxbox').classList.add('ko');err.textContent=r.erreur;return;}
+        $('cxbox').classList.remove('ko');
+        var h=new Date(),hm=h.getHours()+'h'+('0'+h.getMinutes()).slice(-2);
+        $('cxt').textContent=r.dejaEnvoye?'Code déjà envoyé il y a moins de 2 minutes':(renvoi?'Nouveau code envoyé à ':'Code envoyé à ')+hm;
+        var bx=$('cxbox');bx.classList.remove('anim');void bx.offsetWidth;bx.classList.add('anim');
+        inp.focus();
+      }).catch(function(){$('cxt').textContent='Le code n’a pas pu être envoyé';$('cxbox').classList.add('ko');err.textContent='L’envoi du code a échoué. Merci de réessayer dans une minute.';});
+    }
+    inp.oninput=function(){inp.value=inp.value.replace(/\D/g,'');err.textContent='';inp.classList.remove('ko');};
+    inp.onkeydown=function(e){if(e.key==='Enter')btn.click();};
+    $('cxrenv').onclick=function(e){e.preventDefault();envoi(true);};
+    btn.onclick=function(){
+      if(inp.value.length!==6){err.className='cxerr';err.textContent='Saisissez les 6 chiffres du code.';inp.classList.add('ko');return;}
+      var mem=CAB||($('cxmem')&&$('cxmem').checked);
+      btn.disabled=true;btn.textContent='Vérification…';
+      poster0({action:'verifierCode',cabinet:CAB,qui:QUI,saisie:inp.value,memoriser:mem,appareil:navigator.userAgent}).then(function(r){
+        btn.disabled=false;btn.textContent='✓ Accéder à mon espace';
+        if(!r.ok){err.className='cxerr';err.textContent=r.erreur;inp.classList.add('ko');return;}
+        var cle=CAB?'aure_cabinet':CLE_JT;
+        try{(mem?localStorage:sessionStorage).setItem(cle,r.jeton);}catch(e){}
+        if(CAB)ID.jc=r.jeton;else ID.jeton=r.jeton;
+        document.body.classList.remove('encx');$('cx').style.display='none';charger();
+      }).catch(function(){btn.disabled=false;btn.textContent='✓ Accéder à mon espace';err.textContent='La vérification a échoué. Merci de réessayer.';});
+    };
+    envoi(false);
+  }
+  // Bouton « Se déconnecter » (rond aux initiales) ; sur écran tactile : 1er appui = bulle, 2e appui = déconnexion
+  $('rd').onclick=function(){
+    if(!ID.jeton&&!ID.jc)return; // avant l'activation de la connexion par code : le rond ne fait rien
+    var rd=$('rd');
+    if(window.matchMedia&&matchMedia('(hover: none)').matches&&!rd.classList.contains('vu')){rd.classList.add('vu');return;}
+    rd.classList.remove('vu');
+    var fin=function(){
+      try{localStorage.removeItem(CLE_JT);sessionStorage.removeItem(CLE_JT);localStorage.removeItem('aure_cabinet');sessionStorage.removeItem('aure_cabinet');}catch(e){}
+      delete ID.jeton;delete ID.jc;
+      ['chargement','formulaire','merci','accueil','social','embauche','bilan','cdd'].forEach(function(k){if($(k))$(k).style.display='none';});
+      document.body.classList.add('encx');window.scrollTo(0,0);
+      $('cx').innerHTML='<div class="cxfin"><div class="cxcad">🔒</div><div class="cxft">Vous êtes déconnecté</div>'+
+        '<p>Votre espace '+esc($('societe').textContent)+' est fermé sur cet appareil.<br>Un nouveau code vous sera demandé à la prochaine visite.</p>'+
+        '<button type="button" class="cxok cxrec" id="cxrec">✓ Se reconnecter</button></div>';
+      $('cx').style.display='';$('cxrec').onclick=function(){location.reload();};
+    };
+    var o=avecId({action:'deconnecter'});
+    fetch(X,{method:'POST',body:JSON.stringify(o),keepalive:true}).catch(function(){}); // suppression de la ligne CONNEXIONS en arrière-plan
+    fin();
+  };
+  document.addEventListener('click',function(e){var rd=$('rd');if(rd&&!rd.contains(e.target))rd.classList.remove('vu');});
+  function poster0(o){return fetch(X,{method:'POST',body:JSON.stringify(avecId(o))}).then(function(r){return r.json();});}
   function zoneSoc(texte,petit){return '<label class="zone'+(petit?' petite':'')+'"><input type="file" multiple accept="'+ACC_SOC+'">'+NUAGE_OR+'<span class="ztxt">'+texte+'<br><b>ou sélectionnez un fichier</b></span></label><ul class="fichiers"></ul>';}
   var ENVOIS=[];
   function blocSoc(cat,ic,titre,sous,corps){
