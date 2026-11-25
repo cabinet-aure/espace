@@ -280,6 +280,7 @@
   .hj{border-top:1px dashed #eee;padding:2px 0}.hj b{display:inline-block;width:44px}
   .htot{margin-top:6px;font-size:14px;border-radius:8px;padding:8px 12px;background:#eef6ef;color:#2e6b3a;font-weight:bold}
   .htot.bas{background:#fdecea;color:#b71c1c}
+  .htot.vide{background:#f3f3f3;color:#666;font-weight:normal}
   .site{border:1px solid #f0d5cb;border-radius:10px;padding:8px 12px;margin-bottom:8px;background:#fffaf8}
   .site .stit{font-weight:bold;color:#d84315;font-size:14px;margin-bottom:2px}.site .stit a{font-weight:normal;font-size:12.5px;color:#888;margin-left:8px}
   .addSite{display:inline-block;font-weight:bold;color:#d84315;font-size:14px;margin:2px 0 6px}
@@ -1615,7 +1616,8 @@ window.initConv=function(conv){
     if(!n){ms.classList.add('cache');return;}
     var h=parseFloat(String(document.getElementById('e_heures').value).replace(',','.'))||35;
     var mensBase=Math.max(n.min,(g.base===35&&!g.sansSmic)?SMIC:0);
-    var minH=mensBase/(g.base*52/12), minM=g.base===35?minH*h*52/12:mensBase;
+    var hEff=h>35?35+(h-35)*1.25:h; // heures supplémentaires majorées de 25 %
+    var minH=mensBase/(g.base*52/12), minM=g.base===35?minH*hEff*52/12:mensBase;
     var en=document.getElementById('e_salaireEn').value,v=parseFloat(String(document.getElementById('e_montant').value).replace(/\s/g,'').replace(',','.'));
     var txt,bas=false,modTxt='';
     if(CLIENT.secteur==='Syntec'){
@@ -1633,7 +1635,7 @@ window.initConv=function(conv){
       else if(/négociateur VRP/.test(document.getElementById('e_horaires').value)&&fhv){var sx=fhv.querySelector('select');if(sx)sx.dispatchEvent(new Event('change',{bubbles:true}));}}
     if(en==='Taux horaire brut'){txt='Taux horaire minimum pour ce niveau : '+eur(minH)+' brut';bas=v>0&&v<minH-0.005;}
     if(g.m13)modTxt=(modTxt||'')+' (sur 13 mois, 13e mois en plus)';
-    if(en!=='Taux horaire brut'){txt='Salaire minimum pour ce niveau'+(modTxt||(g.base===35?' ('+String(h).replace('.',',')+' h par semaine)':''))+' : '+eur(minM)+' brut par mois';bas=v>0&&v<minM-0.005;}
+    if(en!=='Taux horaire brut'){txt='Salaire minimum pour ce niveau'+(modTxt||(g.base===35?' ('+String(h).replace('.',',')+' h par semaine'+(h>35?', heures supplémentaires majorées comprises':'')+')':''))+' : '+eur(minM)+' brut par mois';bas=v>0&&v<minM-0.005;}
     ms.textContent=(bas?'⚠ Salaire inférieur au minimum de la convention. ':'✔ ')+txt+'.';
     ms.classList.toggle('bas',bas);ms.classList.remove('cache');
   }
@@ -1663,6 +1665,13 @@ window.initConv=function(conv){
     var fhe=document.getElementById('e_heures');fhe.readOnly=true;fhe.style.background='#f3f3f3';
     fhe.closest('.f').style.display='none'; // le total calculé sous les horaires remplace ce champ
     fh.insertAdjacentHTML('afterend',
+      (CLIENT.secteur!=='Propreté'?'<div class="f large" id="f_duree"><span>Durée du travail</span><div class="choix">'+
+        '<label class="on"><input type="radio" name="duree" value="35" checked>Temps plein (35 h)</label>'+
+        '<label><input type="radio" name="duree" value="plus">Plus de 35 h</label>'+
+        '<label><input type="radio" name="duree" value="partiel">Temps partiel</label></div>'+
+        '<div id="d_plus" class="cache" style="margin-top:8px"><span style="display:block;font-weight:bold;font-size:14px;margin-bottom:6px">Heures par semaine</span><select id="e_hsup" style="width:auto;min-width:90px"><option value="36">36 h</option><option value="37">37 h</option><option value="38">38 h</option><option value="39" selected>39 h</option></select></div>'+
+        '<div class="htot cache" id="d_tot"></div>'+
+        '<div class="note" id="d_note" style="font-size:13px;color:#777;margin-top:6px">Horaires selon l’horaire collectif de l’entreprise : rien d’autre à indiquer.</div></div>':'')+
       '<div class="f large" id="f_hor"><span>Jours et horaires de travail</span>'+
       '<div class="jours">'+JC.map(function(j,i){return '<label><input type="checkbox" value="'+i+'"'+(i<5?' checked':'')+'>'+j+'</label>';}).join('')+'</div>'+
       '<div class="hcom">'+ligne('com')+'</div>'+
@@ -1672,7 +1681,7 @@ window.initConv=function(conv){
     var F=document.getElementById('f_hor');
     function setL(l,v){['h1','h2','h3','h4'].forEach(function(c,i){l.querySelector('.'+c).value=v[i];});}
     function getL(l){return ['h1','h2','h3','h4'].map(function(c){return l.querySelector('.'+c).value;});}
-    var HDEF={Bureau:['510','720','810','1020'],Chantiers:['480','720','780','960'],Proprete:['360','540','1020','1200']},hTouche=false;
+    var HDEF={Bureau:['510','720','810','1020'],Chantiers:['480','720','810','990'],Proprete:['360','540','1020','1200']},hTouche=false;
     var dernierLieu=CLIENT.secteur==='Propreté'?'Proprete':'Bureau';
     setL(F.querySelector('.hcom .hl'),HDEF[dernierLieu]);
     window.horDefaut=function(lieu){if(hTouche||!HDEF[lieu]||lieu===dernierLieu)return;dernierLieu=lieu;setL(F.querySelector('.hcom .hl'),HDEF[lieu]);calc();};
@@ -1688,7 +1697,25 @@ window.initConv=function(conv){
       box.innerHTML=jours().map(function(j){return '<div class="hj" data-j="'+j+'"><b>'+JC[j]+'</b> '+ligne(j)+'</div>';}).join('');
       box.querySelectorAll('.hj').forEach(function(d){setL(d.querySelector('.hl'),anc[d.dataset.j]||com);});
     }
+    function special(){var st=radioV('statut');return (CLIENT.secteur==='Syntec'&&st==='Cadre'&&/^[23]$/.test(radioV('modalite')))||(CLIENT.secteur==='Immobilier'&&st==='NegoVRP');}
     function calc(){
+      var FD=document.getElementById('f_duree');
+      if(FD){var du=radioV('duree')||'35',sp=special();
+        FD.style.display=sp?'none':'';
+        FD.querySelectorAll('.choix label').forEach(function(l){l.classList.toggle('on',l.querySelector('input').checked);});
+        document.getElementById('d_plus').classList.toggle('cache',du!=='plus');
+        F.classList.toggle('cache',du!=='partiel');
+        if(du==='partiel'&&!calc.vuPartiel){calc.vuPartiel=true;F.querySelectorAll('.jours input').forEach(function(x){x.checked=false;});} // temps partiel : le client coche ses jours
+        document.getElementById('d_note').classList.toggle('cache',du==='partiel');
+        var dt=document.getElementById('d_tot');dt.classList.toggle('cache',du!=='plus');
+        if(sp)return;
+        if(du!=='partiel'){
+          var hp=du==='plus'?+document.getElementById('e_hsup').value:35;
+          dt.textContent='35 h + '+(hp-35)+' h supplémentaires par semaine, payées avec majoration de 25 %';
+          fhe.value=String(hp);document.getElementById('h_tot').className='htot';
+          document.getElementById('e_horaires').value=du==='plus'?hp+' heures par semaine (35 h + '+(hp-35)+' h supplémentaires), selon l’horaire collectif de l’entreprise':'Temps plein : 35 heures par semaine, selon l’horaire collectif de l’entreprise';
+          fhe.dispatchEvent(new Event('input',{bubbles:true}));return;}
+      }
       var sc=document.getElementById('h_sansCoupure').checked,diff=document.getElementById('h_diff').checked,js=jours();
       F.querySelectorAll('.apm').forEach(function(a){a.style.display=sc?'none':'';});
       F.querySelectorAll('.jours label').forEach(function(l){l.classList.toggle('on',l.querySelector('input').checked);});
@@ -1701,10 +1728,13 @@ window.initConv=function(conv){
       fhe.value=h?String(h):'';
       document.getElementById('e_horaires').value=txt?txt+', soit '+String(h).replace('.',',')+' heures par semaine':'';
       var el=document.getElementById('h_tot');
-      el.className='htot'+(err||!js.length?' bas':'');
-      el.textContent=!js.length?'⚠ Cochez au moins un jour.':err?'⚠ Vérifiez les horaires (une heure de fin est avant l’heure de début).':'Total : '+String(h).replace('.',',')+' h par semaine'+(h<35?' – temps partiel':h>35?' – dont '+String(Math.round((h-35)*100)/100).replace('.',',')+' h supplémentaires':' – temps plein');
+      var tp=!!FD&&h>=35; // temps partiel choisi : moins de 35 h
+      el.className='htot'+(FD&&!js.length?' vide':(err||!js.length||tp?' bas':''));
+      el.textContent=!js.length?(FD?'Cochez les jours travaillés, puis indiquez les horaires.':'⚠ Cochez au moins un jour.'):err?'⚠ Vérifiez les horaires (une heure de fin est avant l’heure de début).':tp?'⚠ Temps partiel : le total doit être inférieur à 35 h (actuellement '+String(h).replace('.',',')+' h).':'Total : '+String(h).replace('.',',')+' h par semaine'+(h<35?' – temps partiel':h>35?' – dont '+String(Math.round((h-35)*100)/100).replace('.',',')+' h supplémentaires':' – temps plein');
       fhe.dispatchEvent(new Event('input',{bubbles:true}));
     }
+    var FD0=document.getElementById('f_duree');if(FD0)FD0.addEventListener('change',function(){calc();});
+    document.getElementById('embauche').addEventListener('change',function(e){if(e.target.name==='statut'||e.target.name==='modalite')calc();});
     F.addEventListener('change',function(e){if(e.target.tagName==='SELECT')hTouche=true;if(e.target.closest('.jours')||e.target.id==='h_diff'){if(document.getElementById('h_diff').checked)construireJours();}calc();});
     calc();
   })();
@@ -1723,11 +1753,9 @@ window.initConv=function(conv){
     if(!a||!b)return 0;var d=(new Date(b)-new Date(a))/86400000+1;return d>0?d:0;}
   function essaiMax(){ // → {txt:'2 mois', liste:[…]} ou null (pas encore calculable) ; {cab:true} si fixée par le cabinet
     var st=radioV('statut'),ct=radioV('contrat'),nv=radioV('niveau');
-    if(!st||!ct||ct==='Apprentissage')return null;
-    var g=GRILLES[st];if(!g)return null;
-    if(g.cabinet||nv==='?')return {cab:true};
-    var n=g.niveaux.filter(function(x){return String(x.c)===nv;})[0];if(!n)return null;
-    if(ct==='CDD'){var j=dureeCdd();if(!j)return {attente:true};
+    if(!ct||ct==='Apprentissage')return null;
+    if(ct==='CDD'){ // CDD : durée fixée par la loi, quel que soit le statut ou le niveau
+      var j=dureeCdd();if(!j)return {attente:true};
       // 6 mois de calendrier : fin du CDD au plus tard la veille de (date d'embauche + 6 mois)
       var d1=new Date(document.getElementById('e_dateEmbauche').value),d2=new Date(document.getElementById('e_finCdd').value);
       var lim=new Date(d1);lim.setUTCMonth(lim.getUTCMonth()+6);lim.setUTCDate(lim.getUTCDate()-1); // dates saisies = minuit UTC
@@ -1736,6 +1764,10 @@ window.initConv=function(conv){
       if(mx<1)return {txt:'Pas de période d’essai',liste:[],aucune:true};
       var t=mx===14?'2 semaines':mx===7?'1 semaine':mx+' jour'+(mx>1?'s':'');
       return {txt:t,liste:mx>7?['1 semaine']:[],loi:true};}
+    if(!st)return null;
+    var g=GRILLES[st];if(!g)return null;
+    if(g.cabinet||nv==='?')return {cab:true};
+    var n=g.niveaux.filter(function(x){return String(x.c)===nv;})[0];if(!n)return null;
     if(!n.essai)return {cab:true};
     if(/cabinet/i.test(n.essai))return {cab:true};
     var m=parseInt(n.essai,10)||0;
