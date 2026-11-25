@@ -968,7 +968,9 @@
         '<button type="button" class="cxok cxrec" id="cxrec">✓ Se reconnecter</button></div>';
       $('cx').style.display='';$('cxrec').onclick=function(){location.reload();};
     };
-    poster0({action:'deconnecter'}).then(fin,fin);
+    var o=avecId({action:'deconnecter'});
+    fetch(X,{method:'POST',body:JSON.stringify(o),keepalive:true}).catch(function(){}); // suppression de la ligne CONNEXIONS en arrière-plan
+    fin();
   };
   document.addEventListener('click',function(e){var rd=$('rd');if(rd&&!rd.contains(e.target))rd.classList.remove('vu');});
   function poster0(o){return fetch(X,{method:'POST',body:JSON.stringify(avecId(o))}).then(function(r){return r.json();});}
