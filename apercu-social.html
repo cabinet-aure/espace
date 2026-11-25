@@ -1123,7 +1123,8 @@
   })();
   function valEmb(){
     var err=[],v={},premier=null;
-    function marque(el,lib){var f=el.closest('.f')||el;f.classList.add('err');if(!premier)premier=f;err.push(lib);}
+    function marque(el,lib){var f=el.closest('.f')||el;if(el.id==='e_emploi'&&$('f_emploiL'))f=$('f_emploiL'); // liste d'emplois par statut : c'est elle qu'on encadre
+      f.classList.add('err');if(!premier)premier=f;err.push(lib);}
     function lit(id,lib){var el=$('e_'+id),x=String(el.value).trim();v[id]=x;if(!x&&lib&&!el.closest('.cache'))marque(el,lib);return x;}
     lit('nom','nom');lit('prenom','prénom');lit('adresse','adresse');var cp=lit('cp','code postal');if(cp&&!/^\d{5}$/.test(cp))marque($('e_cp'),'code postal (5 chiffres)');lit('ville','ville');
     if(v.adresse&&v.cp&&v.ville)v.adresse=v.adresse+', '+v.cp+' '+v.ville.toUpperCase();delete v.cp;delete v.ville;
@@ -1570,7 +1571,7 @@ window.initConv=function(conv){
     :CLIENT.secteur==='Immobilier'?[['Employe','Employé'],['Maitrise','Agent de maîtrise'],['Cadre','Cadre'],['NegoVRP','Négociateur VRP'],['NegoNon','Négociateur non VRP']]
     :[['Ouvrier','Ouvrier'],['ETAM','ETAM (employé, technicien, agent de maîtrise)'],['Cadre','Cadre']];
   function eur(x){return x.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})+' EUR';}
-  document.body.insertAdjacentHTML('afterbegin','<div class="testbandeau">PAGE DE TEST – rien n’est envoyé au cabinet</div>');
+  document.body.insertAdjacentHTML('afterbegin','<div class="testbandeau">PAGE DE TEST – non visible par les clients</div>');
   // 1. bannière 48 h
   var cons=document.querySelector('#embauche .consigne');
   cons.insertAdjacentHTML('beforebegin','<div class="b48"><b>⏱ À remplir au moins 48 heures avant l’embauche</b> : la déclaration d’embauche doit être faite avant l’arrivée du salarié.</div>');
@@ -1995,9 +1996,7 @@ window.initConv=function(conv){
     FS.addEventListener('input',function(){calcP();});
     ajouterSite();
   }
-  // 4. envoi bloqué sur la page de test
-  var b=document.getElementById('envoyerEmb');
-  b.onclick=function(){if(!b.jourJOk&&window.alerteJourJ&&window.alerteJourJ(b))return;b.jourJOk=false;document.getElementById('erreurEmb').textContent='Page de test : rien n’a été envoyé.';};
+  // 4. envoi réel depuis la page de test (test grandeur nature, 25/11/2026)
 };
 </script>
 </body>
