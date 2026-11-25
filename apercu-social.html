@@ -1181,7 +1181,7 @@
     var h=($('e_heureArrivee').value||'').trim(),d=dateEmb();
     var jour=d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
     var m=document.createElement('div');m.className='mjj';
-    m.innerHTML='<div class="mjjB"><div class="mjjT">⛔ '+JJ[e].t+'</div>'+
+    m.innerHTML='<div class="mjjB"><div class="mjjT"><svg width="22" height="22" viewBox="0 0 24 24" style="vertical-align:-4px;margin-right:8px"><circle cx="12" cy="12" r="11" fill="#fff"/><rect x="6" y="10.2" width="12" height="3.6" rx="1.2" fill="#c62828"/></svg>'+JJ[e].t+'</div>'+
       '<div class="mjjC">Prise de poste : <b>'+jour+(h?' à '+h:'')+'</b>.<br><br>'+JJ[e].fen+'</div>'+
       '<div class="mjjA"><button type="button" class="mjjM">Modifier la date</button><button type="button" class="mjjE">Envoyer malgré tout</button></div></div>';
     document.body.appendChild(m);
