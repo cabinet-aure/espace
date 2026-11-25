@@ -94,7 +94,12 @@
   .cxlib{font-size:11px;letter-spacing:1.5px;color:#8a6d1c;font-weight:bold}
   .cxsoc{font-size:21px;font-weight:bold;color:#3d3216;line-height:1.25}
   .cxsir{font-size:12.5px;color:#6b6b6b;margin-top:2px}
-  .cxmsg{font-size:14.5px;line-height:1.5;margin:0 0 14px}.cxmsg>b{color:#8a6d1c}
+  .cxenv{border:2px solid #b8961e;background:#f8f4e8;border-radius:10px;padding:12px 14px;display:flex;gap:12px;align-items:center;margin:0 0 16px;font-size:14.5px;line-height:1.45}
+  .cxenv .cxt{color:#8a6d1c}.cxsp{font-size:13px;color:#6b6b6b}
+  .cxic{font-size:28px;line-height:1;flex:0 0 auto;display:inline-block}
+  .cxenv.anim{animation:cxeclat 1.6s ease-out 2}.cxenv.anim .cxic{animation:cxvol .9s ease-in-out 3}
+  @keyframes cxeclat{0%{background:#ffe9a8;box-shadow:0 0 0 0 rgba(184,150,30,.55)}60%{box-shadow:0 0 0 10px rgba(184,150,30,0)}100%{background:#f8f4e8;box-shadow:0 0 0 0 rgba(184,150,30,0)}}
+  @keyframes cxvol{0%{transform:translateY(0)}25%{transform:translateY(-6px) rotate(-8deg)}50%{transform:translateY(0)}75%{transform:translateY(-3px) rotate(5deg)}100%{transform:translateY(0)}}
   .cxl{display:block;font-size:13px;color:#4a4a4a;font-weight:bold}
   #cxcode{display:block;width:100%;box-sizing:border-box;margin:6px 0 4px;letter-spacing:8px;font-size:22px;text-align:center;border:2px solid #e6dcc0;border-radius:8px;height:50px;font-family:Arial,sans-serif;outline:none}
   #cxcode:focus{border-color:#b8961e}#cxcode.ko{border-color:#c0392b}
@@ -102,7 +107,7 @@
   .cxm{display:flex;gap:8px;align-items:center;font-size:14px;margin-bottom:16px;cursor:pointer}.cxm input{accent-color:#8a6d1c;width:17px;height:17px}
   .cxok{width:100%;background:#8a6d1c;color:#fff;border:0;border-bottom:3px solid #5e4a12;border-radius:8px;padding:14px;font-size:16px;font-weight:bold;cursor:pointer}
   .cxok:disabled{opacity:.7;cursor:wait}
-  .cxpied{font-size:13px;color:#666;margin-top:12px;text-align:center}.cxpied a{color:#8a6d1c;font-weight:bold}
+  .cxpied{font-size:13px;color:#666;margin-top:12px;text-align:center;line-height:1.6}.cxpied a{color:#8a6d1c;font-weight:bold}
   @media(max-width:600px){#cx{padding:18px 16px 22px}.cxsoc{font-size:18px}}
   .attente:before{content:"⏳";display:inline-block;width:1.2em;height:1.2em;line-height:1.2em;text-align:center;vertical-align:-.25em;transform-origin:50% 50%;animation:sab 3s ease-in-out infinite;margin-right:.3em}
   .sab{display:inline-block;width:1.2em;height:1.2em;line-height:1.2em;text-align:center;vertical-align:-.25em;transform-origin:50% 50%;animation:sab 3s ease-in-out infinite}
@@ -899,21 +904,22 @@
       '<div class="cxid"><div class="cxini">'+esc(CAB?'CA':initiales(d.societe))+'</div><div>'+
       '<div class="cxlib">'+(CAB?'ACCÈS CABINET':'ESPACE CLIENT')+'</div><div class="cxsoc">'+esc(d.societe)+'</div>'+
       '<div class="cxsir">SIREN '+esc(sirenLisible(d.siren))+'</div></div></div>'+
-      '<p class="cxmsg"><b>🔒 Connexion sécurisée.</b> <span id="cxenv">Envoi du code de connexion à <b>'+esc(dest)+'</b>…</span></p>'+
+      '<div class="cxenv" id="cxbox"><span class="cxic" aria-hidden="true">✉️</span><div><b class="cxt" id="cxt">Envoi du code en cours…</b><br>Consultez votre boîte mail <b>'+esc(dest)+'</b><br><span class="cxsp">Pensez à vérifier les courriers indésirables.</span></div></div>'+
       '<label class="cxl" for="cxcode">Code reçu par mail (6 chiffres)</label>'+
       '<input id="cxcode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="••••••">'+
       '<div class="cxerr" id="cxerr"></div>'+
       (CAB?'':'<label class="cxm"><input type="checkbox" id="cxmem" checked> Se souvenir de cet appareil pendant 90 jours</label>')+
       '<button type="button" class="cxok" id="cxok">✓ Accéder à mon espace</button>'+
-      '<div class="cxpied">Pas reçu ? <a href="#" id="cxrenv">Renvoyer un code</a> · valable 15 minutes</div></div>';
+      '<div class="cxpied">Vous n’avez pas reçu le code ? <a href="#" id="cxrenv">Renvoyer un code</a><br>Le code est valable 15 minutes.</div></div>';
     $('cx').style.display='';
     var inp=$('cxcode'),err=$('cxerr'),btn=$('cxok');
     function envoi(renvoi){
       err.textContent='';err.className='cxerr';
       poster0({action:'envoyerCode',cabinet:CAB,renvoi:!!renvoi}).then(function(r){
         if(!r.ok){err.textContent=r.erreur;return;}
-        $('cxenv').innerHTML='Un code de connexion vient d’être envoyé à <b>'+esc(dest)+'</b>.';
-        if(renvoi){err.className='cxerr vert';err.textContent='Nouveau code envoyé.';}
+        var h=new Date(),hm=h.getHours()+'h'+('0'+h.getMinutes()).slice(-2);
+        $('cxt').textContent=(renvoi?'Nouveau code envoyé à ':'Code envoyé à ')+hm;
+        var bx=$('cxbox');bx.classList.remove('anim');void bx.offsetWidth;bx.classList.add('anim');
         inp.focus();
       }).catch(function(){err.textContent='L’envoi du code a échoué. Merci de réessayer.';});
     }
