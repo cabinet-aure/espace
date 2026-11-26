@@ -1258,7 +1258,7 @@
     b.innerHTML='<span class="rond"></span>'+(texte||'Envoi en cours…');
     var a=b.previousElementSibling;
     if(!a||!a.classList||!a.classList.contains('patiente')){
-      a=document.createElement('div');a.className='patiente'+(b.closest('#bilan')?' pe':(b.closest('#social,#embauche,#cdd')?'':' vert'));
+      a=document.createElement('div');a.className='patiente'+(b.closest('#bilan')?' pe':(b.closest('#social,#embauche,#cdd,#paie')?'':' vert'));
       a.innerHTML='<h3><span class="sab">⏳</span> Envoi en cours, veuillez patienter jusqu’au message de confirmation</h3><div class="barre"><i></i></div><div class="n"></div>';
       b.parentNode.insertBefore(a,b);
       a.scrollIntoView({behavior:'smooth',block:'center'});
