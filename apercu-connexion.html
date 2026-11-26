@@ -1147,7 +1147,7 @@
     'Autre':'Précisez la situation dans le cadre ci-dessous ; document facultatif.'};
   function champSal(cat){
     var liste=SALS.length?'<label class="f large" style="margin:0"><span>Salarié</span><select class="choixsal"><option value="">Choisir un salarié…</option>'+
-      SALS.map(function(x,i){return '<option value="'+i+'">'+esc(nomMaj(x.nom)+' '+preMaj(x.prenom))+'</option>';}).join('')+'<option value="autre">Un salarié qui n’est pas dans la liste</option></select></label>':'';
+      SALS.map(function(x,i){return '<option value="'+i+'">'+esc(nomMaj(x.nom)+' '+preMaj(x.prenom))+'</option>';}).join('')+'<option value="autre">Autre salarié non présent dans la liste</option></select></label>':'';
     var cache=SALS.length?' style="margin:0;display:none"':' style="margin:0"';
     return '<div class="grille" style="margin-bottom:10px">'+liste+'<label class="f nomlibre"'+cache+'><span>Nom du salarié</span><input class="sal" type="text" maxlength="40" placeholder="ex. : DUPONT" autocomplete="off"></label>'+
       '<label class="f nomlibre"'+cache+'><span>Prénom du salarié</span><input class="pre" type="text" maxlength="40" placeholder="ex. : Jean" autocomplete="off"></label>'+
@@ -1445,7 +1445,7 @@
         return '<button type="button" class="psal'+(f&&f.valide?' fait':f?' ouv':'')+'" data-i="'+i+'">'+(f&&f.valide?'✓ ':'')+esc(nomMaj(x.nom)+' '+preMaj(x.prenom))+'</button>';}).join('')+'</div>';
     }
     $('p_sals').innerHTML=hs;
-    $('p_ajout').textContent=PSAL.length?'+ Un salarié qui n’est pas dans la liste':'+ Ajouter un salarié';
+    $('p_ajout').textContent=PSAL.length?'+ Autre salarié non présent dans la liste':'+ Ajouter un salarié';
     var sel=$('p_sals').querySelector('.psel');
     if(sel)sel.onchange=function(){if(sel.value==='')return;var o=document.createElement('button');o.setAttribute('data-i',sel.value);ouvrirSal(o);};
     function ouvrirSal(b){
