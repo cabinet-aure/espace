@@ -382,6 +382,13 @@
   .psals{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
   .psal{background:#fff;border:1px solid #d84315;color:#d84315;border-radius:18px;padding:8px 14px;font:bold 14px Arial,Helvetica,sans-serif;cursor:pointer}
   .psal:hover{background:#fff3ee}.psal.fait{background:#eef6ef;border-color:#2e6b3a;color:#2e6b3a}.psal.ouv{background:#d84315;color:#fff}
+  .spaie{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#fff;border:1px solid #e6e6e6;border-left:4px solid #d84315;border-radius:10px;padding:14px 16px;margin:0 0 14px}
+  .spaie .sptxt{flex:1;min-width:200px}.spaie .stit{font-weight:bold;font-size:16px;color:#222}
+  .slim{font-size:13px;color:#d84315;font-weight:bold;margin-top:3px}.sarr{font-size:12px;color:#8a3b12;margin-top:3px}
+  .sgrille{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+  .stu{display:flex;flex-direction:column;gap:6px;background:#fff;border:1px solid #e6e6e6;border-radius:10px;padding:14px;text-decoration:none;color:#222;min-height:120px;transition:background .15s,border-color .15s}
+  .stu:hover{background:#f8f4e8;border-color:#e6dcc0}
+  .stu .stit{font-weight:bold;font-size:15px}.stu .sso{font-size:13px;color:#666}.stu .set{margin-top:auto;font-size:13px;color:#888}
   .psel{width:100%;max-width:420px;padding:10px;border:2px solid #d84315;border-radius:8px;font-size:15px;margin:0 0 14px;background:#fff}
   .pslib{font-size:14px;color:#555;margin:0 0 8px}
   .fiche .ferme{position:absolute;top:8px;right:10px;background:none;border:0;color:#999;font-size:18px;cursor:pointer}
@@ -447,8 +454,9 @@
   </div>
   <div id="social" style="display:none">
    <div class="corps soc">
+    <a class="retourS" id="retourSocSeul" href="#" style="display:none">← Retour à la rubrique Social</a>
     <div class="rub or"><h2>👥 Social</h2></div>
-    <div class="consigne" style="font-size:14px;color:#666">Déposez chaque document dans la zone qui correspond, puis cliquez sur « Envoyer mes documents ». <span class="qaide">Besoin d’aide ? Cliquez sur <span class="qrond">?</span></span></div>
+    <div class="consigne" id="consSoc" style="font-size:14px;color:#666">Déposez chaque document dans la zone qui correspond, puis cliquez sur « Envoyer mes documents ». <span class="qaide">Besoin d’aide ? Cliquez sur <span class="qrond">?</span></span></div>
     <div id="blocsSoc"></div>
    </div>
    <div class="actions"><button class="btn or" id="envoyerSoc" disabled>✔ Envoyer mes documents</button><div class="erreur" id="erreurSoc"></div></div>
@@ -735,11 +743,12 @@
       $('titre').textContent=aFaire?((d.periode||'').replace(/^Relevés/i,'Documents bancaires')||'Documents bancaires'):'Documents bancaires';
       if(d.dateLimite&&aFaire){$('dateLimite').textContent=d.dateLimite;$('limite').style.display='';}else{$('limite').style.display='none';}
       $('rien').innerHTML='✔ Tout est à jour.<span class="pd calL" style="display:flex;align-items:center;margin-top:8px">'+calendrier(46)+'<span>Prochaine demande le <b>'+prochaineDemande()+'</b>, par e-mail.</span></span>';
-      if(!SOCIAL_OUVERT&&/^(social|cdd|embauche|paie)$/.test(VUE))VUE='';
+      if(!SOCIAL_OUVERT&&/^(social|cdd|embauche|paie|arret|depart|autre)$/.test(VUE))VUE='';
       [].forEach.call(document.querySelectorAll('.retour'),function(a){a.href=lienVue(C?'':'accueil');a.style.display=(VUE&&VUE!=='accueil')?'inline-block':'none';});
       if(VUE==='banque'){afficher(d.documents||[],d.attente||[]);$('formulaire').style.display='';}
       else if(VUE==='social'){afficherSocial(d);$('social').style.display='';}
       else if(VUE==='bilan'&&d.bilan){afficherBilan(d.bilan);$('bilan').style.display='';}
+      else if(/^(arret|depart|autre)$/.test(VUE)){afficherSocial(d,VUE);$('social').style.display='';}
       else if(VUE==='paie'){$('retourSocPaie').href=lienVue('social');afficherPaie(d);$('paie').style.display='';}
       else if(VUE==='cdd'){$('retourSocCdd').href=lienVue('social');afficherCdd(d.cdd||[]);$('cdd').style.display='';}
       else if(VUE==='embauche'){$('retourSoc').href=lienVue('social');if(window.initConv)window.initConv(d.convention);lireBrouillon();majEmb();$('embauche').style.display='';}
@@ -1122,8 +1131,11 @@
       TYPES[cat].map(function(t){return '<option>'+t+'</option>';}).join('')+'</select></label>'+
       (cat==='arret'?'<label class="f" style="margin:0"><span class="libdat">Date de début de l’arrêt</span><input class="dat" type="date"></label><label class="f" style="margin:0"><span>Date de fin de l’arrêt</span><input class="datf" type="date"></label>':'')+'</div>';
   }
-  function afficherSocial(d){
+  function afficherSocial(d,seul){
     var sal=d.paie!=='X',h='';ENVOIS=d.envois||[];
+    $('retourSocSeul').style.display=seul?'':'none';$('retourSocSeul').href=lienVue('social');
+    $('consSoc').style.display=seul?'':'none';$('envoyerSoc').parentNode.style.display=seul?'':'none';
+    if(!seul){tuilesSoc(d,sal);return;}
     h+=blocSoc('embauche','✍️','Embauche','Un nouveau salarié ? Transmettez-nous ses informations',
       '<a class="btn or petit" href="'+lienVue('embauche')+'">✓ Nous informer d’une embauche</a>');
     var cdds=d.cdd||[];
@@ -1151,7 +1163,8 @@
     }
     h+=blocSoc('autre','📄','Autre document social','Mutuelle, médecine du travail, courrier de l’URSSAF…',
       zoneSoc('Faites glisser ici vos autres documents')+'<textarea class="prec" placeholder="Précision éventuelle (facultatif)"></textarea>');
-    $('blocsSoc').innerHTML=h;
+    var tmp=document.createElement('div');tmp.innerHTML=h;var gard=tmp.querySelector('[data-cat="'+seul+'"]');
+    $('blocsSoc').innerHTML=gard?gard.outerHTML:'';
     [].forEach.call($('blocsSoc').querySelectorAll('.hist'),function(b){
       b.onclick=function(){var hi=b.closest('.banque').querySelector('.histo');var o=!hi.classList.contains('ouvert');hi.classList.toggle('ouvert',o);b.classList.toggle('ouvert',o);};
     });
@@ -1165,6 +1178,25 @@
     if($('p_rien'))$('p_rien').onclick=function(){envoyerPaie(true,this);};
     $('envoyerSoc').lot=null;$('erreurSoc').textContent='';
     majSoc();
+  }
+  function tuilesSoc(d,sal){
+    var h='',cdds=d.cdd||[];
+    if(sal){
+      var pm=d.paieMois||moisPaie(),pe=d.paieEnvoi,arr=d.arretsMois||[],st;
+      if(pe)st='<div class="ptransmis" style="margin:4px 0 0">✓ Transmis le '+esc(pe.date)+(pe.rien?' : rien à signaler':'')+'<a href="'+lienVue('paie')+'">Modifier</a></div>';
+      else st='<div class="slim">À envoyer avant le '+esc(d.paieLimite||finMois())+'</div>'+(arr.length?'<div class="sarr">'+arr.length+(arr.length>1?' arrêts déposés':' arrêt déposé')+' ce mois-ci : déjà pris en compte</div>':'');
+      h+='<div class="spaie"><div class="pastille" style="background:'+OR+';font-size:20px">📋</div><div class="sptxt"><div class="stit">Éléments de paie de '+esc(pm)+'</div>'+st+'</div>'+
+        (pe?'':'<div class="pbtns" style="margin:0"><button type="button" class="pbtn" id="p_rien" style="--pc:#2e6b3a;--pf:#eef6ef"><span class="pr">✓</span>'+(arr.length?'Rien d’autre à signaler':'Rien à signaler')+'</button>'+
+          '<a class="pbtn" href="'+lienVue('paie')+'" style="--pc:#d84315;--pf:#fff3ee"><span class="pr">+</span>Signaler des éléments</a></div>')+'</div>';
+    }
+    function tu(v,ic,t,so,etat){return '<a class="stu" href="'+lienVue(v)+'"><div class="pastille" style="background:'+OR+';font-size:20px">'+ic+'</div><div class="stit">'+t+'</div><div class="sso">'+so+'</div><div class="set">'+etat+'</div></a>';}
+    var proches=cdds.filter(function(x){var j=joursAvant(x.fin);return j>=0&&j<=15;});
+    h+='<div class="sgrille">'+tu('embauche','✍️','Embauche','Un nouveau salarié','→ Remplir le formulaire');
+    if(sal||cdds.length)h+=tu('cdd','🔁','Renouvellement de CDD','Prolonger un CDD en cours',proches.length?'<span style="color:#c0392b">⚠ '+proches.length+' CDD se termine'+(proches.length>1?'nt':'')+' bientôt</span>':cdds.length?'→ '+cdds.length+' CDD en cours':'Aucun CDD en cours');
+    if(sal){h+=tu('arret','🩺','Arrêt de travail','Maladie, accident, prolongation…','→ Déposer un arrêt');h+=tu('depart','🚪','Départ','Démission, fin de CDD, rupture…','→ Signaler un départ');}
+    h+=tu('autre','📄','Autre document social','Mutuelle, médecine du travail…','→ Déposer un document')+'</div>';
+    $('blocsSoc').innerHTML=h;szones=[];
+    if($('p_rien'))$('p_rien').onclick=function(){envoyerPaie(true,this);};
   }
   // Zone de dépôt générique (Social et Embauche)
   function brancherZone(d,cb,err){
