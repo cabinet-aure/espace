@@ -556,7 +556,7 @@
   var SOCIAL_OUVERT=true;
   // Démonstration (page de test seulement) : ?demo=1 affiche des données fictives, rien n'est envoyé
   var DEMO=P.get('demo')==='1'?{ok:true,societe:'SOCIÉTÉ EXEMPLE (démonstration – données fictives)',siren:'',mail:'',documents:[],attente:[],envois:[],cdd:[],paie:'O',
-    paieMois:'décembre 2026',paieLimite:'24/12/2026',paieEnvoi:null,
+    paieMois:'décembre 2026',paieLimite:'31/12/2026',paieEnvoi:null,
     salaries:[{prenom:'Paul',nom:'MARTIN'},{prenom:'Sophie',nom:'BERNARD'},{prenom:'Karim',nom:'BENALI'},{prenom:'Julie',nom:'PETIT'}],
     arretsMois:[{prenom:'Paul',nom:'MARTIN',type:'Maladie',du:'03/12/2026',au:'10/12/2026',depose:'04/12/2026'}]}:null;
   function lienVue(v){var q=new URLSearchParams(C?{c:C}:{s:S,k:K});if(P.get('demo')==='1')q.set('demo','1');if(v)q.set('r',v);return '?'+q.toString();}
@@ -1130,7 +1130,7 @@
     }
     if(sal){
       var pm=d.paieMois||moisPaie(),pe=d.paieEnvoi,arr=d.arretsMois||[],cp='';
-      cp+='<div class="pmois">Éléments de <b>'+esc(pm)+'</b>'+(d.paieLimite?', à transmettre avant le <b>'+esc(d.paieLimite)+'</b>':'')+'</div>';
+      cp+='<div class="pmois">Éléments de <b>'+esc(pm)+'</b>'+', à transmettre avant le <b>'+esc(d.paieLimite||finMois())+'</b>'+'</div>';
       if(pe)cp+='<div class="ptransmis">✓ Transmis au cabinet le '+esc(pe.date)+(pe.rien?' : rien à signaler':'')+'<a href="'+lienVue('paie')+'">Modifier</a></div>';
       else{
         if(arr.length)cp+='<div class="parr">'+arr.length+(arr.length>1?' arrêts déposés':' arrêt déposé')+' ce mois-ci : déjà pris en compte.</div>';
@@ -1263,6 +1263,7 @@
 
   // ===================== ÉLÉMENTS DE PAIE DU MOIS =====================
   var MOIS_FR=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+  function finMois(){var a=new Date(),f=new Date(a.getFullYear(),a.getMonth()+1,0);return fr(f);}
   function moisPaie(){var a=new Date();return MOIS_FR[a.getMonth()]+' '+a.getFullYear();}
   // t : h (heures), j (jours), nb (nombre), eur (montant), prime (montant net/brut), dates (du… au… inclus), txt (texte libre)
   var PP=[{k:'hs',l:'Heures sup.',t:'h'},{k:'prime',l:'Prime',t:'prime'},{k:'maladie',l:'Maladie',t:'dates'},{k:'conges',l:'Congés',t:'dates'},{k:'acompte',l:'Acompte',t:'eur'},{k:'paniers',l:'Paniers',t:'nb'}];
