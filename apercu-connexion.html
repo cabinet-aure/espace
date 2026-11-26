@@ -526,7 +526,6 @@
    <div class="corps soc">
     <a class="retourS" id="retourSocPaie" href="#">← Retour à la rubrique Social</a>
     <div class="pbandeau" id="p_titre">Éléments de paie</div>
-    <div class="consigne" style="font-size:14px;color:#666">Ce mois-ci, un salarié a fait des heures en plus, a eu une prime ou a été absent ? Cliquez sur son nom. Pour les autres, ne faites rien.</div>
     <div id="p_sals"></div>
     <div id="p_fiches"></div>
     <button type="button" class="ajsal" id="p_ajout">+ Signaler un salarié</button>
@@ -1345,7 +1344,7 @@
     $('p_fiches').innerHTML=h;
     var hs='';
     if(PSAL.length){
-      hs='<div class="pslib">Vos salariés :</div><div class="psals">'+PSAL.map(function(x,i){var f=trouver(x.prenom,x.nom);
+      hs='<div class="pslib">Cliquez sur le salarié concerné :</div><div class="psals">'+PSAL.map(function(x,i){var f=trouver(x.prenom,x.nom);
         return '<button type="button" class="psal'+(f&&f.valide?' fait':f?' ouv':'')+'" data-i="'+i+'">'+(f&&f.valide?'✓ ':'')+esc(nomMaj(x.nom)+' '+preMaj(x.prenom))+'</button>';}).join('')+'</div>';
     }
     $('p_sals').innerHTML=hs;
