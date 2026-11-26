@@ -431,7 +431,9 @@
   .pedit{border:2px solid #d84315;border-radius:8px;padding:10px 12px;margin:8px 0 0;display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:14px;background:#fffaf8}
   .pedit input{padding:7px 8px;border:1px solid #ccc;border-radius:6px;font-size:15px;width:110px}.pedit input[type=date]{width:150px}.pedit input.txt{width:260px}
   .pedit button{background:#d84315;color:#fff;border:0;border-radius:6px;padding:7px 14px;font-weight:bold;cursor:pointer}
-  .pedit .nb{display:inline-flex;border:1px solid #ccc;border-radius:6px;overflow:hidden}.pedit .nb label{padding:6px 10px;cursor:pointer}.pedit .nb input{display:none}.pedit .nb label.on{background:#d84315;color:#fff}
+  .pedit .nb{display:inline-flex;gap:6px}.pedit .nb label{padding:5px 14px;cursor:pointer;border:1.5px solid #d84315;color:#d84315;border-radius:16px;font-weight:bold;font-size:13px;background:#fff}.pedit .nb input{display:none}.pedit .nb label.on{background:#d84315;color:#fff}.pedit .nb label.manq{border-color:#c62828}
+  .pedit .perr{width:100%;color:#c62828;font-weight:bold;font-size:13px}.pedit .perr:empty{display:none}
+  .pedit .emul{width:100%;display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px}.pedit .emul label{display:flex;flex-direction:column;align-items:center;font-size:12px;color:#555;gap:3px}.pedit .emul input{width:100%;text-align:center;box-sizing:border-box}
   .plus{background:none;border:0;color:#d84315;font-size:14px;cursor:pointer;margin:10px 0 0;padding:0;text-decoration:underline}
   .pgr{margin:10px 0 0}.pgr .gt{font-size:12px;color:#777;text-transform:uppercase;letter-spacing:.5px;margin:8px 0 4px}
   .fpied{display:flex;justify-content:flex-end;gap:10px;margin:12px 0 0}.fpied .fann{background:#fff!important;color:#555!important;border:1px solid #bdbdbd!important}.fpied .fann:hover{background:#f3f3f3!important}.fpied button{background:#2e6b3a;color:#fff;border:0;border-radius:6px;padding:8px 16px;font-weight:bold;cursor:pointer}
@@ -1381,12 +1383,12 @@
   function finMois(){var a=new Date(),f=new Date(a.getFullYear(),a.getMonth()+1,0);return fr(f);}
   function moisPaie(){var a=new Date();return MOIS_FR[a.getMonth()]+' '+a.getFullYear();}
   // t : h (heures), j (jours), nb (nombre), eur (montant), prime (montant net/brut), dates (du… au… inclus), txt (texte libre)
-  var PP=[{k:'hs',l:'Heures sup.',t:'h'},{k:'prime',l:'Prime',t:'prime'},{k:'maladie',l:'Maladie',t:'dates'},{k:'conges',l:'Congés',t:'dates'},{k:'acompte',l:'Acompte',t:'eur'},{k:'paniers',l:'Paniers',t:'nb'}];
-  var PG=[['Absences',[{k:'absnp',l:'Absence non payée',t:'dates'},{k:'at',l:'Accident du travail',t:'dates'},{k:'mat',l:'Maternité / paternité',t:'dates'},{k:'enf',l:'Enfant malade',t:'dates'}]],
-    ['Congés',[{k:'rtt',l:'RTT',t:'dates'},{k:'evt',l:'Événement familial',t:'dates'}]],
-    ['Temps de travail',[{k:'hc',l:'Heures complémentaires',t:'h'},{k:'ndf',l:'Nuit / dimanche / férié',t:'h'},{k:'intemp',l:'Intempéries',t:'j'},{k:'chp',l:'Chômage partiel',t:'h'}]],
+  var PP=[{k:'hs',l:'Heures sup.',t:'h'},{k:'prime',l:'Prime',t:'prime'},{k:'maladie',l:'Maladie',t:'dates'},{k:'conges',l:'Congés',t:'dates'},{k:'acompte',l:'Acompte',t:'eur'},{k:'paniers',l:'Paniers',t:'nb'},{k:'trajet',l:'Indemnités de trajet',t:'multi',u:'j',f:[['z1','Zone 1'],['z2','Zone 2'],['z3','Zone 3'],['z4','Zone 4'],['z5','Zone 5'],['z6','Zone 6'],['z7','Zone 7']]}];
+  var PG=[['Absences',[{k:'absnp',l:'Absence non payée',t:'dates'},{k:'at',l:'Accident du travail',t:'dates'},{k:'mat',l:'Maternité / paternité',t:'dates'},{k:'cfa',l:'Jours CFA',t:'dates'}]],
+    ['Congés',[{k:'evt',l:'Événement familial',t:'dates'},{k:'css',l:'Congé sans solde',t:'dates'}]],
+    ['Temps de travail',[{k:'hc',l:'Heures complémentaires',t:'h'},{k:'ndf',l:'Nuit / dimanche / férié',t:'multi',u:'h',f:[['nuit','Nuit'],['dim','Dimanche'],['fer','Jour férié']]},{k:'intemp',l:'Intempéries',t:'j'},{k:'chp',l:'Chômage partiel',t:'h'}]],
     ['Rémunération',[{k:'chsal',l:'Changement de salaire',t:'txt'},{k:'avance',l:'Avance / prêt',t:'eur'}]],
-    ['Frais et indemnités',[{k:'trajet',l:'Trajets / petits déplacements',t:'j'},{k:'gd',l:'Grands déplacements',t:'j'},{k:'navigo',l:'Transport (Navigo)',t:'eur'},{k:'frais',l:'Frais professionnels',t:'eur'},{k:'tr',l:'Titres-restaurant',t:'nb'},{k:'avn',l:'Avantage en nature',t:'txt'}]],
+    ['Frais et indemnités',[{k:'gd',l:'Grands déplacements',t:'j'},{k:'navigo',l:'Transport (Navigo)',t:'eur'},{k:'frais',l:'Frais professionnels',t:'eur'},{k:'tr',l:'Titres-restaurant',t:'nb'},{k:'avn',l:'Avantage en nature',t:'txt'}]],
     ['Divers',[{k:'saisie',l:'Saisie sur salaire',t:'txt'},{k:'mut',l:'Changement de mutuelle',t:'txt'},{k:'autre',l:'Autre',t:'txt'}]]];
   var PDEF={};PP.concat([].concat.apply([],PG.map(function(g){return g[1];}))).forEach(function(x){PDEF[x.k]=x;});
   var FICHES=[],PSAL=[],PDATA=null,nFiche=0;
@@ -1402,9 +1404,11 @@
     if(t==='h')return frc(v.n)+' h';if(t==='j')return frc(v.n)+' j';if(t==='nb')return frc(v.n);
     if(t==='eur')return frc(v.n)+' EUR';if(t==='prime')return frc(v.n)+' EUR '+(v.base||'net');
     if(t==='dates')return 'du '+jm(v.du)+' au '+jm(v.au)+' inclus';
+    if(t==='multi')return PDEF[k].f.filter(function(c){return v[c[0]];}).map(function(c){return c[1].toLowerCase()+' : '+frc(v[c[0]])+' '+PDEF[k].u;}).join(', ');
     return v.txt;
   }
-  function resumeFiche(f){return Object.keys(f.v).map(function(k){return PDEF[k].l+' '+annot(k,f.v[k]);}).join(' · ');}
+  function libVal(k,v){return PDEF[k].l+(PDEF[k].t==='multi'?' : ':' ')+annot(k,v);}
+  function resumeFiche(f){return Object.keys(f.v).map(function(k){return libVal(k,f.v[k]);}).join(' · ');}
   function afficherPaie(d){
     PDATA=d;PSAL=(d.salaries||[]).slice().sort(function(a,b){return cle(a.nom+' '+a.prenom)<cle(b.nom+' '+b.prenom)?-1:1;});FICHES=[];
     $('p_titre').textContent='Éléments de paie de '+(d.paieMois||moisPaie())+' – '+d.societe;
@@ -1431,12 +1435,13 @@
   function editHtml(f){
     var k=f.ouvert;if(!k)return '';var x=PDEF[k],v=f.v[k]||{},h='<div class="pedit"><b>'+esc(x.l)+'</b> ';
     if(x.t==='dates')h+='du <input type="date" class="e1" value="'+esc(v.du||'')+'"> au <input type="date" class="e2" value="'+esc(v.au||'')+'"> <span style="color:#777">dates incluses</span>';
+    else if(x.t==='multi')h+=': nombre '+(x.u==='h'?'d’heures':'de jours')+'<div class="emul">'+x.f.map(function(c){return '<label><span>'+esc(c[1])+'</span><input class="em" data-c="'+c[0]+'" inputmode="decimal" maxlength="6" value="'+esc(v[c[0]]?frc(v[c[0]]):'')+'"></label>';}).join('')+'</div>';
     else if(x.t==='txt')h+='<input class="e1 txt" maxlength="200" value="'+esc(v.txt||'')+'" placeholder="Précisez">';
     else{
       h+='<input class="e1" inputmode="decimal" maxlength="10" value="'+esc(v.n?frc(v.n):'')+'"> '+({h:'heures',j:'jours',nb:'',eur:'EUR',prime:'EUR'})[x.t];
-      if(x.t==='prime'){var b=v.base||'net';h+=' <span class="nb"><label class="'+(b==='net'?'on':'')+'"><input type="radio" name="b'+f.id+'" value="net"'+(b==='net'?' checked':'')+'>Net</label><label class="'+(b==='brut'?'on':'')+'"><input type="radio" name="b'+f.id+'" value="brut"'+(b==='brut'?' checked':'')+'>Brut</label></span>';}
+      if(x.t==='prime'){var b=v.base||'';h+=' <span class="nb"><label class="'+(b==='net'?'on':'')+'"><input type="radio" name="b'+f.id+'" value="net"'+(b==='net'?' checked':'')+'>Net</label><label class="'+(b==='brut'?'on':'')+'"><input type="radio" name="b'+f.id+'" value="brut"'+(b==='brut'?' checked':'')+'>Brut</label></span>';}
     }
-    return h+' <button type="button" class="eok">OK</button></div>';
+    return h+' <button type="button" class="eok">OK</button><div class="perr"></div></div>';
   }
   function rendreFiches(){
     var h='';
@@ -1474,15 +1479,16 @@
     }
     [].forEach.call($('p_sals').querySelectorAll('.psal'),function(b){b.onclick=function(){ouvrirSal(b);};});
     brancherFiches();
-    var e=$('p_fiches').querySelector('.pedit .e1');if(e)e.focus();
+    var e=$('p_fiches').querySelector('.pedit .e1,.pedit .em');if(e)e.focus();
   }
   function ficheDe(el){var id=+el.closest('[data-f]').getAttribute('data-f');return FICHES.filter(function(f){return f.id===id;})[0];}
   function lireNoms(f,el){var c=el.closest('.fiche');if(!c)return;f.p=preMaj(c.querySelector('.fp').value);f.n=nomMaj(c.querySelector('.fn').value);}
   function fermerEdit(f,el){
     var k=f.ouvert,x=PDEF[k],c=el.closest('.pedit'),e1=c.querySelector('.e1'),e2=c.querySelector('.e2'),v=null;
     if(x.t==='dates'){if(e1.value&&e2.value){if(e2.value<e1.value){f.err='La date de fin est avant la date de début.';return false;}v={du:e1.value,au:e2.value};}}
+    else if(x.t==='multi'){var mv={},nb=0;[].forEach.call(c.querySelectorAll('.em'),function(i){var n=Number(String(i.value).replace(/\s/g,'').replace(',','.'));if(i.value.trim()&&isFinite(n)&&n>0){mv[i.getAttribute('data-c')]=Math.round(n*100)/100;nb++;}});if(nb)v=mv;}
     else if(x.t==='txt'){if(e1.value.trim())v={txt:e1.value.trim()};}
-    else{var n=Number(String(e1.value).replace(/\s/g,'').replace(',','.'));if(e1.value.trim()&&isFinite(n)&&n>0){v={n:Math.round(n*100)/100};if(x.t==='prime'){var r=c.querySelector('input[type=radio]:checked');v.base=r?r.value:'net';}}}
+    else{var n=Number(String(e1.value).replace(/\s/g,'').replace(',','.'));if(e1.value.trim()&&isFinite(n)&&n>0){v={n:Math.round(n*100)/100};if(x.t==='prime'){var r=c.querySelector('input[type=radio]:checked');if(!r){c.querySelector('.perr').textContent='⚠ Indiquez si la prime est exprimée en net ou en brut.';[].forEach.call(c.querySelectorAll('.nb label'),function(l){l.classList.add('manq');});return 'err';}v.base=r.value;}}}
     if(!v)return false;
     f.v[k]=v;f.ouvert='';f.err='';return true;
   }
@@ -1503,14 +1509,14 @@
         f.ouvert=f.ouvert===k?'':k;f.err='';rendreFiches();};});
       var ed=c.querySelector('.pedit');
       if(ed){
-        ed.querySelector('.eok').onclick=function(){lireNoms(f,ed);if(fermerEdit(f,ed))rendreFiches();else{if(f.err)rendreFiches();}};
+        ed.querySelector('.eok').onclick=function(){lireNoms(f,ed);var rf=fermerEdit(f,ed);if(rf==='err')return;if(rf)rendreFiches();else{if(f.err)rendreFiches();}};
         [].forEach.call(ed.querySelectorAll('input'),function(i){i.onkeydown=function(e){if(e.key==='Enter'){e.preventDefault();ed.querySelector('.eok').click();}};});
-        [].forEach.call(ed.querySelectorAll('.nb input'),function(r){r.onchange=function(){[].forEach.call(ed.querySelectorAll('.nb label'),function(l){l.classList.toggle('on',l.querySelector('input').checked);});};});
+        [].forEach.call(ed.querySelectorAll('.nb input'),function(r){r.onchange=function(){ed.querySelector('.perr').textContent='';[].forEach.call(ed.querySelectorAll('.nb label'),function(l){l.classList.remove('manq');l.classList.toggle('on',l.querySelector('input').checked);});};});
       }
       c.querySelector('.plus').onclick=function(){lireNoms(f,c);f.plus=!f.plus;rendreFiches();};
       c.querySelector('.fval').onclick=function(){
         lireNoms(f,c);
-        var ed2=c.querySelector('.pedit');if(ed2)fermerEdit(f,ed2);
+        var ed2=c.querySelector('.pedit');if(ed2&&fermerEdit(f,ed2)==='err')return;
         if(!f.p||!f.n){f.err='Indiquez le NOM et le prénom du salarié.';rendreFiches();return;}
         var autre=trouver(f.p,f.n,f);
         if(autre){for(var k in f.v)autre.v[k]=f.v[k];FICHES=FICHES.filter(function(z){return z!==f;});autre.valide=false;autre.info='Ce salarié est déjà signalé : complétez sa fiche.';rendreFiches();return;}
@@ -1547,7 +1553,7 @@
       if(!fiches.length&&!info&&!nf){err.textContent='Signalez au moins un salarié, une information ou un fichier.';return;}
     }
     var o={rubrique:'paie',mois:(PDATA&&PDATA.paieMois)||moisPaie(),rien:!!rien,fiches:fiches,info:rien?'':$('p_info').value.trim()};
-    var recap=rien?['Éléments de paie : rien à signaler']:fiches.map(function(f){return f.nom+' '+f.prenom+' : '+(f.rien?'rien à signaler':Object.keys(f.v).map(function(k){return PDEF[k].l+' '+annot(k,f.v[k]);}).join(', '));});
+    var recap=rien?['Éléments de paie : rien à signaler']:fiches.map(function(f){return f.nom+' '+f.prenom+' : '+(f.rien?'rien à signaler':Object.keys(f.v).map(function(k){return libVal(k,f.v[k]);}).join(', '));});
     if(DEMO){merci('Démonstration : rien n’a été envoyé.',recap);return;}
     b.disabled=true;etat(b,0,0,'','Envoi en cours…');
     var lot='L'+Date.now().toString(36)+Math.random().toString(36).slice(2,8),fichiers=rien?[]:($('paie').querySelector('.banque').files||[]);o.lot=lot;
