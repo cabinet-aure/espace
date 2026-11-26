@@ -1409,10 +1409,11 @@
     if(t==='h')return frc(v.n)+' h';if(t==='j')return frc(v.n)+' j';if(t==='nb')return frc(v.n);
     if(t==='eur')return frc(v.n)+' EUR';if(t==='prime')return frc(v.n)+' EUR '+(v.base||'net');
     if(t==='dates')return 'du '+jm(v.du)+' au '+jm(v.au)+' inclus';
-    if(t==='multi')return ': '+PDEF[k].f.filter(function(c){return v[c[0]];}).map(function(c){return c[1].toLowerCase()+' : '+frc(v[c[0]])+' '+PDEF[k].u;}).join(', ');
+    if(t==='multi')return PDEF[k].f.filter(function(c){return v[c[0]];}).map(function(c){return c[1].toLowerCase()+' : '+frc(v[c[0]])+' '+PDEF[k].u;}).join(', ');
     return v.txt;
   }
-  function resumeFiche(f){return Object.keys(f.v).map(function(k){return PDEF[k].l+' '+annot(k,f.v[k]);}).join(' · ');}
+  function libVal(k,v){return PDEF[k].l+(PDEF[k].t==='multi'?' : ':' ')+annot(k,v);}
+  function resumeFiche(f){return Object.keys(f.v).map(function(k){return libVal(k,f.v[k]);}).join(' · ');}
   function afficherPaie(d){
     PDATA=d;PSAL=(d.salaries||[]).slice().sort(function(a,b){return cle(a.nom+' '+a.prenom)<cle(b.nom+' '+b.prenom)?-1:1;});FICHES=[];
     $('p_titre').textContent='Éléments de paie de '+(d.paieMois||moisPaie())+' – '+d.societe;
@@ -1557,7 +1558,7 @@
       if(!fiches.length&&!info&&!nf){err.textContent='Signalez au moins un salarié, une information ou un fichier.';return;}
     }
     var o={rubrique:'paie',mois:(PDATA&&PDATA.paieMois)||moisPaie(),rien:!!rien,fiches:fiches,info:rien?'':$('p_info').value.trim()};
-    var recap=rien?['Éléments de paie : rien à signaler']:fiches.map(function(f){return f.nom+' '+f.prenom+' : '+(f.rien?'rien à signaler':Object.keys(f.v).map(function(k){return PDEF[k].l+' '+annot(k,f.v[k]);}).join(', '));});
+    var recap=rien?['Éléments de paie : rien à signaler']:fiches.map(function(f){return f.nom+' '+f.prenom+' : '+(f.rien?'rien à signaler':Object.keys(f.v).map(function(k){return libVal(k,f.v[k]);}).join(', '));});
     if(DEMO){merci('Démonstration : rien n’a été envoyé.',recap);return;}
     b.disabled=true;etat(b,0,0,'','Envoi en cours…');
     var lot='L'+Date.now().toString(36)+Math.random().toString(36).slice(2,8),fichiers=rien?[]:($('paie').querySelector('.banque').files||[]);o.lot=lot;
