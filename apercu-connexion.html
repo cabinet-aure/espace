@@ -383,11 +383,12 @@
   .psal{background:#fff;border:1px solid #d84315;color:#d84315;border-radius:18px;padding:8px 14px;font:bold 14px Arial,Helvetica,sans-serif;cursor:pointer}
   .psal:hover{background:#fff3ee}.psal.fait{background:#eef6ef;border-color:#2e6b3a;color:#2e6b3a}.psal.ouv{background:#d84315;color:#fff}
   #social .corps{background:#fbfbfa}
+  .fsoc .tete{background:#fbfbfa}
   .spaie{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#fff;border:1px solid #e8e8e8;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.07);padding:14px 16px;margin:0 0 14px;cursor:pointer;transition:background .15s,border-color .15s}
   .spaie:hover{background:#f8f4e8;border-color:#e6dcc0}
   .spaie .sptxt{flex:1;min-width:200px}.spaie .stit{font-weight:bold;font-size:16px;color:#1f1f1f}
   .slim{font-size:13px;color:#6b6b6b;margin-top:3px}.slim b{color:#d84315}
-  .sic{width:46px;height:46px;border-radius:50%;background:#d84315;display:flex;align-items:center;justify-content:center;font-size:22px;flex:none;box-shadow:0 2px 5px rgba(216,67,21,.25)}
+  .sic{width:52px;height:52px;border-radius:50%;background:#d84315;display:flex;align-items:center;justify-content:center;font-size:22px;flex:none;box-shadow:0 2px 5px rgba(216,67,21,.25)}
   .pbtn:hover{filter:none}#p_rien:hover{background:#e3f0e4!important}
   .sgrille{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
   @media(max-width:700px){.sgrille{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -519,7 +520,7 @@
   <div id="cdd" style="display:none">
    <div class="corps soc">
     <a class="retourS" id="retourSocCdd" href="#">← Retour à la rubrique Social</a>
-    <div class="rub or"><h2>🔁 Renouvellement de CDD</h2></div>
+    <div class="rub or"><h2>📅 Renouvellement de CDD</h2></div>
     <div class="consigne" style="font-size:14px;color:#666">Le renouvellement doit être signé avant la date de fin du CDD. Tous les champs sont obligatoires.</div>
     <div class="aucun" id="c_aucun" style="display:none;margin:18px 0">Aucun CDD en cours n’est enregistré pour votre société. Pour toute information : 01&nbsp;30&nbsp;49&nbsp;50&nbsp;05.</div>
     <div class="sect" id="c_form"><h3>Le CDD à renouveler</h3><div class="grille">
@@ -1148,6 +1149,7 @@
   }
   var SALS=[];
   function afficherSocial(d,seul){
+    document.body.classList.add('fsoc');
     var sal=d.paie!=='X',h='';ENVOIS=d.envois||[];
     SALS=(d.salaries||[]).slice().sort(function(a,b){return cle(a.nom+' '+a.prenom)<cle(b.nom+' '+b.prenom)?-1:1;});
     $('retourSocSeul').style.display=seul?'':'none';$('retourSocSeul').href=lienVue('social');
@@ -1158,7 +1160,7 @@
     var cdds=d.cdd||[];
     if(sal||cdds.length){
       var proches=cdds.filter(function(x){var j=joursAvant(x.fin);return j>=0&&j<=15;});
-      h+=blocSoc('cdd','🔁','Renouvellement de CDD','Un CDD arrive à son terme et vous souhaitez le prolonger ?',
+      h+=blocSoc('cdd','📅','Renouvellement de CDD','Un CDD arrive à son terme et vous souhaitez le prolonger ?',
         proches.map(function(x){return '<div class="finproche">⚠ CDD de '+esc(x.salarie)+' : fin le '+esc(x.fin)+'</div>';}).join('')+
         (cdds.length?'<a class="btn or petit" href="'+lienVue('cdd')+'">✓ Renouveler un CDD</a>':'<div class="aucun">Aucun CDD en cours.</div>'));
     }
@@ -1176,7 +1178,7 @@
     }
     if(sal){
       h+=blocSoc('arret','🩺','Arrêt de travail','Arrêt maladie, accident du travail, prolongation…',champSal('arret')+zoneSoc('Faites glisser ici l’arrêt de travail'));
-      h+=blocSoc('depart','🚪','Départ','Démission, fin de CDD, rupture conventionnelle, licenciement…',champSal('depart')+zoneSoc('Faites glisser ici les documents du départ'));
+      h+=blocSoc('depart','📤','Départ','Démission, fin de CDD, rupture conventionnelle, licenciement…',champSal('depart')+zoneSoc('Faites glisser ici les documents du départ'));
     }
     h+=blocSoc('autre','📄','Autre document social','Mutuelle, médecine du travail, courrier de l’URSSAF…',
       zoneSoc('Faites glisser ici vos autres documents')+'<textarea class="prec" placeholder="Précision éventuelle (facultatif)"></textarea>');
@@ -1204,6 +1206,7 @@
     majSoc();
   }
   function tuilesSoc(d,sal){
+    document.body.classList.add('fsoc');
     var h='',cdds=d.cdd||[];
     if(sal){
       var pm=d.paieMois||moisPaie(),pe=d.paieEnvoi,arr=d.arretsMois||[],st;
@@ -1216,8 +1219,8 @@
     function tu(v,ic,t,so,go){return '<a class="stu" href="'+lienVue(v)+'"><div class="sin"><span class="sic">'+ic+'</span><div class="sh">'+t+'</div><div class="sb">'+so+'</div></div><div class="sgo">'+go+'</div></a>';}
     var proches=cdds.filter(function(x){var j=joursAvant(x.fin);return j>=0&&j<=15;});
     h+='<div class="sgrille">'+tu('embauche','✍️','Embauche','Un nouveau salarié ? Transmettez ses informations.','✓ Déclarer');
-    if(sal||cdds.length)h+=tu('cdd','🔁','Renouvellement de CDD',proches.length?'<span style="color:#c0392b;font-weight:bold">⚠ '+proches.length+' CDD se termine'+(proches.length>1?'nt':'')+' bientôt</span>':cdds.length?cdds.length+' CDD en cours.':'Aucun CDD en cours.','✓ Renouveler');
-    if(sal){h+=tu('arret','🩺','Arrêt de travail','Maladie, accident, prolongation…','✓ Déposer');h+=tu('depart','🚪','Départ','Démission, fin de CDD, rupture…','✓ Signaler');}
+    if(sal||cdds.length)h+=tu('cdd','📅','Renouvellement de CDD',proches.length?'<span style="color:#c0392b;font-weight:bold">⚠ '+proches.length+' CDD se termine'+(proches.length>1?'nt':'')+' bientôt</span>':cdds.length?cdds.length+' CDD en cours.':'Aucun CDD en cours.','✓ Renouveler');
+    if(sal){h+=tu('arret','🩺','Arrêt de travail','Maladie, accident, prolongation…','✓ Déposer');h+=tu('depart','📤','Départ','Démission, fin de CDD, rupture…','✓ Signaler');}
     h+='</div><a class="sautre" href="'+lienVue('autre')+'"><span class="sic">📄</span>Autre document social (mutuelle, médecine du travail…)<span class="sgo2">✓ Déposer</span></a>';
     $('blocsSoc').innerHTML=h;szones=[];
     if($('spaie'))$('spaie').onclick=function(e){if(e.target.closest('#p_rien,a'))return;location.href=lienVue('paie');};
@@ -1771,7 +1774,7 @@
 })();
 </script>
 <div class="mfond" id="mfond"><div class="mboite" role="dialog" aria-modal="true"><div class="mhaut"><h2 id="mtitre"></h2><button type="button" class="mfermer" id="mfermer" aria-label="Fermer">×</button></div><div class="mcorps" id="mcorps"></div></div></div><script>(function(){
- var F={"banque": [["banque", "Déposer vos documents bancaires", ["Chaque début de mois, vous recevez un e-mail avec le lien de votre espace.", "La liste des documents attendus s’affiche, banque par banque.", "Déposez chaque document dans la case de sa banque (glissez le fichier ou cliquez sur « sélectionner un fichier »).", "Cliquez sur « Envoyer mes documents » et attendez le message de confirmation."]]], "social": [["embauche", "Déclarer une embauche", ["Cliquez sur « Nous informer d’une embauche ».", "Remplissez le formulaire : le salarié, le contrat, le salaire et la mutuelle.", "Joignez les pièces demandées en bas du formulaire : pièce d’identité (recto verso), attestation de droits de la carte Vitale (à télécharger sur le compte ameli)…", "Cliquez sur « Envoyer les informations » : nous préparons la déclaration d’embauche et le contrat."]], ["cdd", "Renouveler un CDD", ["Cliquez sur « Renouveler un CDD » : le CDD en cours s’affiche.", "Choisissez la durée du renouvellement (1, 3, 6 mois ou une autre date).", "Indiquez si les conditions changent, puis cliquez sur « Envoyer la demande ».", "Le renouvellement doit être signé avant la fin du CDD."]], ["paie", "Envoyer les éléments de paie du mois", ["Case « Éléments de paie du mois ».", "Déposez votre fichier : heures, primes, absences, acomptes…", "Cliquez sur « Envoyer mes documents »."]], ["arret", "Envoyer un arrêt de travail", ["Case « Arrêt de travail » : indiquez le salarié, le type d’arrêt et la date.", "Déposez l’arrêt (PDF ou photo), puis cliquez sur « Envoyer mes documents ».", "Accident du travail : à nous transmettre sans attendre, la déclaration doit être faite dans les 48 heures."]], ["depart", "Signaler le départ d’un salarié", ["Case « Départ » : indiquez le salarié et le type de départ (démission, fin de CDD, rupture conventionnelle…).", "Déposez le document (lettre de démission, convention…), puis cliquez sur « Envoyer mes documents »."]]], "bilan": [["bilan", "Envoyer les documents du bilan", ["La liste des documents attendus s’affiche avec une barre de progression.", "Déposez chaque document dans sa case.", "Cliquez sur « Envoyer mes documents » : la liste se met à jour au fur et à mesure."]]]},I={"embauche": "✍️", "cdd": "🔁", "paie": "📋", "arret": "🩺", "depart": "🚪", "banque": "🏦", "bilan": "📁"},M={"embauche": "Déclarer une embauche", "cdd": "Renouveler un CDD", "paie": "Envoyer les éléments de paie", "arret": "Envoyer un arrêt de travail", "depart": "Signaler un départ"},C={banque:['#2e6b3a','#eef6ef','Banque','#cfe3cf','#f4faf4'],social:['#d84315','#fff3ee','Social','#f0c4b4','#fffaf8'],bilan:['#1f5f6b','#e6f1f3','Bilan','#c5dadd','#f3f8f9']};
+ var F={"banque": [["banque", "Déposer vos documents bancaires", ["Chaque début de mois, vous recevez un e-mail avec le lien de votre espace.", "La liste des documents attendus s’affiche, banque par banque.", "Déposez chaque document dans la case de sa banque (glissez le fichier ou cliquez sur « sélectionner un fichier »).", "Cliquez sur « Envoyer mes documents » et attendez le message de confirmation."]]], "social": [["embauche", "Déclarer une embauche", ["Cliquez sur « Nous informer d’une embauche ».", "Remplissez le formulaire : le salarié, le contrat, le salaire et la mutuelle.", "Joignez les pièces demandées en bas du formulaire : pièce d’identité (recto verso), attestation de droits de la carte Vitale (à télécharger sur le compte ameli)…", "Cliquez sur « Envoyer les informations » : nous préparons la déclaration d’embauche et le contrat."]], ["cdd", "Renouveler un CDD", ["Cliquez sur « Renouveler un CDD » : le CDD en cours s’affiche.", "Choisissez la durée du renouvellement (1, 3, 6 mois ou une autre date).", "Indiquez si les conditions changent, puis cliquez sur « Envoyer la demande ».", "Le renouvellement doit être signé avant la fin du CDD."]], ["paie", "Envoyer les éléments de paie du mois", ["Case « Éléments de paie du mois ».", "Déposez votre fichier : heures, primes, absences, acomptes…", "Cliquez sur « Envoyer mes documents »."]], ["arret", "Envoyer un arrêt de travail", ["Case « Arrêt de travail » : indiquez le salarié, le type d’arrêt et la date.", "Déposez l’arrêt (PDF ou photo), puis cliquez sur « Envoyer mes documents ».", "Accident du travail : à nous transmettre sans attendre, la déclaration doit être faite dans les 48 heures."]], ["depart", "Signaler le départ d’un salarié", ["Case « Départ » : indiquez le salarié et le type de départ (démission, fin de CDD, rupture conventionnelle…).", "Déposez le document (lettre de démission, convention…), puis cliquez sur « Envoyer mes documents »."]]], "bilan": [["bilan", "Envoyer les documents du bilan", ["La liste des documents attendus s’affiche avec une barre de progression.", "Déposez chaque document dans sa case.", "Cliquez sur « Envoyer mes documents » : la liste se met à jour au fur et à mesure."]]]},I={"embauche": "✍️", "cdd": "📅", "paie": "📋", "arret": "🩺", "depart": "📤", "banque": "🏦", "bilan": "📁"},M={"embauche": "Déclarer une embauche", "cdd": "Renouveler un CDD", "paie": "Envoyer les éléments de paie", "arret": "Envoyer un arrêt de travail", "depart": "Signaler un départ"},C={banque:['#2e6b3a','#eef6ef','Banque','#cfe3cf','#f4faf4'],social:['#d84315','#fff3ee','Social','#f0c4b4','#fffaf8'],bilan:['#1f5f6b','#e6f1f3','Bilan','#c5dadd','#f3f8f9']};
  var r=new URLSearchParams(location.search).get('r')||'';
  var t={banque:'banque',social:'social',embauche:'social',cdd:'social',bilan:'bilan'}[r];
  var b=document.getElementById('mde');if(!t||!b)return;
