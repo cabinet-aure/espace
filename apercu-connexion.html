@@ -526,7 +526,7 @@
    <div class="corps soc">
     <a class="retourS" id="retourSocPaie" href="#">← Retour à la rubrique Social</a>
     <div class="pbandeau" id="p_titre">Éléments de paie</div>
-    <div class="consigne" style="font-size:14px;color:#666">Signalez uniquement les salariés pour qui il y a quelque chose ce mois-ci (heures sup., prime, absence…). Les autres seront payés normalement.</div>
+    <div class="consigne" style="font-size:14px;color:#666">Ce mois-ci, un salarié a fait des heures en plus, a eu une prime ou a été absent ? Cliquez sur son nom. Pour les autres, ne faites rien.</div>
     <div id="p_sals"></div>
     <div id="p_fiches"></div>
     <button type="button" class="ajsal" id="p_ajout">+ Signaler un salarié</button>
@@ -1135,7 +1135,7 @@
     }
     if(sal){
       var pm=d.paieMois||moisPaie(),pe=d.paieEnvoi,arr=d.arretsMois||[],cp='';
-      cp+='<div class="pmois">Éléments de <b>'+esc(pm)+'</b>'+', à transmettre avant le <b>'+esc(d.paieLimite||finMois())+'</b>'+'</div>';
+      cp+='<div class="pmois">Paie de <b>'+esc(pm)+'</b> : à envoyer avant le <b>'+esc(d.paieLimite||finMois())+'</b>'+'</div>';
       if(pe)cp+='<div class="ptransmis">✓ Transmis au cabinet le '+esc(pe.date)+(pe.rien?' : rien à signaler':'')+'<a href="'+lienVue('paie')+'">Modifier</a></div>';
       else{
         if(arr.length)cp+='<div class="parr">'+arr.length+(arr.length>1?' arrêts déposés':' arrêt déposé')+' ce mois-ci : déjà pris en compte.</div>';
@@ -1345,11 +1345,11 @@
     $('p_fiches').innerHTML=h;
     var hs='';
     if(PSAL.length){
-      hs='<div class="pslib">Cliquez sur le salarié concerné :</div><div class="psals">'+PSAL.map(function(x,i){var f=trouver(x.prenom,x.nom);
+      hs='<div class="pslib">Vos salariés :</div><div class="psals">'+PSAL.map(function(x,i){var f=trouver(x.prenom,x.nom);
         return '<button type="button" class="psal'+(f&&f.valide?' fait':f?' ouv':'')+'" data-i="'+i+'">'+(f&&f.valide?'✓ ':'')+esc(nomMaj(x.nom)+' '+preMaj(x.prenom))+'</button>';}).join('')+'</div>';
     }
     $('p_sals').innerHTML=hs;
-    $('p_ajout').textContent=PSAL.length?'+ Autre salarié (absent de la liste)':'+ Signaler un salarié';
+    $('p_ajout').textContent=PSAL.length?'+ Un salarié qui n’est pas dans la liste':'+ Ajouter un salarié';
     [].forEach.call($('p_sals').querySelectorAll('.psal'),function(b){b.onclick=function(){
       [].forEach.call($('p_fiches').querySelectorAll('.fiche'),function(c){lireNoms(ficheDe(c),c);});
       var x=PSAL[+b.getAttribute('data-i')],f=trouver(x.prenom,x.nom);
