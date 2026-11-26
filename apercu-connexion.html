@@ -1344,7 +1344,7 @@
     });
     $('p_fiches').innerHTML=h;
     var hs='';
-    if(PSAL.length>10){
+    if(PSAL.length){
       hs='<div class="pslib">Choisissez le salarié concerné :</div><select class="psel"><option value="">Choisir un salarié…</option>'+PSAL.map(function(x,i){var f=trouver(x.prenom,x.nom);
         return '<option value="'+i+'">'+(f&&f.valide?'✓ ':'')+esc(nomMaj(x.nom)+' '+preMaj(x.prenom))+(f&&f.valide?' (déjà signalé)':'')+'</option>';}).join('')+'</select>';
     }
