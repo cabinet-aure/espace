@@ -806,7 +806,7 @@
     if(d.paie==='X')corpsS='Paie, embauches,<br>arrêts de travail, départs';
     else if(pe)corpsS='<span class="past vert">Paie envoyée</span><br>Reçue par le cabinet<br>le <b>'+esc(longue(pe.date))+'</b>';
     else corpsS='<span class="past rouge">Paie de '+esc((d.paieMois||moisPaie()).replace(/\s*\d{4}$/,''))+'</span><br>À envoyer avant le<br><b>'+esc(longue(d.paieLimite||finMois()))+'</b>';
-    $('tuiles').innerHTML=tuile('#2e6b3a','🏦','Banque',corpsB,n?'✓ Déposer':'✓ Consulter',lienVue('banque'))+
+    $('tuiles').innerHTML=tuile('#2e6b3a','🏦','Banque',corpsB,n?'✓ Déposer':'Consulter',lienVue('banque'))+
       (SOCIAL_OUVERT?tuile('#d84315','👥','Social',corpsS,'✓ Déposer',lienVue('social'))
       :inactive('👥','Social','Paie, embauches,<br>arrêts de travail, départs','#d84315'))+tuileBilan(d.bilan);
   }
@@ -962,7 +962,7 @@
     var n=b.documents.filter(function(x){return x.statut!=='Reçu';}).length,corps;
     if(n)corps='<span class="past rouge">'+n+(n>1?' documents':' document')+' à envoyer</span><br>'+esc(b.titre)+(b.dateLimite?'<br>avant le <b>'+esc(longue(b.dateLimite))+'</b>':'');
     else corps='<span class="past vert">À jour</span><br>'+esc(b.titre);
-    return tuile('#1f5f6b','📁','Bilan',corps,n?'✓ Déposer':'✓ Consulter',lienVue('bilan'));
+    return tuile('#1f5f6b','📁','Bilan',corps,n?'✓ Déposer':'Consulter',lienVue('bilan'));
   }
   function afficherBilan(b){
     $('bTitre').textContent='Documents pour le '+b.titre.charAt(0).toLowerCase()+b.titre.slice(1);
