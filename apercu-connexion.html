@@ -382,6 +382,7 @@
   .psals{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
   .psal{background:#fff;border:1px solid #d84315;color:#d84315;border-radius:18px;padding:8px 14px;font:bold 14px Arial,Helvetica,sans-serif;cursor:pointer}
   .psal:hover{background:#fff3ee}.psal.fait{background:#eef6ef;border-color:#2e6b3a;color:#2e6b3a}.psal.ouv{background:#d84315;color:#fff}
+  .psel{width:100%;max-width:420px;padding:10px;border:2px solid #d84315;border-radius:8px;font-size:15px;margin:0 0 14px;background:#fff}
   .pslib{font-size:14px;color:#555;margin:0 0 8px}
   .fiche .ferme{position:absolute;top:8px;right:10px;background:none;border:0;color:#999;font-size:18px;cursor:pointer}
   .sugg{position:absolute;left:0;right:0;top:100%;background:#fff;border:1px solid #ddd;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.1);z-index:5;display:none}
@@ -561,9 +562,9 @@
   // Démonstration (page de test seulement) : ?demo=1 affiche des données fictives, rien n'est envoyé
   var DEMO=P.get('demo')==='1'?{ok:true,societe:'SOCIÉTÉ EXEMPLE (démonstration – données fictives)',siren:'',mail:'',documents:[],attente:[],envois:[],cdd:[],paie:'O',
     paieMois:'décembre 2026',paieLimite:'31/12/2026',paieEnvoi:null,
-    salaries:[{prenom:'Paul',nom:'MARTIN'},{prenom:'Sophie',nom:'BERNARD'},{prenom:'Karim',nom:'BENALI'},{prenom:'Julie',nom:'PETIT'}],
+    salaries:P.get('liste')==='1'?['Paul MARTIN','Sophie BERNARD','Karim BENALI','Julie PETIT','Lucas DUBOIS','Emma LEROY','Hugo MOREAU','Léa GARNIER','Nathan FAURE','Chloé ROUSSEL','Théo BLANC','Inès GUERIN','Louis BOYER','Manon CHEVALIER'].map(function(t){var x=t.split(' ');return {prenom:x[0],nom:x[1]};}):[{prenom:'Paul',nom:'MARTIN'},{prenom:'Sophie',nom:'BERNARD'},{prenom:'Karim',nom:'BENALI'},{prenom:'Julie',nom:'PETIT'}],
     arretsMois:[{prenom:'Paul',nom:'MARTIN',type:'Maladie',du:'03/12/2026',au:'10/12/2026',depose:'04/12/2026'}]}:null;
-  function lienVue(v){var q=new URLSearchParams(C?{c:C}:{s:S,k:K});if(P.get('demo')==='1')q.set('demo','1');if(v)q.set('r',v);return '?'+q.toString();}
+  function lienVue(v){var q=new URLSearchParams(C?{c:C}:{s:S,k:K});if(P.get('demo')==='1')q.set('demo','1');if(P.get('liste')==='1')q.set('liste','1');if(v)q.set('r',v);return '?'+q.toString();}
   var MAX=10*1024*1024, zones=[];
   var NUAGE='<svg class="ico" viewBox="0 0 64 48" aria-hidden="true"><path d="M51 20.5A15 15 0 0 0 22.5 15 11.5 11.5 0 0 0 12.5 37.5h37A8.6 8.6 0 0 0 51 20.5z" fill="#2e6b3a"/><path d="M32 31V18" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M24 23.5 32 15.5l8 8" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   var ACCEPT='.pdf,.ofx,.jpg,.jpeg,.png,.xls,.xlsx,.csv,.qif,.txt,.tsv,.cfonb,.dat,.120';
@@ -1343,18 +1344,25 @@
     });
     $('p_fiches').innerHTML=h;
     var hs='';
-    if(PSAL.length){
+    if(PSAL.length>10){
+      hs='<div class="pslib">Choisissez le salarié concerné :</div><select class="psel"><option value="">Choisir un salarié…</option>'+PSAL.map(function(x,i){var f=trouver(x.prenom,x.nom);
+        return '<option value="'+i+'">'+(f&&f.valide?'✓ ':'')+esc(nomMaj(x.nom)+' '+preMaj(x.prenom))+(f&&f.valide?' (déjà signalé)':'')+'</option>';}).join('')+'</select>';
+    }
+    else if(PSAL.length){
       hs='<div class="pslib">Cliquez sur le salarié concerné :</div><div class="psals">'+PSAL.map(function(x,i){var f=trouver(x.prenom,x.nom);
         return '<button type="button" class="psal'+(f&&f.valide?' fait':f?' ouv':'')+'" data-i="'+i+'">'+(f&&f.valide?'✓ ':'')+esc(nomMaj(x.nom)+' '+preMaj(x.prenom))+'</button>';}).join('')+'</div>';
     }
     $('p_sals').innerHTML=hs;
     $('p_ajout').textContent=PSAL.length?'+ Un salarié qui n’est pas dans la liste':'+ Ajouter un salarié';
-    [].forEach.call($('p_sals').querySelectorAll('.psal'),function(b){b.onclick=function(){
+    var sel=$('p_sals').querySelector('.psel');
+    if(sel)sel.onchange=function(){if(sel.value==='')return;var o=document.createElement('button');o.setAttribute('data-i',sel.value);ouvrirSal(o);};
+    function ouvrirSal(b){
       [].forEach.call($('p_fiches').querySelectorAll('.fiche'),function(c){lireNoms(ficheDe(c),c);});
       var x=PSAL[+b.getAttribute('data-i')],f=trouver(x.prenom,x.nom);
       if(f){f.valide=false;}else{f=nouvelleFiche(x.prenom,x.nom);}
       rendreFiches();var c=$('p_fiches').querySelector('[data-f="'+f.id+'"]');if(c)c.scrollIntoView({block:'center'});
-    };});
+    }
+    [].forEach.call($('p_sals').querySelectorAll('.psal'),function(b){b.onclick=function(){ouvrirSal(b);};});
     brancherFiches();
     var e=$('p_fiches').querySelector('.pedit .e1');if(e)e.focus();
   }
