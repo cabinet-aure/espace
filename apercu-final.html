@@ -382,19 +382,25 @@
   .psals{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
   .psal{background:#fff;border:1px solid #d84315;color:#d84315;border-radius:18px;padding:8px 14px;font:bold 14px Arial,Helvetica,sans-serif;cursor:pointer}
   .psal:hover{background:#fff3ee}.psal.fait{background:#eef6ef;border-color:#2e6b3a;color:#2e6b3a}.psal.ouv{background:#d84315;color:#fff}
-  .spaie{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#fff;border:1px solid #e3e3e3;border-left:4px solid #d84315;border-radius:10px;padding:14px 16px;margin:0 0 14px}
-  .spaie .sptxt{flex:1;min-width:200px}.spaie .stit{font-weight:bold;font-size:16px;color:#222}
-  .slim{font-size:13px;color:#d84315;font-weight:bold;margin-top:3px}.sarr{font-size:12px;color:#8a3b12;margin-top:3px}
+  #social .corps{background:#fbfbfa}
+  .spaie{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#fff;border:1px solid #e8e8e8;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.07);padding:14px 16px;margin:0 0 14px;cursor:pointer;transition:background .15s,border-color .15s}
+  .spaie:hover{background:#f8f4e8;border-color:#e6dcc0}
+  .spaie .sptxt{flex:1;min-width:200px}.spaie .stit{font-weight:bold;font-size:16px;color:#1f1f1f}
+  .slim{font-size:13px;color:#6b6b6b;margin-top:3px}.slim b{color:#d84315}
+  .sic{width:46px;height:46px;border-radius:50%;background:#d84315;display:flex;align-items:center;justify-content:center;font-size:22px;flex:none;box-shadow:0 2px 5px rgba(216,67,21,.25)}
+  .pbtn:hover{filter:none}#p_rien:hover{background:#e3f0e4!important}
   .sgrille{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
   @media(max-width:700px){.sgrille{grid-template-columns:repeat(2,minmax(0,1fr))}}
-  .stu{display:flex;flex-direction:column;gap:6px;background:#fff;border:1px solid #e3e3e3;border-left:4px solid #d84315;border-radius:10px;padding:12px;text-decoration:none;color:#222;min-height:130px;transition:background .15s}
-  .stu:hover{background:#f8f4e8}
-  .stu .sic{width:38px;height:38px;border-radius:50%;background:#d84315;display:flex;align-items:center;justify-content:center;font-size:19px;flex:none}
-  .stu .sh{font-weight:bold;font-size:15px}.stu .sb{font-size:13px;color:#666}
-  .stu .sgo{margin-top:auto;color:#d84315;font-weight:bold;font-size:13px}
-  .sautre{display:flex;align-items:center;gap:12px;border:1px solid #e3e3e3;border-left:4px solid #d84315;border-radius:10px;padding:10px 14px;margin-top:12px;font-size:14px;color:#222;text-decoration:none;background:#fff;transition:background .15s}
-  .sautre:hover{background:#f8f4e8}.sautre .sic{width:30px;height:30px;border-radius:50%;background:#d84315;display:flex;align-items:center;justify-content:center;font-size:15px;flex:none}
-  .sautre .sgo2{margin-left:auto;color:#d84315;font-weight:bold;font-size:13px;white-space:nowrap}
+  .stu{display:flex;flex-direction:column;background:#fff;border:1px solid #e8e8e8;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.07);overflow:hidden;text-decoration:none;color:#1f1f1f;min-height:170px;transition:border-color .15s}
+  .stu:hover{border-color:#e6dcc0}
+  .stu .sin{padding:14px 14px 10px;display:flex;flex-direction:column;gap:8px;flex:1;transition:background .15s}
+  .stu:hover .sin{background:#f8f4e8}
+  .stu .sh{font-weight:bold;font-size:15px;margin-top:2px}.stu .sb{font-size:13px;color:#6b6b6b;line-height:1.4}
+  .stu .sgo{background:#d84315;color:#fff;font-weight:bold;font-size:14px;text-align:center;padding:10px;transition:background .15s}
+  .stu:hover .sgo{background:#bf3a10}
+  .sautre{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #e8e8e8;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.07);padding:10px 12px 10px 14px;margin-top:12px;font-size:14px;color:#1f1f1f;text-decoration:none;transition:background .15s,border-color .15s}
+  .sautre:hover{background:#f8f4e8;border-color:#e6dcc0}.sautre .sic{width:34px;height:34px;font-size:16px}
+  .sautre .sgo2{margin-left:auto;background:#d84315;color:#fff;font-weight:bold;font-size:13px;border-radius:8px;padding:8px 14px;white-space:nowrap}
   .psel{width:100%;max-width:420px;padding:10px;border:2px solid #d84315;border-radius:8px;font-size:15px;margin:0 0 14px;background:#fff}
   .pslib{font-size:14px;color:#555;margin:0 0 8px}
   .fiche .ferme{position:absolute;top:8px;right:10px;background:none;border:0;color:#999;font-size:18px;cursor:pointer}
@@ -1185,18 +1191,19 @@
     if(sal){
       var pm=d.paieMois||moisPaie(),pe=d.paieEnvoi,arr=d.arretsMois||[],st;
       if(pe)st='<div class="ptransmis" style="margin:4px 0 0">✓ Transmis le '+esc(pe.date)+(pe.rien?' : rien à signaler':'')+'<a href="'+lienVue('paie')+'">Modifier</a></div>';
-      else st='<div class="slim">À envoyer avant le '+esc(d.paieLimite||finMois())+'</div>'+(arr.length?'<div class="sarr">'+arr.length+(arr.length>1?' arrêts déposés':' arrêt déposé')+' ce mois-ci : déjà pris en compte</div>':'');
-      h+='<div class="spaie"><div class="pastille" style="background:'+OR+';font-size:20px">📋</div><div class="sptxt"><div class="stit">Éléments de paie de '+esc(pm)+'</div>'+st+'</div>'+
+      else st='<div class="slim">À envoyer avant le <b>'+esc(d.paieLimite||finMois())+'</b>'+(arr.length?' · '+arr.length+(arr.length>1?' arrêts déjà déposés':' arrêt déjà déposé'):'')+'</div>';
+      h+='<div class="spaie" id="spaie"><span class="sic">📋</span><div class="sptxt"><div class="stit">Éléments de paie de '+esc(pm)+'</div>'+st+'</div>'+
         (pe?'':'<div class="pbtns" style="margin:0"><button type="button" class="pbtn" id="p_rien" style="--pc:#2e6b3a;--pf:#eef6ef"><span class="pr">✓</span>'+(arr.length?'Rien d’autre à signaler':'Rien à signaler')+'</button>'+
           '<a class="pbtn" href="'+lienVue('paie')+'" style="--pc:#d84315;--pf:#fff3ee"><span class="pr">+</span>Signaler des éléments</a></div>')+'</div>';
     }
-    function tu(v,ic,t,so,go){return '<a class="stu" href="'+lienVue(v)+'"><span class="sic">'+ic+'</span><div class="sh">'+t+'</div><div class="sb">'+so+'</div><div class="sgo">'+go+'</div></a>';}
+    function tu(v,ic,t,so,go){return '<a class="stu" href="'+lienVue(v)+'"><div class="sin"><span class="sic">'+ic+'</span><div class="sh">'+t+'</div><div class="sb">'+so+'</div></div><div class="sgo">'+go+'</div></a>';}
     var proches=cdds.filter(function(x){var j=joursAvant(x.fin);return j>=0&&j<=15;});
-    h+='<div class="sgrille">'+tu('embauche','✍️','Embauche','Un nouveau salarié ?','→ Déclarer');
-    if(sal||cdds.length)h+=tu('cdd','🔁','Renouvellement de CDD',proches.length?'<span style="color:#c0392b;font-weight:bold">⚠ '+proches.length+' CDD se termine'+(proches.length>1?'nt':'')+' bientôt</span>':cdds.length?cdds.length+' CDD en cours.':'Aucun CDD en cours.','→ Renouveler');
-    if(sal){h+=tu('arret','🩺','Arrêt de travail','Maladie, accident, prolongation…','→ Déposer');h+=tu('depart','🚪','Départ','Démission, fin de CDD, rupture…','→ Signaler');}
-    h+='</div><a class="sautre" href="'+lienVue('autre')+'"><span class="sic">📄</span>Autre document social (mutuelle, médecine du travail…)<span class="sgo2">→ Déposer</span></a>';
+    h+='<div class="sgrille">'+tu('embauche','✍️','Embauche','Un nouveau salarié ? Transmettez ses informations.','✓ Déclarer');
+    if(sal||cdds.length)h+=tu('cdd','🔁','Renouvellement de CDD',proches.length?'<span style="color:#c0392b;font-weight:bold">⚠ '+proches.length+' CDD se termine'+(proches.length>1?'nt':'')+' bientôt</span>':cdds.length?cdds.length+' CDD en cours.':'Aucun CDD en cours.','✓ Renouveler');
+    if(sal){h+=tu('arret','🩺','Arrêt de travail','Maladie, accident, prolongation…','✓ Déposer');h+=tu('depart','🚪','Départ','Démission, fin de CDD, rupture…','✓ Signaler');}
+    h+='</div><a class="sautre" href="'+lienVue('autre')+'"><span class="sic">📄</span>Autre document social (mutuelle, médecine du travail…)<span class="sgo2">✓ Déposer</span></a>';
     $('blocsSoc').innerHTML=h;szones=[];
+    if($('spaie'))$('spaie').onclick=function(e){if(e.target.closest('#p_rien,a'))return;location.href=lienVue('paie');};
     if($('p_rien'))$('p_rien').onclick=function(){envoyerPaie(true,this);};
   }
   // Zone de dépôt générique (Social et Embauche)
