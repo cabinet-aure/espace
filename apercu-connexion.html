@@ -760,7 +760,7 @@
       if(d.dateLimite&&aFaire){$('dateLimite').textContent=d.dateLimite;$('limite').style.display='';}else{$('limite').style.display='none';}
       $('rien').innerHTML='✔ Tout est à jour.<span class="pd calL" style="display:flex;align-items:center;margin-top:8px">'+calendrier(46)+'<span>Prochaine demande le <b>'+prochaineDemande()+'</b>, par e-mail.</span></span>';
       if(!SOCIAL_OUVERT&&/^(social|cdd|embauche|paie|arret|depart|autre)$/.test(VUE))VUE='';
-      [].forEach.call(document.querySelectorAll('.retour'),function(a){a.href=lienVue(C?'':'accueil');a.style.display=(VUE&&VUE!=='accueil')?'inline-block':'none';});
+      [].forEach.call(document.querySelectorAll('.retour'),function(a){a.href=lienVue(C?'':'accueil');a.style.display=(VUE&&VUE!=='accueil'&&!/^(paie|cdd|embauche|arret|depart|autre)$/.test(VUE))?'inline-block':'none';});
       if(VUE==='banque'){afficher(d.documents||[],d.attente||[]);$('formulaire').style.display='';}
       else if(VUE==='social'){afficherSocial(d);$('social').style.display='';}
       else if(VUE==='bilan'&&d.bilan){afficherBilan(d.bilan);$('bilan').style.display='';}
@@ -1171,7 +1171,7 @@
     var sal=d.paie!=='X',h='';ENVOIS=d.envois||[];
     SALS=(d.salaries||[]).slice().sort(function(a,b){return cle(a.nom+' '+a.prenom)<cle(b.nom+' '+b.prenom)?-1:1;});
     $('retourSocSeul').style.display=seul?'':'none';$('retourSocSeul').href=lienVue('social');
-    $('consSoc').style.display=seul?'':'none';if(seul)$('consSoc').innerHTML='<span class="qaide">Besoin d’aide ? Cliquez sur <span class="qrond">?</span></span>';$('envoyerSoc').parentNode.style.display=seul?'':'none';
+    $('consSoc').style.display='none';$('envoyerSoc').parentNode.style.display=seul?'':'none';
     if(!seul){tuilesSoc(d,sal);return;}
     h+=blocSoc('embauche','✍️','Embauche','Un nouveau salarié ? Transmettez-nous ses informations',
       '<a class="btn or petit" href="'+lienVue('embauche')+'">✓ Nous informer d’une embauche</a>');
