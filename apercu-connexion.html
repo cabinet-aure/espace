@@ -1296,7 +1296,7 @@
   }
   function resumeFiche(f){return Object.keys(f.v).map(function(k){return PDEF[k].l+' '+annot(k,f.v[k]);}).join(' · ');}
   function afficherPaie(d){
-    PDATA=d;PSAL=(d.salaries||[]).slice();FICHES=[];
+    PDATA=d;PSAL=(d.salaries||[]).slice().sort(function(a,b){return cle(a.nom+' '+a.prenom)<cle(b.nom+' '+b.prenom)?-1:1;});FICHES=[];
     $('p_titre').textContent='Éléments de paie de '+(d.paieMois||moisPaie())+' – '+d.societe;
     var z=$('paie').querySelector('.banque .bq-corps');
     z.innerHTML='<div class="pou" style="margin-top:0">Vous préférez envoyer votre propre fichier ou une photo ?</div>'+zoneSoc('Faites glisser ici votre fichier',true);
@@ -1331,10 +1331,10 @@
   function rendreFiches(){
     var h='';
     FICHES.forEach(function(f){
-      if(f.valide){h+='<div class="fresume" data-f="'+f.id+'"><span><b>✓ '+esc(f.p+' '+f.n)+'</b> – '+esc(resumeFiche(f))+(f.depose?'<span class="dep">arrêt déposé le '+esc(f.depose)+'</span>':'')+'</span><a href="#" class="fmod">Modifier</a></div>';return;}
+      if(f.valide){h+='<div class="fresume" data-f="'+f.id+'"><span><b>✓ '+esc(f.n+' '+f.p)+'</b> – '+esc(resumeFiche(f))+(f.depose?'<span class="dep">arrêt déposé le '+esc(f.depose)+'</span>':'')+'</span><a href="#" class="fmod">Modifier</a></div>';return;}
       var dansPP=PP.some(function(x){return x.k===f.ouvert;});
       h+='<div class="fiche" data-f="'+f.id+'"><button type="button" class="ferme" title="Retirer cette fiche">✕</button>'+
-        '<div class="noms"><label><span>Prénom</span><input class="fp" value="'+esc(f.p)+'" autocomplete="off" maxlength="40" ></label><label><span>NOM</span><input class="fn" value="'+esc(f.n)+'" autocomplete="off" maxlength="40" ></label><div class="sugg"></div></div>'+
+        '<div class="noms"><label><span>NOM</span><input class="fn" value="'+esc(f.n)+'" autocomplete="off" maxlength="40"></label><label><span>Prénom</span><input class="fp" value="'+esc(f.p)+'" autocomplete="off" maxlength="40"></label><div class="sugg"></div></div>'+
         (f.info?'<div class="finfo">'+esc(f.info)+'</div>':'')+
         '<div class="pills">'+PP.map(function(x){return pillHtml(f,x);}).join('')+'</div>'+(dansPP?editHtml(f):'')+
         '<button type="button" class="plus">'+(f.plus?'− Moins de choix':'+ Plus de choix')+'</button>';
@@ -1346,7 +1346,7 @@
     var hs='';
     if(PSAL.length){
       hs='<div class="pslib">Cliquez sur le salarié concerné :</div><div class="psals">'+PSAL.map(function(x,i){var f=trouver(x.prenom,x.nom);
-        return '<button type="button" class="psal'+(f&&f.valide?' fait':f?' ouv':'')+'" data-i="'+i+'">'+(f&&f.valide?'✓ ':'')+esc(preMaj(x.prenom)+' '+nomMaj(x.nom))+'</button>';}).join('')+'</div>';
+        return '<button type="button" class="psal'+(f&&f.valide?' fait':f?' ouv':'')+'" data-i="'+i+'">'+(f&&f.valide?'✓ ':'')+esc(nomMaj(x.nom)+' '+preMaj(x.prenom))+'</button>';}).join('')+'</div>';
     }
     $('p_sals').innerHTML=hs;
     $('p_ajout').textContent=PSAL.length?'+ Autre salarié (absent de la liste)':'+ Signaler un salarié';
@@ -1391,7 +1391,7 @@
       c.querySelector('.fval').onclick=function(){
         lireNoms(f,c);
         var ed2=c.querySelector('.pedit');if(ed2)fermerEdit(f,ed2);
-        if(!f.p||!f.n){f.err='Indiquez le prénom et le NOM du salarié.';rendreFiches();return;}
+        if(!f.p||!f.n){f.err='Indiquez le NOM et le prénom du salarié.';rendreFiches();return;}
         var autre=trouver(f.p,f.n,f);
         if(autre){for(var k in f.v)autre.v[k]=f.v[k];FICHES=FICHES.filter(function(z){return z!==f;});autre.valide=false;autre.info='Ce salarié est déjà signalé : complétez sa fiche.';rendreFiches();return;}
         if(!Object.keys(f.v).length){f.err='Complétez au moins un élément (heures sup., prime, absence…).';rendreFiches();return;}
@@ -1405,7 +1405,7 @@
     var mots=t.split(/\s+/).filter(Boolean);
     var l=PSAL.filter(function(s){var k=cle(s.prenom+' '+s.nom);return mots.length&&mots.every(function(m){return k.indexOf(m)>=0;});}).slice(0,6);
     if(!l.length){box.style.display='none';return;}
-    box.innerHTML=l.map(function(s,i){var deja=trouver(s.prenom,s.nom,f);return '<div data-i="'+i+'">'+esc(preMaj(s.prenom)+' '+nomMaj(s.nom))+(deja?' <i>(déjà signalé – compléter)</i>':'')+'</div>';}).join('');
+    box.innerHTML=l.map(function(s,i){var deja=trouver(s.prenom,s.nom,f);return '<div data-i="'+i+'">'+esc(nomMaj(s.nom)+' '+preMaj(s.prenom))+(deja?' <i>(déjà signalé – compléter)</i>':'')+'</div>';}).join('');
     box.style.display='block';
     [].forEach.call(box.children,function(dv){dv.onmousedown=function(e){e.preventDefault();var s=l[+dv.getAttribute('data-i')],deja=trouver(s.prenom,s.nom,f);
       if(deja){for(var k in f.v)deja.v[k]=f.v[k];FICHES=FICHES.filter(function(z){return z!==f;});deja.valide=false;deja.info='Ce salarié est déjà signalé : complétez sa fiche.';rendreFiches();return;}
@@ -1413,7 +1413,7 @@
   }
   $('p_ajout').onclick=function(){
     [].forEach.call($('p_fiches').querySelectorAll('.fiche'),function(c){lireNoms(ficheDe(c),c);});
-    nouvelleFiche('','');rendreFiches();var c=$('p_fiches').querySelectorAll('.fiche');c[c.length-1].querySelector('.fp').focus();
+    nouvelleFiche('','');rendreFiches();var c=$('p_fiches').querySelectorAll('.fiche');c[c.length-1].querySelector('.fn').focus();
   };
   // Envoi : rien=true pour « Rien à signaler » (depuis la rubrique Social)
   function envoyerPaie(rien,b){
@@ -1427,7 +1427,7 @@
       if(!fiches.length&&!info&&!nf){err.textContent='Signalez au moins un salarié, une information ou un fichier.';return;}
     }
     var o={rubrique:'paie',mois:(PDATA&&PDATA.paieMois)||moisPaie(),rien:!!rien,fiches:fiches,info:rien?'':$('p_info').value.trim()};
-    var recap=rien?['Éléments de paie : rien à signaler']:fiches.map(function(f){return f.prenom+' '+f.nom+' : '+Object.keys(f.v).map(function(k){return PDEF[k].l+' '+annot(k,f.v[k]);}).join(', ');});
+    var recap=rien?['Éléments de paie : rien à signaler']:fiches.map(function(f){return f.nom+' '+f.prenom+' : '+Object.keys(f.v).map(function(k){return PDEF[k].l+' '+annot(k,f.v[k]);}).join(', ');});
     if(DEMO){merci('Démonstration : rien n’a été envoyé.',recap);return;}
     b.disabled=true;etat(b,0,0,'','Envoi en cours…');
     var lot='L'+Date.now().toString(36)+Math.random().toString(36).slice(2,8),fichiers=rien?[]:($('paie').querySelector('.banque').files||[]);o.lot=lot;
