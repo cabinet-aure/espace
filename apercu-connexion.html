@@ -1147,7 +1147,7 @@
     'Autre':'Précisez la situation dans le cadre ci-dessous ; document facultatif.'};
   function champSal(cat){
     var liste=SALS.length?'<label class="f large" style="margin:0"><span>Salarié</span><select class="choixsal"><option value="">Choisir un salarié…</option>'+
-      SALS.map(function(x,i){return '<option value="'+i+'">'+esc(nomMaj(x.nom)+' '+preMaj(x.prenom))+'</option>';}).join('')+'<option value="autre">Autre salarié (pas dans la liste)</option></select></label>':'';
+      SALS.map(function(x,i){return '<option value="'+i+'">'+esc(nomMaj(x.nom)+' '+preMaj(x.prenom))+'</option>';}).join('')+'<option value="autre">Un salarié qui n’est pas dans la liste</option></select></label>':'';
     var cache=SALS.length?' style="margin:0;display:none"':' style="margin:0"';
     return '<div class="grille" style="margin-bottom:10px">'+liste+'<label class="f nomlibre"'+cache+'><span>Nom du salarié</span><input class="sal" type="text" maxlength="40" placeholder="ex. : DUPONT" autocomplete="off"></label>'+
       '<label class="f nomlibre"'+cache+'><span>Prénom du salarié</span><input class="pre" type="text" maxlength="40" placeholder="ex. : Jean" autocomplete="off"></label>'+
@@ -1155,7 +1155,7 @@
       TYPES[cat].map(function(t){return '<option>'+t+'</option>';}).join('')+'</select></label>'+
       (cat==='depart'?'<label class="f" style="margin:0"><span>Dernier jour travaillé (ou fin du contrat)</span><input class="datd" type="date"></label>'+
         '<label class="f prvf" style="margin:0;display:none"><span>Préavis effectué ?</span><select class="prv"><option value="">Choisir…</option><option>Oui</option><option>Non</option><option>Dispensé</option></select></label>'+
-        '<div class="f large dinfo" style="margin:0;display:none"></div>':'')+
+        '<div class="dinfo" style="grid-column:1/-1;display:none;background:#f3f6fb;border:1px solid #d6e0ef;border-radius:8px;padding:9px 12px;font-size:14px;color:#2b3f5c"></div>':'')+
       (cat==='arret'?'<label class="f" style="margin:0"><span class="libdat">Date de début de l’arrêt</span><input class="dat" type="date"></label><label class="f" style="margin:0"><span>Date de fin de l’arrêt</span><input class="datf" type="date"></label>':'')+'</div>';
   }
   var SALS=[];
