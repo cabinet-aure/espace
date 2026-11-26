@@ -415,7 +415,7 @@
   .pedit .nb{display:inline-flex;border:1px solid #ccc;border-radius:6px;overflow:hidden}.pedit .nb label{padding:6px 10px;cursor:pointer}.pedit .nb input{display:none}.pedit .nb label.on{background:#d84315;color:#fff}
   .plus{background:none;border:0;color:#d84315;font-size:14px;cursor:pointer;margin:10px 0 0;padding:0;text-decoration:underline}
   .pgr{margin:10px 0 0}.pgr .gt{font-size:12px;color:#777;text-transform:uppercase;letter-spacing:.5px;margin:8px 0 4px}
-  .fpied{display:flex;justify-content:flex-end;margin:12px 0 0}.fpied button{background:#2e6b3a;color:#fff;border:0;border-radius:6px;padding:8px 16px;font-weight:bold;cursor:pointer}
+  .fpied{display:flex;justify-content:flex-end;gap:10px;margin:12px 0 0}.fpied .fann{background:#fff!important;color:#555!important;border:1px solid #bdbdbd!important}.fpied .fann:hover{background:#f3f3f3!important}.fpied button{background:#2e6b3a;color:#fff;border:0;border-radius:6px;padding:8px 16px;font-weight:bold;cursor:pointer}
   .ferr{color:#c0392b;font-size:13px;margin:8px 0 0}
   .finfo{color:#8a3b12;font-size:13px;margin:8px 0 0}
   .fresume{border:1px solid #cfe3cf;background:#eef6ef;border-radius:8px;padding:10px 14px;margin:0 0 10px;display:flex;justify-content:space-between;gap:10px;align-items:center;color:#2e6b3a;font-size:14px}
@@ -1373,14 +1373,14 @@
     FICHES.forEach(function(f){
       if(f.valide){h+='<div class="fresume" data-f="'+f.id+'"><span><b>✓ '+esc(f.n+' '+f.p)+'</b> – '+esc(resumeFiche(f))+(f.depose?'<span class="dep">arrêt déposé le '+esc(f.depose)+'</span>':'')+'</span><a href="#" class="fmod">Modifier</a></div>';return;}
       var dansPP=PP.some(function(x){return x.k===f.ouvert;});
-      h+='<div class="fiche" data-f="'+f.id+'"><button type="button" class="ferme" title="Retirer cette fiche">✕</button>'+
+      h+='<div class="fiche" data-f="'+f.id+'">'+
         '<div class="noms"><label><span>NOM</span><input class="fn" value="'+esc(f.n)+'" autocomplete="off" maxlength="40"></label><label><span>Prénom</span><input class="fp" value="'+esc(f.p)+'" autocomplete="off" maxlength="40"></label><div class="sugg"></div></div>'+
         (f.info?'<div class="finfo">'+esc(f.info)+'</div>':'')+
         '<div class="pills">'+PP.map(function(x){return pillHtml(f,x);}).join('')+'</div>'+(dansPP?editHtml(f):'')+
         '<button type="button" class="plus">'+(f.plus?'− Moins de choix':'+ Plus de choix')+'</button>';
       if(f.plus)h+=PG.map(function(g){var ici=g[1].some(function(x){return x.k===f.ouvert;});
         return '<div class="pgr"><div class="gt">'+esc(g[0])+'</div><div class="pills" style="margin:0">'+g[1].map(function(x){return pillHtml(f,x);}).join('')+'</div>'+(ici?editHtml(f):'')+'</div>';}).join('');
-      h+=(f.err?'<div class="ferr">'+esc(f.err)+'</div>':'')+'<div class="fpied"><button type="button" class="fval">✓ Valider</button></div></div>';
+      h+=(f.err?'<div class="ferr">'+esc(f.err)+'</div>':'')+'<div class="fpied"><button type="button" class="fann">Annuler</button><button type="button" class="fval">✓ Valider</button></div></div>';
     });
     $('p_fiches').innerHTML=h;
     var hs='';
@@ -1399,7 +1399,7 @@
     function ouvrirSal(b){
       [].forEach.call($('p_fiches').querySelectorAll('.fiche'),function(c){lireNoms(ficheDe(c),c);});
       var x=PSAL[+b.getAttribute('data-i')],f=trouver(x.prenom,x.nom);
-      if(f){f.valide=false;}else{f=nouvelleFiche(x.prenom,x.nom);}
+      if(f){if(f.valide)f.sauve=JSON.stringify(f.v);f.valide=false;}else{f=nouvelleFiche(x.prenom,x.nom);}
       rendreFiches();var c=$('p_fiches').querySelector('[data-f="'+f.id+'"]');if(c)c.scrollIntoView({block:'center'});
     }
     [].forEach.call($('p_sals').querySelectorAll('.psal'),function(b){b.onclick=function(){ouvrirSal(b);};});
@@ -1420,7 +1420,10 @@
     var R=$('p_fiches');
     [].forEach.call(R.querySelectorAll('.fiche'),function(c){
       var f=ficheDe(c);
-      c.querySelector('.ferme').onclick=function(){FICHES=FICHES.filter(function(z){return z!==f;});rendreFiches();};
+      c.querySelector('.fann').onclick=function(){
+        if(f.sauve){f.v=JSON.parse(f.sauve);f.valide=true;f.ouvert='';f.err='';f.info='';delete f.sauve;}
+        else FICHES=FICHES.filter(function(z){return z!==f;});
+        var sel=$('p_sals').querySelector('.psel');if(sel)sel.value='';rendreFiches();};
       ['fp','fn'].forEach(function(cl){var i=c.querySelector('.'+cl);
         i.oninput=function(){suggerer(f,c);};i.onfocus=function(){suggerer(f,c);};
         i.onblur=function(){setTimeout(function(){c.querySelector('.sugg').style.display='none';},200);lireNoms(f,i);};});
@@ -1442,10 +1445,10 @@
         var autre=trouver(f.p,f.n,f);
         if(autre){for(var k in f.v)autre.v[k]=f.v[k];FICHES=FICHES.filter(function(z){return z!==f;});autre.valide=false;autre.info='Ce salarié est déjà signalé : complétez sa fiche.';rendreFiches();return;}
         if(!Object.keys(f.v).length){f.err='Complétez au moins un élément (heures sup., prime, absence…).';rendreFiches();return;}
-        f.valide=true;f.err='';f.info='';f.ouvert='';rendreFiches();
+        f.valide=true;f.err='';f.info='';f.ouvert='';delete f.sauve;var sl=$('p_sals').querySelector('.psel');if(sl)sl.value='';rendreFiches();
       };
     });
-    [].forEach.call(R.querySelectorAll('.fresume .fmod'),function(a){a.onclick=function(e){e.preventDefault();var f=ficheDe(a);f.valide=false;rendreFiches();};});
+    [].forEach.call(R.querySelectorAll('.fresume .fmod'),function(a){a.onclick=function(e){e.preventDefault();var f=ficheDe(a);f.sauve=JSON.stringify(f.v);f.valide=false;rendreFiches();};});
   }
   function suggerer(f,c){
     var p=c.querySelector('.fp').value,n=c.querySelector('.fn').value,t=cle(p+' '+n).trim(),box=c.querySelector('.sugg');
