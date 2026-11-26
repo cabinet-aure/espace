@@ -10,7 +10,7 @@
   *{box-sizing:border-box}
   body{margin:0;background:#f1f3f2;font-family:Arial,Helvetica,sans-serif;color:var(--txt);font-size:15px;line-height:1.45}
   .wrap{max-width:820px;margin:0 auto;padding:16px 14px 0}
-  @media(min-width:1400px){.wrap{max-width:1000px;padding-top:28px}body{font-size:16.5px}.tete .lib{font-size:16px}.tete .soc{font-size:21px}.rub h2{font-size:19px}.bq-nom{font-size:19px}.t .tti{font-size:19px}.t .tb{font-size:15.5px}.t .go{font-size:16px}.ic{width:58px;height:58px}}
+  @media(min-width:1400px){.wrap{max-width:1000px;padding-top:28px}body{font-size:16.5px}.tete .lib{font-size:16px}.tete .soc{font-size:21px}.rub h2{font-size:19px}.bq-nom{font-size:19px}.ic{width:58px;height:58px}}
   .carte{background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.08);border-top:6px solid var(--or)}
   .carte>footer{border-radius:0 0 12px 12px}
   .bq-tete>div:not(.pastille){flex:1;min-width:0}
@@ -186,19 +186,26 @@
   .merci a{color:var(--vert);font-weight:bold}
   .retour{display:inline-block;font-size:14px;color:var(--vert);font-weight:bold;text-decoration:none;border:1px solid #cfe3cf;background:#f4faf4;border-radius:20px;padding:5px 12px;margin-bottom:12px}
   .intro{padding:6px 30px 4px}
-  .tuiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;padding:16px 30px 28px}
-  .t{display:flex;flex-direction:column;background:#fff;border:1px solid #e8e8e8;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.08);overflow:hidden;text-decoration:none;color:#1f1f1f;transition:border-color .15s}
-  .t .tin{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;padding:18px 14px 14px;transition:background .15s}
-  a.t:hover{border-color:#e6dcc0}a.t:hover .tin{background:#f8f4e8}
-  .t .tic{width:52px;height:52px;border-radius:50%;background:var(--c);display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 2px 5px rgba(0,0,0,.15)}
-  .t .tti{font-weight:bold;font-size:17px;margin:10px 0 8px}
-  .t .tb{font-size:14px;color:#555;line-height:1.5}
-  .t .tb b{color:#1f1f1f;white-space:nowrap}
-  .past{display:inline-block;border-radius:14px;padding:3px 12px;font-weight:bold;font-size:13px;margin-bottom:6px}
+  .tuiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;padding:14px 30px 22px}
+  .t{display:flex;flex-direction:column;background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.10);overflow:hidden;text-decoration:none;color:#222}
+  a.t:hover{background:#f8f4e8}
+  .t .tin{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center}
+  .t .tic{width:44px;height:44px;border-radius:50%;background:var(--c);display:flex;align-items:center;justify-content:center;margin:16px auto 8px}
+  .t .tic svg{width:22px;height:22px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .t .tti{font-weight:bold;font-size:17px;margin:0}
+  .t .tb{padding:8px 14px 14px;font-size:13px;color:#444;line-height:1.5}
+  .t .tb b{color:#222;white-space:nowrap}
+  .past{display:inline-block;border-radius:12px;padding:2px 12px;font-weight:bold}
   .past.vert{background:#e6f2e8;color:#2e6b3a}.past.rouge{background:#fdeaea;color:#b42318}
-  .t .go{background:var(--c);color:#fff;font-weight:bold;font-size:15px;text-align:center;padding:11px;transition:background .15s}
-  a.t:hover .go{filter:brightness(.92)}
+  .t .go{background:var(--c);color:#fff;font-weight:bold;font-size:14px;text-align:center;padding:10px 0}
   .t.inactif{cursor:default}.t.inactif .go{background:#b8c4c7}
+  .vacc .bdg{border-left:0;padding-left:0}
+  .vacc .bandeau{border:0;border-radius:8px}
+  .vacc .tete .bandeau .lib{font-size:10px;color:#a8892b}
+  .vacc .tete .bandeau .soc{font-size:17px;color:#222}
+  .vacc .tete .rd{width:38px;height:38px;background:#a8892b;box-shadow:none;font-size:13px}
+  footer svg{width:15px;height:15px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-2px;margin-right:4px}
+  footer{font-size:12px!important;padding:12px!important;gap:6px 28px!important}
 .tete .moi{position:relative;flex:none;align-self:flex-end;margin-bottom:2px}
   .ic{width:52px;height:52px;border-radius:50%;background:#f6efd9;border:2px solid #b8961e;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
   .ic:hover,.ic[aria-expanded="true"]{background:#efe2bb}
@@ -566,7 +573,7 @@
     <p>Vos documents vont être examinés par nos services. Nous reviendrons vers vous si un complément s’avère nécessaire.</p>
     <p><a href="#" id="revenir">Revenir à mon espace</a></p>
   </div>
-  <footer><span class="fl">📍 6 rue des Marais, 78310 Coignières</span><span class="fl">📞 01&nbsp;30&nbsp;49&nbsp;50&nbsp;05</span></footer>
+  <footer><span class="fl"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/><path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z"/></svg>6 rue des Marais, 78310 Coignières</span><span class="fl"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2"/></svg>01&nbsp;30&nbsp;49&nbsp;50&nbsp;05</span></footer>
  </div>
 </div>
 <script>
@@ -768,7 +775,7 @@
       else if(VUE==='paie'){$('retourSocPaie').href=lienVue('social');afficherPaie(d);$('paie').style.display='';}
       else if(VUE==='cdd'){$('retourSocCdd').href=lienVue('social');afficherCdd(d.cdd||[]);$('cdd').style.display='';}
       else if(VUE==='embauche'){$('retourSoc').href=lienVue('social');if(window.initConv)window.initConv(d.convention);lireBrouillon();majEmb();$('embauche').style.display='';}
-      else{tuiles(d);$('accueil').style.display='';}
+      else{tuiles(d);document.body.classList.add('vacc');$('accueil').style.display='';}
       $('chargement').style.display='none';
     }).catch(function(){erreurLien('La page n’a pas pu être chargée. Merci de réessayer dans quelques instants.');});
   }
@@ -806,9 +813,9 @@
     if(d.paie==='X')corpsS='Paie, embauches,<br>arrêts de travail, départs';
     else if(pe)corpsS='<span class="past vert">Paie envoyée</span><br>Reçue par le cabinet<br>le <b>'+esc(longue(pe.date))+'</b>';
     else corpsS='<span class="past rouge">Paie de '+esc((d.paieMois||moisPaie()).replace(/\s*\d{4}$/,''))+'</span><br>À envoyer avant le<br><b>'+esc(longue(d.paieLimite||finMois()))+'</b>';
-    $('tuiles').innerHTML=tuile('#2e6b3a','🏦','Banque',corpsB,n?'✓ Déposer':'Consulter',lienVue('banque'))+
-      (SOCIAL_OUVERT?tuile('#d84315','👥','Social',corpsS,'✓ Déposer',lienVue('social'))
-      :inactive('👥','Social','Paie, embauches,<br>arrêts de travail, départs','#d84315'))+tuileBilan(d.bilan);
+    $('tuiles').innerHTML=tuile('#2e6b3a','<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21l18 0"/><path d="M3 10l18 0"/><path d="M5 6l7 -3l7 3"/><path d="M4 10l0 11"/><path d="M20 10l0 11"/><path d="M8 14l0 3"/><path d="M12 14l0 3"/><path d="M16 14l0 3"/></svg>','Banque',corpsB,n?'✓ Déposer':'Consulter',lienVue('banque'))+
+      (SOCIAL_OUVERT?tuile('#d84315','<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"/><path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0 -3 -3.85"/></svg>','Social',corpsS,'✓ Déposer',lienVue('social'))
+      :inactive('<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"/><path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0 -3 -3.85"/></svg>','Social','Paie, embauches,<br>arrêts de travail, départs','#d84315'))+tuileBilan(d.bilan);
   }
   function tuile(c,ic,t,corps,go,lien){
     return '<a class="t" style="--c:'+c+'" href="'+lien+'"><div class="tin"><span class="tic">'+ic+'</span><div class="tti">'+t+'</div><div class="tb">'+corps+'</div></div><div class="go">'+go+'</div></a>';
@@ -958,11 +965,11 @@
   function zoneBil(texte){return '<label class="zone petite"><input type="file" multiple accept="'+ACC_SOC+'">'+NUAGE_PE+'<span class="ztxt">'+texte+'<br><b>ou sélectionnez un fichier</b></span></label><ul class="fichiers"></ul>';}
   // Case de l'accueil : demande en cours (vert pétrole, « ✓ Déposer »), tout reçu (« ✔ À jour »), sinon « Prochainement »
   function tuileBilan(b){
-    if(!b)return inactive('📁','Bilan','Documents<br>pour le bilan','#1f5f6b');
+    if(!b)return inactive('<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l3 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2"/></svg>','Bilan','Documents<br>pour le bilan','#1f5f6b');
     var n=b.documents.filter(function(x){return x.statut!=='Reçu';}).length,corps;
     if(n)corps='<span class="past rouge">'+n+(n>1?' documents':' document')+' à envoyer</span><br>'+esc(b.titre)+(b.dateLimite?'<br>avant le <b>'+esc(longue(b.dateLimite))+'</b>':'');
     else corps='<span class="past vert">À jour</span><br>'+esc(b.titre);
-    return tuile('#1f5f6b','📁','Bilan',corps,n?'✓ Déposer':'Consulter',lienVue('bilan'));
+    return tuile('#1f5f6b','<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l3 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2"/></svg>','Bilan',corps,n?'✓ Déposer':'Consulter',lienVue('bilan'));
   }
   function afficherBilan(b){
     $('bTitre').textContent='Documents pour le '+b.titre.charAt(0).toLowerCase()+b.titre.slice(1);
