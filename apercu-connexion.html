@@ -382,13 +382,20 @@
   .psals{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
   .psal{background:#fff;border:1px solid #d84315;color:#d84315;border-radius:18px;padding:8px 14px;font:bold 14px Arial,Helvetica,sans-serif;cursor:pointer}
   .psal:hover{background:#fff3ee}.psal.fait{background:#eef6ef;border-color:#2e6b3a;color:#2e6b3a}.psal.ouv{background:#d84315;color:#fff}
-  .spaie{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#fff;border:1px solid #e6e6e6;border-left:4px solid #d84315;border-radius:10px;padding:14px 16px;margin:0 0 14px}
+  .spaie{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#fff;border:2px solid #d84315;border-radius:10px;padding:14px 16px;margin:0 0 14px}
   .spaie .sptxt{flex:1;min-width:200px}.spaie .stit{font-weight:bold;font-size:16px;color:#222}
   .slim{font-size:13px;color:#d84315;font-weight:bold;margin-top:3px}.sarr{font-size:12px;color:#8a3b12;margin-top:3px}
-  .sgrille{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
-  .stu{display:flex;flex-direction:column;gap:6px;background:#fff;border:1px solid #e6e6e6;border-radius:10px;padding:14px;text-decoration:none;color:#222;min-height:120px;transition:background .15s,border-color .15s}
-  .stu:hover{background:#f8f4e8;border-color:#e6dcc0}
-  .stu .stit{font-weight:bold;font-size:15px}.stu .sso{font-size:13px;color:#666}.stu .set{margin-top:auto;font-size:13px;color:#888}
+  .sgrille{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+  @media(max-width:700px){.sgrille{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  .stu{display:flex;flex-direction:column;border:2px solid #d84315;border-radius:10px;overflow:hidden;text-decoration:none;color:#222;background:#fff}
+  .stu .sh{background:#d84315;color:#fff;font-weight:bold;font-size:14px;padding:10px;display:flex;align-items:center;gap:8px;min-height:40px}
+  .stu .sic{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;font-size:16px;flex:none}
+  .stu .sb{padding:10px;font-size:13px;color:#444;flex:1;transition:background .15s}
+  .stu:hover .sb{background:#f8f4e8}
+  .stu .sgo{margin:0 10px 10px;background:#d84315;color:#fff;font-weight:bold;font-size:13px;text-align:center;border-radius:6px;padding:8px;border-bottom:3px solid #8c2b0d}
+  .sautre{display:flex;align-items:center;gap:12px;border:2px solid #d84315;border-radius:10px;padding:10px 14px;margin-top:12px;font-size:14px;color:#222;text-decoration:none;background:#fff;transition:background .15s}
+  .sautre:hover{background:#f8f4e8}.sautre .sic{width:30px;height:30px;border-radius:50%;background:#d84315;display:flex;align-items:center;justify-content:center;font-size:15px;flex:none}
+  .sautre .sgo2{margin-left:auto;color:#d84315;font-weight:bold;font-size:13px;white-space:nowrap}
   .psel{width:100%;max-width:420px;padding:10px;border:2px solid #d84315;border-radius:8px;font-size:15px;margin:0 0 14px;background:#fff}
   .pslib{font-size:14px;color:#555;margin:0 0 8px}
   .fiche .ferme{position:absolute;top:8px;right:10px;background:none;border:0;color:#999;font-size:18px;cursor:pointer}
@@ -1189,12 +1196,12 @@
         (pe?'':'<div class="pbtns" style="margin:0"><button type="button" class="pbtn" id="p_rien" style="--pc:#2e6b3a;--pf:#eef6ef"><span class="pr">✓</span>'+(arr.length?'Rien d’autre à signaler':'Rien à signaler')+'</button>'+
           '<a class="pbtn" href="'+lienVue('paie')+'" style="--pc:#d84315;--pf:#fff3ee"><span class="pr">+</span>Signaler des éléments</a></div>')+'</div>';
     }
-    function tu(v,ic,t,so,etat){return '<a class="stu" href="'+lienVue(v)+'"><div class="pastille" style="background:'+OR+';font-size:20px">'+ic+'</div><div class="stit">'+t+'</div><div class="sso">'+so+'</div><div class="set">'+etat+'</div></a>';}
+    function tu(v,ic,t,so,go){return '<a class="stu" href="'+lienVue(v)+'"><div class="sh"><span class="sic">'+ic+'</span>'+t+'</div><div class="sb">'+so+'</div><div class="sgo">'+go+'</div></a>';}
     var proches=cdds.filter(function(x){var j=joursAvant(x.fin);return j>=0&&j<=15;});
-    h+='<div class="sgrille">'+tu('embauche','✍️','Embauche','Un nouveau salarié','→ Remplir le formulaire');
-    if(sal||cdds.length)h+=tu('cdd','🔁','Renouvellement de CDD','Prolonger un CDD en cours',proches.length?'<span style="color:#c0392b">⚠ '+proches.length+' CDD se termine'+(proches.length>1?'nt':'')+' bientôt</span>':cdds.length?'→ '+cdds.length+' CDD en cours':'Aucun CDD en cours');
-    if(sal){h+=tu('arret','🩺','Arrêt de travail','Maladie, accident, prolongation…','→ Déposer un arrêt');h+=tu('depart','🚪','Départ','Démission, fin de CDD, rupture…','→ Signaler un départ');}
-    h+=tu('autre','📄','Autre document social','Mutuelle, médecine du travail…','→ Déposer un document')+'</div>';
+    h+='<div class="sgrille">'+tu('embauche','✍️','Embauche','Un nouveau salarié ?','✓ Déclarer');
+    if(sal||cdds.length)h+=tu('cdd','🔁','Renouvellement de CDD',proches.length?'<span style="color:#c0392b;font-weight:bold">⚠ '+proches.length+' CDD se termine'+(proches.length>1?'nt':'')+' bientôt</span>':cdds.length?cdds.length+' CDD en cours.':'Aucun CDD en cours.','✓ Renouveler');
+    if(sal){h+=tu('arret','🩺','Arrêt de travail','Maladie, accident, prolongation…','✓ Déposer');h+=tu('depart','🚪','Départ','Démission, fin de CDD, rupture…','✓ Signaler');}
+    h+='</div><a class="sautre" href="'+lienVue('autre')+'"><span class="sic">📄</span>Autre document social (mutuelle, médecine du travail…)<span class="sgo2">✓ Déposer</span></a>';
     $('blocsSoc').innerHTML=h;szones=[];
     if($('p_rien'))$('p_rien').onclick=function(){envoyerPaie(true,this);};
   }
