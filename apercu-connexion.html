@@ -392,6 +392,14 @@
   .spaie .sptxt{flex:1;min-width:200px}.spaie .stit{font-weight:bold;font-size:16px;color:#1f1f1f}
   .slim{font-size:13px;color:#6b6b6b;margin-top:3px}.slim b{color:#d84315}
   .sic{width:52px;height:52px;border-radius:50%;background:#d84315;display:flex;align-items:center;justify-content:center;font-size:22px;flex:none;box-shadow:0 2px 5px rgba(216,67,21,.25)}
+  .sicl{background:var(--bg)!important;color:var(--fg);box-shadow:none!important}
+  .sicl svg,.rub h2 svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .sautre .sicl svg{width:18px;height:18px}
+  .rub h2 svg{width:22px;height:22px;vertical-align:-4px;margin-right:6px}
+  .scal{width:52px;border-radius:9px;overflow:hidden;box-shadow:0 1px 5px rgba(0,0,0,.2);text-align:center;flex:none;background:#fff;font-family:Arial,Helvetica,sans-serif}
+  .scal .cm{background:#c62828;color:#fff;font-size:11px;font-weight:bold;letter-spacing:1px;padding:3px 0}
+  .scal .cj{font-size:23px;font-weight:bold;color:#1f1f1f;padding:3px 0 4px;line-height:1.1}
+  .scal.ok .cm{background:#2e6b3a}.scal.ok .cj{color:#2e6b3a}
   .pbtn:hover{filter:none}#p_rien:hover{background:#e3f0e4!important}
   .sgrille{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
   @media(max-width:700px){.sgrille{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -471,7 +479,7 @@
   <div id="social" style="display:none">
    <div class="corps soc">
     <a class="retourS" id="retourSocSeul" href="#" style="display:none">← Retour à la rubrique Social</a>
-    <div class="rub or"><h2>👥 Social</h2></div>
+    <div class="rub or"><h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"/><path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0 -3 -3.85"/></svg>Social</h2></div>
     <div class="consigne" id="consSoc" style="font-size:14px;color:#666">Déposez chaque document dans la zone qui correspond, puis cliquez sur « Envoyer mes documents ». <span class="qaide">Besoin d’aide ? Cliquez sur <span class="qrond">?</span></span></div>
     <div id="blocsSoc"></div>
    </div>
@@ -1234,16 +1242,17 @@
       var pm=d.paieMois||moisPaie(),pe=d.paieEnvoi,arr=d.arretsMois||[],st;
       if(pe)st='<div class="ptransmis" style="margin:4px 0 0">✓ Transmis le '+esc(pe.date)+(pe.rien?' : rien à signaler':'')+'<a href="'+lienVue('paie')+'">Modifier</a></div>';
       else st='<div class="slim">À envoyer avant le <b>'+esc(d.paieLimite||finMois())+'</b>'+(arr.length?' · '+arr.length+(arr.length>1?' arrêts déjà déposés':' arrêt déjà déposé'):'')+'</div>';
-      h+='<div class="spaie" id="spaie"><span class="sic">📋</span><div class="sptxt"><div class="stit">Éléments de paie de '+esc(pm)+'</div>'+st+'</div>'+
+      var lim=String(d.paieLimite||finMois()).match(/^(\d{2})\/(\d{2})/),MC=['JANV.','FÉVR.','MARS','AVR.','MAI','JUIN','JUIL.','AOÛT','SEPT.','OCT.','NOV.','DÉC.'];
+      h+='<div class="spaie" id="spaie"><span class="scal'+(pe?' ok':'')+'" aria-hidden="true"><span class="cm" style="display:block">'+(lim?MC[+lim[2]-1]:'')+'</span><span class="cj" style="display:block">'+(pe?'✓':(lim?+lim[1]:''))+'</span></span><div class="sptxt"><div class="stit">Éléments de paie de '+esc(pm)+'</div>'+st+'</div>'+
         (pe?'':'<div class="pbtns" style="margin:0"><button type="button" class="pbtn" id="p_rien" style="--pc:#2e6b3a;--pf:#eef6ef"><span class="pr">✓</span>'+(arr.length?'Rien d’autre à signaler':'Rien à signaler')+'</button>'+
           '<a class="pbtn" href="'+lienVue('paie')+'" style="--pc:#d84315;--pf:#fff3ee"><span class="pr">+</span>Signaler des éléments</a></div>')+'</div>';
     }
     function tu(v,ic,t,so,go){return '<a class="stu" href="'+lienVue(v)+'"><div class="sin"><span class="sic">'+ic+'</span><div class="sh">'+t+'</div><div class="sb">'+so+'</div></div><div class="sgo">'+go+'</div></a>';}
     var proches=cdds.filter(function(x){var j=joursAvant(x.fin);return j>=0&&j<=15;});
-    h+='<div class="sgrille">'+tu('embauche','✍️','Embauche','Un nouveau salarié ? Transmettez ses informations.','✓ Déclarer');
-    if(sal||cdds.length)h+=tu('cdd','📅','Renouvellement de CDD',proches.length?'<span style="color:#c0392b;font-weight:bold">⚠ '+proches.length+' CDD se termine'+(proches.length>1?'nt':'')+' bientôt</span>':cdds.length?cdds.length+' CDD en cours.':'Aucun CDD en cours.','✓ Renouveler');
-    if(sal){h+=tu('arret','🩺','Arrêt de travail','Maladie, accident, prolongation…','✓ Déposer');h+=tu('depart','📤','Départ','Démission, fin de CDD, rupture…','✓ Signaler');}
-    h+='</div><a class="sautre" href="'+lienVue('autre')+'"><span class="sic">📄</span>Autre document social (mutuelle, médecine du travail…)<span class="sgo2">✓ Déposer</span></a>';
+    h+='<div class="sgrille">'+tu('embauche','<span class="sic sicl" style="--bg:#e3f1e5;--fg:#2e6b3a"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"/><path d="M16 19h6"/><path d="M19 16v6"/><path d="M6 21v-2a4 4 0 0 1 4 -4h4"/></svg></span>','Embauche','Un nouveau salarié ? Transmettez ses informations.','✓ Déclarer');
+    if(sal||cdds.length)h+=tu('cdd','<span class="sic sicl" style="--bg:#e3eef8;--fg:#1f5f9e"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M4 11h16"/><path d="M11 15h1"/><path d="M12 15v3"/></svg></span>','Renouvellement de CDD',proches.length?'<span style="color:#c0392b;font-weight:bold">⚠ '+proches.length+' CDD se termine'+(proches.length>1?'nt':'')+' bientôt</span>':cdds.length?cdds.length+' CDD en cours.':'Aucun CDD en cours.','✓ Renouveler');
+    if(sal){h+=tu('arret','<span class="sic sicl" style="--bg:#f3e6f6;--fg:#7a3e8e"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h-1a2 2 0 0 0 -2 2v3.5a5.5 5.5 0 0 0 11 0v-3.5a2 2 0 0 0 -2 -2h-1"/><path d="M8 15a6 6 0 1 0 12 0v-3"/><path d="M11 3v2"/><path d="M6 3v2"/><path d="M18 10a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/></svg></span>','Arrêt de travail','Maladie, accident, prolongation…','✓ Déposer');h+=tu('depart','<span class="sic sicl" style="--bg:#ececea;--fg:#555555"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"/><path d="M6 21v-2a4 4 0 0 1 4 -4h4"/><path d="M16 19h6"/></svg></span>','Départ','Démission, fin de CDD, rupture…','✓ Signaler');}
+    h+='</div><a class="sautre" href="'+lienVue('autre')+'"><span class="sic sicl" style="--bg:#e6eef0;--fg:#1f5e6b"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"/><path d="M9 9l1 0"/><path d="M9 13l6 0"/><path d="M9 17l6 0"/></svg></span>Autre document social (mutuelle, médecine du travail…)<span class="sgo2">✓ Déposer</span></a>';
     $('blocsSoc').innerHTML=h;szones=[];
     if($('spaie'))$('spaie').onclick=function(e){if(e.target.closest('#p_rien,a'))return;location.href=lienVue('paie');};
     if($('p_rien'))$('p_rien').onclick=function(){envoyerPaie(true,this);};
