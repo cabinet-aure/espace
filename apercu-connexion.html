@@ -379,6 +379,7 @@
   .fiche .noms{display:grid;grid-template-columns:1fr 1fr;gap:10px;position:relative}
   .fiche .noms input{width:100%;box-sizing:border-box;padding:9px 10px;border:1px solid #ccc;border-radius:6px;font-size:15px}
   .fiche .noms label span{display:block;font-size:13px;color:#555;margin-bottom:4px}
+  .aidenom{font-size:13px;color:#8a3b12;margin:0 24px 8px 0}
   .fiche .ferme{position:absolute;top:8px;right:10px;background:none;border:0;color:#999;font-size:18px;cursor:pointer}
   .sugg{position:absolute;left:0;right:0;top:100%;background:#fff;border:1px solid #ddd;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.1);z-index:5;display:none}
   .sugg div{padding:8px 12px;cursor:pointer;font-size:14px}.sugg div:hover{background:#fff3ee}.sugg i{color:#999;font-style:normal;font-size:12px}
@@ -1329,7 +1330,8 @@
       if(f.valide){h+='<div class="fresume" data-f="'+f.id+'"><span><b>✓ '+esc(f.p+' '+f.n)+'</b> – '+esc(resumeFiche(f))+(f.depose?'<span class="dep">arrêt déposé le '+esc(f.depose)+'</span>':'')+'</span><a href="#" class="fmod">Modifier</a></div>';return;}
       var dansPP=PP.some(function(x){return x.k===f.ouvert;});
       h+='<div class="fiche" data-f="'+f.id+'"><button type="button" class="ferme" title="Retirer cette fiche">✕</button>'+
-        '<div class="noms"><label><span>Prénom</span><input class="fp" value="'+esc(f.p)+'" autocomplete="off" maxlength="40"></label><label><span>NOM</span><input class="fn" value="'+esc(f.n)+'" autocomplete="off" maxlength="40"></label><div class="sugg"></div></div>'+
+        (PSAL.length?'<div class="aidenom">Tapez les premières lettres du prénom ou du nom : vos salariés vous seront proposés.</div>':'')+
+        '<div class="noms"><label><span>Prénom</span><input class="fp" value="'+esc(f.p)+'" autocomplete="off" maxlength="40" placeholder="'+(PSAL.length?'ex. : so…':'')+'"></label><label><span>NOM</span><input class="fn" value="'+esc(f.n)+'" autocomplete="off" maxlength="40" placeholder="'+(PSAL.length?'ex. : ber…':'')+'"></label><div class="sugg"></div></div>'+
         (f.info?'<div class="finfo">'+esc(f.info)+'</div>':'')+
         '<div class="pills">'+PP.map(function(x){return pillHtml(f,x);}).join('')+'</div>'+(dansPP?editHtml(f):'')+
         '<button type="button" class="plus">'+(f.plus?'− Moins de choix':'+ Plus de choix')+'</button>';
