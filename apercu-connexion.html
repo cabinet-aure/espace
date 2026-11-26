@@ -1282,7 +1282,7 @@
     $('merci').style.display='block';window.scrollTo(0,0);
   }
   $('envoyerSoc').onclick=function(){
-    var b=this,taches=[],recap=[],manque=false;
+    var b=this,taches=[],recap=[],manque=false,finAvant=false;
     $('erreurSoc').textContent='';
     szones.forEach(function(d){
       var cat=d.getAttribute('data-cat'),s=d.querySelector('input.sal'),pr=d.querySelector('input.pre'),p=d.querySelector('.prec'),prec=p?p.value.trim():'';
@@ -1294,11 +1294,13 @@
       if(ty&&d.files.length&&!typ){ty.closest('.f').classList.add('err');manque=true;}
       if(da&&d.files.length&&!dat){da.closest('.f').classList.add('err');manque=true;}
       if(df&&d.files.length&&!datf){df.closest('.f').classList.add('err');manque=true;}
+      if(df&&dat&&datf&&datf<dat){df.closest('.f').classList.add('err');finAvant=true;}
       d.files.forEach(function(f,i){taches.push({d:d,cat:cat,sal:sal,nomS:nomS,preS:preS,typ:typ,dat:dat,datf:datf,prec:i===0?prec:'',f:f});});
       if(!d.files.length&&prec)taches.push({d:d,cat:cat,sal:'',prec:prec,f:null});
       if(d.files.length)recap.push(titre+(sal?' – '+sal:'')+' : '+d.files.length+' fichier'+(d.files.length>1?'s':''));
       else if(prec)recap.push(titre+' : précision transmise');
     });
+    if(finAvant){$('erreurSoc').textContent='La date de fin de l’arrêt est avant la date de début : merci de la corriger.';return;}
     if(manque){$('erreurSoc').textContent='Merci de compléter les cases en rouge (salarié, type et dates).';return;}
     if(!taches.length)return;
     b.lot=b.lot||('L'+Date.now().toString(36)+Math.random().toString(36).slice(2,8));
