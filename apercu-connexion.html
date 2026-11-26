@@ -1409,7 +1409,7 @@
     if(t==='h')return frc(v.n)+' h';if(t==='j')return frc(v.n)+' j';if(t==='nb')return frc(v.n);
     if(t==='eur')return frc(v.n)+' EUR';if(t==='prime')return frc(v.n)+' EUR '+(v.base||'net');
     if(t==='dates')return 'du '+jm(v.du)+' au '+jm(v.au)+' inclus';
-    if(t==='multi')return PDEF[k].f.filter(function(c){return v[c[0]];}).map(function(c){return c[1].toLowerCase()+' '+frc(v[c[0]])+' '+PDEF[k].u;}).join(', ');
+    if(t==='multi')return ': '+PDEF[k].f.filter(function(c){return v[c[0]];}).map(function(c){return c[1].toLowerCase()+' : '+frc(v[c[0]])+' '+PDEF[k].u;}).join(', ');
     return v.txt;
   }
   function resumeFiche(f){return Object.keys(f.v).map(function(k){return PDEF[k].l+' '+annot(k,f.v[k]);}).join(' · ');}
