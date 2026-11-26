@@ -1422,7 +1422,7 @@
       f.v[k]={du:isoDe(a.du),au:isoDe(a.au)};f.depose=a.depose;f.valide=true;
     });
     var pe=d.paieEnvoi;
-    if(pe&&pe.fiches)pe.fiches.forEach(function(x){var f=trouver(x.prenom,x.nom)||nouvelleFiche(x.prenom,x.nom);for(var k in x.v)f.v[k]=x.v[k];f.valide=true;});
+    if(pe&&pe.fiches)pe.fiches.forEach(function(x){var f=trouver(x.prenom,x.nom)||nouvelleFiche(x.prenom,x.nom);for(var k in x.v)f.v[k]=x.v[k];f.rien=!!x.rien;f.valide=true;});
     if(pe&&pe.info)$('p_info').value=pe.info;
     if(!FICHES.length&&!PSAL.length)nouvelleFiche('','');
     rendreFiches();
@@ -1446,7 +1446,7 @@
   function rendreFiches(){
     var h='';
     FICHES.forEach(function(f){
-      if(f.valide){h+='<div class="fresume" data-f="'+f.id+'"><span><b>✓ '+esc(f.n+' '+f.p)+'</b> – '+esc(resumeFiche(f))+(f.depose?'<span class="dep">arrêt déposé le '+esc(f.depose)+'</span>':'')+'</span><a href="#" class="fmod">Modifier</a></div>';return;}
+      if(f.valide){h+='<div class="fresume" data-f="'+f.id+'"><span><b>✓ '+esc(f.n+' '+f.p)+'</b> – '+esc(Object.keys(f.v).length?resumeFiche(f):'Rien à signaler')+(f.depose?'<span class="dep">arrêt déposé le '+esc(f.depose)+'</span>':'')+'</span><a href="#" class="fmod">Modifier</a></div>';return;}
       var dansPP=PP.some(function(x){return x.k===f.ouvert;});
       h+='<div class="fiche" data-f="'+f.id+'">'+
         '<div class="noms"><label><span>NOM</span><input class="fn" value="'+esc(f.n)+'" autocomplete="off" maxlength="40"></label><label><span>Prénom</span><input class="fp" value="'+esc(f.p)+'" autocomplete="off" maxlength="40"></label><div class="sugg"></div></div>'+
@@ -1455,7 +1455,7 @@
         '<button type="button" class="plus">'+(f.plus?'− Moins de choix':'+ Plus de choix')+'</button>';
       if(f.plus)h+=PG.map(function(g){var ici=g[1].some(function(x){return x.k===f.ouvert;});
         return '<div class="pgr"><div class="gt">'+esc(g[0])+'</div><div class="pills" style="margin:0">'+g[1].map(function(x){return pillHtml(f,x);}).join('')+'</div>'+(ici?editHtml(f):'')+'</div>';}).join('');
-      h+=(f.err?'<div class="ferr">'+esc(f.err)+'</div>':'')+'<div class="fpied"><button type="button" class="fann">Annuler</button><button type="button" class="fval">✓ Valider</button></div></div>';
+      h+=(f.err?'<div class="ferr">'+esc(f.err)+'</div>':'')+'<div class="fpied"><button type="button" class="fann">Annuler</button><button type="button" class="fval">✓ '+(Object.keys(f.v).length||f.ouvert?'Valider':'Rien à signaler')+'</button></div></div>';
     });
     $('p_fiches').innerHTML=h;
     var hs='';
@@ -1519,7 +1519,7 @@
         if(!f.p||!f.n){f.err='Indiquez le NOM et le prénom du salarié.';rendreFiches();return;}
         var autre=trouver(f.p,f.n,f);
         if(autre){for(var k in f.v)autre.v[k]=f.v[k];FICHES=FICHES.filter(function(z){return z!==f;});autre.valide=false;autre.info='Ce salarié est déjà signalé : complétez sa fiche.';rendreFiches();return;}
-        if(!Object.keys(f.v).length){f.err='Complétez au moins un élément (heures sup., prime, absence…).';rendreFiches();return;}
+        f.rien=!Object.keys(f.v).length;
         f.valide=true;f.err='';f.info='';f.ouvert='';delete f.sauve;var sl=$('p_sals').querySelector('.psel');if(sl)sl.value='';rendreFiches();
       };
     });
@@ -1547,12 +1547,12 @@
       [].forEach.call($('p_fiches').querySelectorAll('.fiche'),function(c){lireNoms(ficheDe(c),c);});
       var ouvertes=FICHES.filter(function(f){return !f.valide&&(f.p||f.n||Object.keys(f.v).length);});
       if(ouvertes.length){err.textContent='Cliquez sur « ✓ Valider » dans chaque fiche avant l’envoi (ou retirez-la avec ✕).';return;}
-      fiches=FICHES.filter(function(f){return f.valide;}).map(function(f){return {prenom:f.p,nom:f.n,v:f.v,depose:f.depose||''};});
+      fiches=FICHES.filter(function(f){return f.valide;}).map(function(f){return {prenom:f.p,nom:f.n,v:f.v,depose:f.depose||'',rien:!Object.keys(f.v).length};});
       var info=$('p_info').value.trim(),zb=$('paie').querySelector('.banque'),nf=(zb.files||[]).length;
       if(!fiches.length&&!info&&!nf){err.textContent='Signalez au moins un salarié, une information ou un fichier.';return;}
     }
     var o={rubrique:'paie',mois:(PDATA&&PDATA.paieMois)||moisPaie(),rien:!!rien,fiches:fiches,info:rien?'':$('p_info').value.trim()};
-    var recap=rien?['Éléments de paie : rien à signaler']:fiches.map(function(f){return f.nom+' '+f.prenom+' : '+Object.keys(f.v).map(function(k){return PDEF[k].l+' '+annot(k,f.v[k]);}).join(', ');});
+    var recap=rien?['Éléments de paie : rien à signaler']:fiches.map(function(f){return f.nom+' '+f.prenom+' : '+(f.rien?'rien à signaler':Object.keys(f.v).map(function(k){return PDEF[k].l+' '+annot(k,f.v[k]);}).join(', '));});
     if(DEMO){merci('Démonstration : rien n’a été envoyé.',recap);return;}
     b.disabled=true;etat(b,0,0,'','Envoi en cours…');
     var lot='L'+Date.now().toString(36)+Math.random().toString(36).slice(2,8),fichiers=rien?[]:($('paie').querySelector('.banque').files||[]);o.lot=lot;
