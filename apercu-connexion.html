@@ -386,6 +386,11 @@
   .psal{background:#fff;border:1px solid #d84315;color:#d84315;border-radius:18px;padding:8px 14px;font:bold 14px Arial,Helvetica,sans-serif;cursor:pointer}
   .psal:hover{background:#fff3ee}.psal.fait{background:#eef6ef;border-color:#2e6b3a;color:#2e6b3a}.psal.ouv{background:#d84315;color:#fff}
   #social .corps{background:#fbfbfa}
+  #formulaire .banque{border:0;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.08);background:#fff}
+  #formulaire .bq-tete{background:#fff}
+  #formulaire .zone:hover{background:#f8f4e8;border-color:#c9b37a}
+  .bcal{display:flex;align-items:center;gap:16px;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.08);padding:16px 18px;margin:14px 0 4px;font-size:14px;color:#444;line-height:1.5}
+  .bcal b{color:#c62828}
   #social .rub{margin:14px 0 18px}
   #social .corps{padding-bottom:30px!important}
   .spaie{padding:18px!important;gap:16px!important;margin:0 0 22px!important}
@@ -465,7 +470,8 @@
   <div id="accueil" style="display:none"><div class="tuiles" id="tuiles"></div></div>
   <div id="formulaire" style="display:none">
    <div class="corps">
-    <div class="rub"><h2 id="titre"></h2><span class="dl" id="limite" style="display:none">Date limite : <b id="dateLimite"></b></span></div>
+    <div class="rub"><h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21l18 0"/><path d="M3 10l18 0"/><path d="M5 6l7 -3l7 3"/><path d="M4 10l0 11"/><path d="M20 10l0 11"/><path d="M8 14l0 3"/><path d="M12 14l0 3"/><path d="M16 14l0 3"/></svg><span id="titre"></span></h2><span class="dl" id="limite" style="display:none">Date limite : <b id="dateLimite"></b></span></div>
+    <div class="bcal" id="bcal" style="display:none"><span class="scal" aria-hidden="true"><span class="cm" id="bcm" style="display:block"></span><span class="cj" id="bcj" style="display:block"></span></span><div class="bct">À déposer avant le <b id="bclim"></b>.<br>Déposez tous les documents d’une même banque dans la zone de cette banque, puis cliquez sur « Envoyer mes documents ».</div></div>
     <div class="consigne" id="consigne" style="font-size:14px;color:#666">Pour compléter votre dossier, merci de nous transmettre les documents ci-dessous. <span class="qaide">Besoin d’aide ? Cliquez sur <span class="qrond">?</span></span>
       <ol>
         <li>Déposez <b>tous les documents d’une même banque</b> dans la zone de cette banque.</li>
@@ -476,7 +482,7 @@
     <div class="rien" id="rien" style="display:none">✔ Aucun document n’est attendu de votre part pour le moment.</div>
     <div id="banques"></div>
     <div class="banque autre" id="autre" style="--c:#546e7a">
-      <div class="bq-tete"><div class="pastille" style="background:#546e7a"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M12 12v6M9 15h6"/></svg></div>
+      <div class="bq-tete"><div class="pastille picl" style="background:#e6eef0;color:#1f5e6b"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M12 12v6M9 15h6"/></svg></div>
         <div><div class="bq-nom">Autres documents</div><div class="bq-cpt">Avis de paiement de vos clients, liste des chèques émis, liste des chèques reçus, nouveau prêt, crédit-bail…</div></div><span class="pret"></span></div>
       <div class="bq-corps"><div class="attente" style="display:none"></div><label class="zone"><input type="file" multiple accept=".pdf,.ofx,.jpg,.jpeg,.png,.xls,.xlsx,.csv,.qif,.txt,.tsv,.cfonb,.dat,.120"><svg class="ico" viewBox="0 0 64 48" aria-hidden="true"><path d="M51 20.5A15 15 0 0 0 22.5 15 11.5 11.5 0 0 0 12.5 37.5h37A8.6 8.6 0 0 0 51 20.5z" fill="#2e6b3a"/><path d="M32 31V18" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M24 23.5 32 15.5l8 8" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="ztxt">Faites glisser ici vos autres documents<br><b>ou sélectionnez un fichier</b></span></label><ul class="fichiers"></ul>
         <textarea id="precision" placeholder="Précision éventuelle (facultatif)"></textarea>
@@ -601,7 +607,7 @@
   // Rubrique Social : passer à true quand les clients auront été informés (prévu en janvier 2027)
   var SOCIAL_OUVERT=true;
   // Démonstration (page de test seulement) : ?demo=1 affiche des données fictives, rien n'est envoyé
-  var DEMO=P.get('demo')==='1'?{ok:true,societe:'SOCIÉTÉ EXEMPLE (démonstration – données fictives)',siren:'',mail:'',documents:[],attente:[],envois:[],cdd:[],paie:'O',
+  var DEMO=P.get('demo')==='1'?{ok:true,societe:'SOCIÉTÉ EXEMPLE (démonstration – données fictives)',siren:'',mail:'',documents:P.get('bq')==='1'?[['Crédit Agricole','Compte courant (se terminant par 4521)','Relevé de compte de novembre 2026'],['Crédit Agricole','Compte courant (se terminant par 4521)','Relevé de carte bancaire de novembre 2026'],['Société Générale','Compte courant (se terminant par 0987)','Relevé de compte de novembre 2026'],['Société Générale','Compte courant (se terminant par 0987)','Relevé des LCR de novembre 2026'],['Banque Populaire','Compte courant (se terminant par 7730)','Relevé de compte de novembre 2026'],['Caixa Geral de Depósitos','Compte courant (se terminant par 5512)','Relevé de compte de novembre 2026']].map(function(x,i){return {ref:'R'+(i+1),banque:x[0],compte:x[1],document:x[2],statut:'À déposer'};}):[],periode:'Relevés de novembre 2026',dateLimite:'05/12/2026',attente:[],envois:[],cdd:[],paie:'O',
     paieMois:'décembre 2026',paieLimite:'31/12/2026',paieEnvoi:null,
     salaries:P.get('liste')==='1'?['Paul MARTIN','Sophie BERNARD','Karim BENALI','Julie PETIT','Lucas DUBOIS','Emma LEROY','Hugo MOREAU','Léa GARNIER','Nathan FAURE','Chloé ROUSSEL','Théo BLANC','Inès GUERIN','Louis BOYER','Manon CHEVALIER'].map(function(t){var x=t.split(' ');return {prenom:x[0],nom:x[1]};}):[{prenom:'Paul',nom:'MARTIN'},{prenom:'Sophie',nom:'BERNARD'},{prenom:'Karim',nom:'BENALI'},{prenom:'Julie',nom:'PETIT'}],
     arretsMois:[{prenom:'Paul',nom:'MARTIN',type:'Maladie',du:'03/12/2026',au:'10/12/2026',depose:'04/12/2026'}]}:null;
@@ -774,7 +780,10 @@
       if(d.mail){$('pMail').textContent=d.mail;}else{$('pMailL').style.display='none';}
       var aFaire=(d.documents||[]).some(function(x){return x.statut!=='Reçu';});
       $('titre').textContent=aFaire?((d.periode||'').replace(/^Relevés/i,'Documents bancaires')||'Documents bancaires'):'Documents bancaires';
-      if(d.dateLimite&&aFaire){$('dateLimite').textContent=d.dateLimite;$('limite').style.display='';}else{$('limite').style.display='none';}
+      $('limite').style.display='none';$('bclim').textContent='';
+      var mdl=String(d.dateLimite||'').match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+      if(mdl&&aFaire){$('bclim').textContent=d.dateLimite;$('bcm').textContent=['JANV.','FÉVR.','MARS','AVR.','MAI','JUIN','JUIL.','AOÛT','SEPT.','OCT.','NOV.','DÉC.'][+mdl[2]-1];$('bcj').textContent=+mdl[1];}
+      else if(d.dateLimite&&aFaire){$('dateLimite').textContent=d.dateLimite;$('limite').style.display='';}
       $('rien').innerHTML='✔ Tout est à jour.<span class="pd calL" style="display:flex;align-items:center;margin-top:8px">'+calendrier(46)+'<span>Prochaine demande le <b>'+prochaineDemande()+'</b>, par e-mail.</span></span>';
       if(!SOCIAL_OUVERT&&/^(social|cdd|embauche|paie|arret|depart|autre)$/.test(VUE))VUE='';
       [].forEach.call(document.querySelectorAll('.retour'),function(a){a.href=lienVue(C?'':'accueil');a.style.display=(VUE&&VUE!=='accueil'&&!/^(paie|cdd|embauche|arret|depart|autre)$/.test(VUE))?'inline-block':'none';});
@@ -858,6 +867,8 @@
   function texteAttente(a){return a.n+' fichier'+(a.n>1?'s':'')+' envoyé'+(a.n>1?'s':'')+' le '+a.dernier+' – en cours de vérification';}
   function zoneHtml(texte){return '<label class="zone"><input type="file" multiple accept="'+ACCEPT+'">'+NUAGE+'<span class="ztxt">'+texte+'<br><b>ou sélectionnez un fichier</b></span></label>';}
 
+  // Couleur pâle de la pastille (85 % de blanc)
+  function teinte(h){var m=String(h).match(/^#(..)(..)(..)$/);if(!m)return '#eeeeee';return '#'+[1,2,3].map(function(i){var v=Math.round(parseInt(m[i],16)*0.15+255*0.85);return ('0'+v.toString(16)).slice(-2);}).join('');}
   function afficher(docs,attente){
     var ordre=[],bq={},att={},h='';
     attente.forEach(function(a){att[a.banque]=a;});
@@ -874,14 +885,14 @@
       var attendu=l.some(function(x){return x.statut!=='Reçu';});
       var releve=l.some(function(x){return x.statut!=='Reçu'&&/releve de compte|releve ou attestation/.test(cle(x.document));});
       h+='<div class="banque" data-banque="'+esc(b)+'" data-releve="'+(releve?1:'')+'" style="--c:'+k[1]+'">'+
-        '<div class="bq-tete"><div class="pastille" style="background:'+k[1]+'">'+esc(k[0])+'</div><div><div class="bq-nom">'+esc(b)+'</div><div class="bq-cpt">'+sous+'</div></div><span class="pret"></span></div>'+
+        '<div class="bq-tete"><div class="pastille picl" style="background:'+teinte(k[1])+';color:'+k[1]+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21l18 0"/><path d="M3 10l18 0"/><path d="M5 6l7 -3l7 3"/><path d="M4 10l0 11"/><path d="M20 10l0 11"/><path d="M8 14l0 3"/><path d="M12 14l0 3"/><path d="M16 14l0 3"/></svg></div><div><div class="bq-nom">'+esc(b)+'</div><div class="bq-cpt">'+sous+'</div></div><span class="pret"></span></div>'+
         '<div class="bq-corps">'+corps+(att[b]?'<div class="attente">'+esc(texteAttente(att[b]))+'</div>':'')+
         (attendu?zoneHtml('Faites glisser ici les documents '+esc(deBanque(b)))+'<ul class="fichiers"></ul><div class="avert">Seul un fichier d’export (OFX, CSV…) a été déposé : le relevé de compte au format PDF reste attendu.</div>':'')+
         '</div></div>';
     });
     $('banques').innerHTML=h;
     $('rien').style.display=aDeposer?'none':'';
-    $('consigne').style.display=aDeposer?'':'none';
+    var bc=!!$('bclim').textContent;$('bcal').style.display=aDeposer&&bc?'':'none';$('consigne').style.display=aDeposer&&!bc?'':'none';
     var aa=$('autre').querySelector('.attente');
     if(att['']){aa.textContent=texteAttente(att['']);aa.style.display='';}else aa.style.display='none';
     zones=[].slice.call(document.querySelectorAll('.banque[data-banque]')).filter(function(b){return b.querySelector('.zone');});
