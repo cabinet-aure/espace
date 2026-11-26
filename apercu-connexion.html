@@ -395,6 +395,7 @@
   .sicl{background:var(--bg)!important;color:var(--fg);box-shadow:none!important}
   .sicl svg,.rub h2 svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
   .sautre .sicl svg{width:18px;height:18px}
+  .picl svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.picl{box-shadow:none!important}
   .rub h2 svg{width:22px;height:22px;vertical-align:-4px;margin-right:6px}
   .scal{width:52px;border-radius:9px;overflow:hidden;box-shadow:0 1px 5px rgba(0,0,0,.2);text-align:center;flex:none;background:#fff;font-family:Arial,Helvetica,sans-serif}
   .scal .cm{background:#c62828;color:#fff;font-size:11px;font-weight:bold;letter-spacing:1px;padding:3px 0}
@@ -488,7 +489,7 @@
   <div id="embauche" style="display:none">
    <div class="corps soc">
     <a class="retourS" id="retourSoc" href="#">← Retour à la rubrique Social</a>
-    <div class="rub or"><h2>✍️ Informations pour l’embauche</h2></div>
+    <div class="rub or"><h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"/><path d="M16 19h6"/><path d="M19 16v6"/><path d="M6 21v-2a4 4 0 0 1 4 -4h4"/></svg>Informations pour l’embauche</h2></div>
     <div class="consigne" style="font-size:14px;color:#666">Ces informations nous permettent de préparer l’embauche de votre salarié. Tous les champs sont obligatoires.</div>
     <div class="brouillon" id="brouillon">✔ Votre saisie précédente a été conservée. Les pièces jointes sont à déposer à nouveau. <a href="#" id="effacerBrouillon">Tout effacer et recommencer</a></div>
     <div class="alerte" id="alerteEmb"><b>⚠ Informations incomplètes : merci de compléter les éléments suivants :</b><ul id="alerteListe"></ul></div>
@@ -531,7 +532,7 @@
   <div id="cdd" style="display:none">
    <div class="corps soc">
     <a class="retourS" id="retourSocCdd" href="#">← Retour à la rubrique Social</a>
-    <div class="rub or"><h2>📅 Renouvellement de CDD</h2></div>
+    <div class="rub or"><h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M4 11h16"/><path d="M11 15h1"/><path d="M12 15v3"/></svg>Renouvellement de CDD</h2></div>
     <div class="consigne" style="font-size:14px;color:#666">Le renouvellement doit être signé avant la date de fin du CDD. Tous les champs sont obligatoires.</div>
     <div class="aucun" id="c_aucun" style="display:none;margin:18px 0">Aucun CDD en cours n’est enregistré pour votre société. Pour toute information : 01&nbsp;30&nbsp;49&nbsp;50&nbsp;05.</div>
     <div class="sect" id="c_form"><h3>Le CDD à renouveler</h3><div class="grille">
@@ -1147,7 +1148,7 @@
           (x.traite?'<span class="stt fait">✔ Traité le '+esc(x.traite)+'</span>':'<span class="stt enc"><span class="sab">⏳</span> En cours de traitement</span>')+'</div>';
       }).join('')+'</div>';
     }
-    return '<div class="banque" data-cat="'+cat+'" style="--c:'+OR+'"><div class="bq-tete"><div class="pastille" style="background:'+OR+';font-size:20px">'+ic+'</div>'+
+    return '<div class="banque" data-cat="'+cat+'" style="--c:'+OR+'"><div class="bq-tete">'+(typeof ic==='object'?'<div class="pastille picl" style="background:'+ic.bg+';color:'+ic.fg+'">'+ic.svg+'</div>':'<div class="pastille" style="background:'+OR+';font-size:20px">'+ic+'</div>')+''+
       '<div><div class="bq-nom">'+titre+'</div><div class="bq-cpt">'+sous+'</div></div><div class="droite"><span class="pret"></span>'+bt+'</div></div><div class="bq-corps">'+corps+'</div>'+hi+'</div>';
   }
   var TYPES={arret:['Arrêt maladie','Prolongation d’arrêt maladie','Accident du travail','Prolongation d’accident du travail','Accident de trajet','Maladie professionnelle','Congé maternité','Congé paternité','Mi-temps thérapeutique'],
@@ -1203,10 +1204,10 @@
       h+=blocSoc('paie','📋','Éléments de paie du mois','Heures sup., primes, absences, acomptes…',cp);
     }
     if(sal){
-      h+=blocSoc('arret','🩺','Arrêt de travail','Arrêt maladie, accident du travail, prolongation…',champSal('arret')+zoneSoc('Faites glisser ici l’arrêt de travail'));
-      h+=blocSoc('depart','📤','Départ','Démission, fin de CDD, rupture conventionnelle, licenciement…',champSal('depart')+zoneSoc('Faites glisser ici le document (facultatif)')+'<textarea class="prec" placeholder="Précision éventuelle (facultatif)"></textarea>');
+      h+=blocSoc('arret',{bg:'#f3e6f6',fg:'#7a3e8e',svg:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h-1a2 2 0 0 0 -2 2v3.5a5.5 5.5 0 0 0 11 0v-3.5a2 2 0 0 0 -2 -2h-1"/><path d="M8 15a6 6 0 1 0 12 0v-3"/><path d="M11 3v2"/><path d="M6 3v2"/><path d="M18 10a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/></svg>'},'Arrêt de travail','Arrêt maladie, accident du travail, prolongation…',champSal('arret')+zoneSoc('Faites glisser ici l’arrêt de travail'));
+      h+=blocSoc('depart',{bg:'#ececea',fg:'#555555',svg:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"/><path d="M6 21v-2a4 4 0 0 1 4 -4h4"/><path d="M16 19h6"/></svg>'},'Départ','Démission, fin de CDD, rupture conventionnelle, licenciement…',champSal('depart')+zoneSoc('Faites glisser ici le document (facultatif)')+'<textarea class="prec" placeholder="Précision éventuelle (facultatif)"></textarea>');
     }
-    h+=blocSoc('autre','📄','Autre document social','Mutuelle, médecine du travail, courrier de l’URSSAF…',
+    h+=blocSoc('autre',{bg:'#e6eef0',fg:'#1f5e6b',svg:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"/><path d="M9 9l1 0"/><path d="M9 13l6 0"/><path d="M9 17l6 0"/></svg>'},'Autre document social','Mutuelle, médecine du travail, courrier de l’URSSAF…',
       zoneSoc('Faites glisser ici vos autres documents')+'<textarea class="prec" placeholder="Précision éventuelle (facultatif)"></textarea>');
     var tmp=document.createElement('div');tmp.innerHTML=h;var gard=tmp.querySelector('[data-cat="'+seul+'"]');
     $('blocsSoc').innerHTML=gard?gard.outerHTML:'';
