@@ -608,6 +608,8 @@
   // Rubrique Social : passer à true quand les clients auront été informés (prévu en janvier 2027)
   var SOCIAL_OUVERT=true;
   // Démonstration (page de test seulement) : ?demo=1 affiche des données fictives, rien n'est envoyé
+  // Mode essai (page de test) : vrai espace du client, mais rien n'est envoyé au cabinet
+  var ESSAI=P.get('essai')==='1';
   var DEMO=P.get('demo')==='1'?{ok:true,societe:'SOCIÉTÉ EXEMPLE (démonstration – données fictives)',siren:'',mail:'',documents:P.get('bq')==='1'?[['Crédit Agricole','Compte courant (se terminant par 4521)','Relevé de compte de novembre 2026'],['Crédit Agricole','Compte courant (se terminant par 4521)','Relevé de carte bancaire de novembre 2026'],['Société Générale','Compte courant (se terminant par 0987)','Relevé de compte de novembre 2026'],['Société Générale','Compte courant (se terminant par 0987)','Relevé des LCR de novembre 2026'],['Banque Populaire','Compte courant (se terminant par 7730)','Relevé de compte de novembre 2026'],['Caixa Geral de Depósitos','Compte courant (se terminant par 5512)','Relevé de compte de novembre 2026']].map(function(x,i){return {ref:'R'+(i+1),banque:x[0],compte:x[1],document:x[2],statut:'À déposer'};}):[],periode:'Relevés de novembre 2026',dateLimite:'05/12/2026',attente:[],envois:[],cdd:[],paie:'O',
     paieMois:'décembre 2026',paieLimite:'31/12/2026',paieEnvoi:null,
     salaries:P.get('liste')==='1'?['Paul MARTIN','Sophie BERNARD','Karim BENALI','Julie PETIT','Lucas DUBOIS','Emma LEROY','Hugo MOREAU','Léa GARNIER','Nathan FAURE','Chloé ROUSSEL','Théo BLANC','Inès GUERIN','Louis BOYER','Manon CHEVALIER'].map(function(t){var x=t.split(' ');return {prenom:x[0],nom:x[1]};}):[{prenom:'Paul',nom:'MARTIN'},{prenom:'Sophie',nom:'BERNARD'},{prenom:'Karim',nom:'BENALI'},{prenom:'Julie',nom:'PETIT'}],
@@ -765,6 +767,13 @@
   }
   function lireDonnees(){
     if(DEMO)return Promise.resolve(DEMO);
+    if(ESSAI)return lireReel().then(function(d){
+      // Essai TDM PAYSAGE : documents bancaires de novembre affichés pour l'exemple (la vraie liste est créée le 1er décembre)
+      if(d&&d.ok&&String(d.siren).replace(/\D/g,'')==='833417744'&&!(d.documents||[]).length){d.documents=[{ref:'E1',banque:'Caisse d’Épargne',compte:'Compte courant (se terminant par 8920)',document:'Relevé de compte de novembre 2026',statut:'À déposer'}];d.periode='Relevés de novembre 2026';d.dateLimite='05/12/2026';}
+      return d;});
+    return lireReel();
+  }
+  function lireReel(){
     var n=0;
     function tente(){return essaiFetch().catch(function(e){n++;if(n<3)return new Promise(function(r){setTimeout(r,1500);}).then(tente);throw e;});}
     return tente().catch(function(){return essaiJsonp();});
@@ -933,6 +942,7 @@
   function lire(f){return new Promise(function(ok,ko){var r=new FileReader();r.onload=function(){ok(String(r.result).split(',')[1]||'');};r.onerror=ko;r.readAsDataURL(f);});}
   // Envoi au script avec deux nouveaux essais automatiques (service occupé ou réseau), puis message « occupé »
   function poster(o){
+    if(ESSAI)return new Promise(function(r){setTimeout(function(){r({ok:true,ref:'ESSAI'});},300);});
     var n=0;
     function attendre(){n++;return new Promise(function(r){setTimeout(r,n*4000);}).then(essai);}
     function essai(){
@@ -964,6 +974,7 @@
     (function suivant(){
       if(i>=taches.length){
         $('recap').innerHTML=recap.map(function(t){return '<li>'+esc(t)+'</li>';}).join('');
+        if(ESSAI)$('merciTitre').textContent='Mode essai : rien n’a été envoyé au cabinet.';
         finAttente();$('formulaire').style.display='none';$('merci').style.display='block';window.scrollTo(0,0);return;
       }
       var t=taches[i];etat(b,i+1,taches.length,t.f?t.f.name:'');
@@ -1331,6 +1342,7 @@
   }
   function finAttente(){ENVOI_EN_COURS=false;[].forEach.call(document.querySelectorAll('.patiente'),function(a){a.parentNode.removeChild(a);});}
   function merci(titre,recap){
+    if(ESSAI)titre='Mode essai : rien n’a été envoyé au cabinet.';
     finAttente();
     $('merciTitre').textContent=titre;
     $('recap').innerHTML=recap.map(function(t){return '<li>'+esc(t)+'</li>';}).join('');
@@ -2146,7 +2158,7 @@ window.initConv=function(conv){
     :CLIENT.secteur==='Immobilier'?[['Employe','Employé'],['Maitrise','Agent de maîtrise'],['Cadre','Cadre'],['NegoVRP','Négociateur VRP'],['NegoNon','Négociateur non VRP']]
     :[['Ouvrier','Ouvrier'],['ETAM','ETAM (employé, technicien, agent de maîtrise)'],['Cadre','Cadre']];
   function eur(x){return x.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})+' EUR';}
-  document.body.insertAdjacentHTML('afterbegin','<div class="testbandeau">PAGE DE TEST – non visible par les clients</div>');
+  document.body.insertAdjacentHTML('afterbegin',ESSAI?'<div class="testbandeau" style="background:#f6d27a;color:#3d3216">MODE ESSAI : rien de ce que vous envoyez n’est transmis au cabinet</div>':'<div class="testbandeau">PAGE DE TEST – non visible par les clients</div>');
   // 1. bannière 48 h
   var cons=document.querySelector('#embauche .consigne');
   cons.insertAdjacentHTML('beforebegin','<div class="b48"><b>⏱ À remplir au moins 48 heures avant l’embauche</b> : la déclaration d’embauche doit être faite avant l’arrivée du salarié.</div>');
