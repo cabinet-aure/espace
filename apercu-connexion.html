@@ -605,7 +605,7 @@
     <div class="ok">✔</div>
     <h2 id="merciTitre">Nous vous remercions : vos documents ont bien été transmis au cabinet.</h2>
     <ul id="recap"></ul>
-    <p>Vos documents vont être examinés par nos services. Nous reviendrons vers vous si un complément s’avère nécessaire.</p>
+    <p id="merciTexte">Vos documents vont être examinés par nos services. Nous reviendrons vers vous si un complément s’avère nécessaire.</p>
     <p><a href="#" id="revenir">Revenir à mon espace</a></p>
   </div>
   <footer><span class="fl"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/><path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z"/></svg>6 rue des Marais, 78310 Coignières</span><span class="fl"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2"/></svg>01&nbsp;30&nbsp;49&nbsp;50&nbsp;05</span></footer>
@@ -1256,7 +1256,7 @@
     }
     if(sal){
       h+=blocSoc('arret',{bg:'#f3e6f6',fg:'#7a3e8e',svg:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h-1a2 2 0 0 0 -2 2v3.5a5.5 5.5 0 0 0 11 0v-3.5a2 2 0 0 0 -2 -2h-1"/><path d="M8 15a6 6 0 1 0 12 0v-3"/><path d="M11 3v2"/><path d="M6 3v2"/><path d="M18 10a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/></svg>'},'Arrêt de travail','Arrêt maladie, accident du travail, prolongation…',champSal('arret')+zoneSoc('Faites glisser ici l’arrêt de travail'));
-      h+=blocSoc('depart',{bg:'#ececea',fg:'#555555',svg:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"/><path d="M6 21v-2a4 4 0 0 1 4 -4h4"/><path d="M16 19h6"/></svg>'},'Départ','Démission, fin de CDD, rupture conventionnelle, licenciement…',champSal('depart')+zoneSoc('Faites glisser ici le document (facultatif)')+'<textarea class="prec" placeholder="Précision éventuelle (facultatif)"></textarea>');
+      h+=blocSoc('depart',{bg:'#ececea',fg:'#555555',svg:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"/><path d="M6 21v-2a4 4 0 0 1 4 -4h4"/><path d="M16 19h6"/></svg>'},'Départ','Démission, rupture conventionnelle, licenciement…',champSal('depart')+zoneSoc('Faites glisser ici le document (facultatif)')+'<textarea class="prec" placeholder="Précision éventuelle (facultatif)"></textarea>');
     }
     h+=blocSoc('autre',{bg:'#e6eef0',fg:'#1f5e6b',svg:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"/><path d="M9 9l1 0"/><path d="M9 13l6 0"/><path d="M9 17l6 0"/></svg>'},'Autre document social','Mutuelle, médecine du travail, courrier de l’URSSAF…',
       zoneSoc('Faites glisser ici vos autres documents')+'<textarea class="prec" placeholder="Précision éventuelle (facultatif)"></textarea>');
@@ -1303,7 +1303,7 @@
     var proches=cdds.filter(function(x){var j=joursAvant(x.fin);return j>=0&&j<=15;});
     h+='<div class="sgrille">'+tu('embauche','<span class="sic sicl" style="--bg:#e3f1e5;--fg:#2e6b3a"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"/><path d="M16 19h6"/><path d="M19 16v6"/><path d="M6 21v-2a4 4 0 0 1 4 -4h4"/></svg></span>','Embauche','Un nouveau salarié ? Transmettez ses informations.','✓ Déclarer');
     if(sal||cdds.length)h+=tu('cdd','<span class="sic sicl" style="--bg:#e3eef8;--fg:#1f5f9e"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M4 11h16"/><path d="M11 15h1"/><path d="M12 15v3"/></svg></span>','Fin de CDD',proches.length?'<span style="color:#c0392b;font-weight:bold">⚠ '+proches.length+' CDD se termine'+(proches.length>1?'nt':'')+' bientôt</span>':cdds.length?cdds.length+' CDD en cours.':'Aucun CDD en cours.','✓ Choisir');
-    if(sal){h+=tu('arret','<span class="sic sicl" style="--bg:#f3e6f6;--fg:#7a3e8e"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h-1a2 2 0 0 0 -2 2v3.5a5.5 5.5 0 0 0 11 0v-3.5a2 2 0 0 0 -2 -2h-1"/><path d="M8 15a6 6 0 1 0 12 0v-3"/><path d="M11 3v2"/><path d="M6 3v2"/><path d="M18 10a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/></svg></span>','Arrêt de travail','Maladie, accident, prolongation…','✓ Déposer');h+=tu('depart','<span class="sic sicl" style="--bg:#ececea;--fg:#555555"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"/><path d="M6 21v-2a4 4 0 0 1 4 -4h4"/><path d="M16 19h6"/></svg></span>','Départ','Démission, fin de CDD, rupture…','✓ Signaler');}
+    if(sal){h+=tu('arret','<span class="sic sicl" style="--bg:#f3e6f6;--fg:#7a3e8e"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h-1a2 2 0 0 0 -2 2v3.5a5.5 5.5 0 0 0 11 0v-3.5a2 2 0 0 0 -2 -2h-1"/><path d="M8 15a6 6 0 1 0 12 0v-3"/><path d="M11 3v2"/><path d="M6 3v2"/><path d="M18 10a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/></svg></span>','Arrêt de travail','Maladie, accident, prolongation…','✓ Déposer');h+=tu('depart','<span class="sic sicl" style="--bg:#ececea;--fg:#555555"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"/><path d="M6 21v-2a4 4 0 0 1 4 -4h4"/><path d="M16 19h6"/></svg></span>','Départ','Démission, rupture, licenciement…','✓ Signaler');}
     h+='</div><a class="sautre" href="'+lienVue('autre')+'"><span class="sic sicl" style="--bg:#e6eef0;--fg:#1f5e6b"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"/><path d="M9 9l1 0"/><path d="M9 13l6 0"/><path d="M9 17l6 0"/></svg></span>Autre document social (mutuelle, médecine du travail…)<span class="sgo2">✓ Déposer</span></a>';
     $('blocsSoc').innerHTML=h;szones=[];
     if($('spaie'))$('spaie').onclick=function(e){if(e.target.closest('#p_rien,a'))return;location.href=lienVue('paie');};
@@ -1361,9 +1361,10 @@
     a.querySelector('.n').textContent=n?('Fichier '+i+' sur '+n+(nom?' : '+nom:'')):(texte||'');
   }
   function finAttente(){ENVOI_EN_COURS=false;[].forEach.call(document.querySelectorAll('.patiente'),function(a){a.parentNode.removeChild(a);});}
-  function merci(titre,recap){
+  function merci(titre,recap,texte){
     if(ESSAI)titre='Mode essai : rien n’a été envoyé au cabinet.';
     finAttente();
+    $('merciTexte').textContent=texte||'Vos documents vont être examinés par nos services. Nous reviendrons vers vous si un complément s’avère nécessaire.';
     $('merciTitre').textContent=titre;
     $('recap').innerHTML=recap.map(function(t){return '<li>'+esc(t)+'</li>';}).join('');
     $('revenir').href=lienVue(C?'':'accueil');
@@ -1690,7 +1691,7 @@
     if(!x){$('f_csal').classList.add('err');$('erreurCdd').textContent='Merci d’indiquer le salarié.';return;}
     b.disabled=true;etat(b);
     poster(avecId({rubrique:'cdd',ref:x.ref,choix:'non'})).then(function(){
-      merci('Nous vous remercions : votre réponse a bien été transmise au cabinet.',['Fin du CDD de '+x.salarie+' le '+x.fin+' (non renouvelé)']);
+      merci('Nous vous remercions : votre réponse a bien été transmise au cabinet.',['Fin du CDD de '+x.salarie+' le '+x.fin+' (non renouvelé)'],'Le cabinet préparera les documents de fin de contrat.');
     }).catch(function(e){finAttente();b.disabled=false;b.textContent='✕ Confirmer la fin du CDD';
       afficherEchec($('erreurCdd'),e,'L’envoi a échoué ('+(e.message||e)+'). Merci de réessayer.');});
   };
