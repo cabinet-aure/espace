@@ -246,6 +246,7 @@
   .cinfo{border-radius:8px;padding:10px 12px;font-size:14px;margin:4px 0 12px;line-height:1.45}
   .cinfo.r{background:#fdecea;border:1px solid #f5c6c6;color:#8e1c1c}.cinfo.v{background:#e8f5e9;border:1px solid #c8e6c9;color:#1b5e20}.cinfo.o{background:#fff3ee;border:1px solid #ff8a65;border-left:6px solid #ff8a65;color:#d84315;font-weight:bold}
   .ccarte .erreur{margin-top:8px}
+  .cinfo.j,.cinfo.o,.cmax{background:#fffbe6!important;border:1px solid #e0e0e0!important;border-left:6px solid #ff8a65!important;color:#333!important;font-weight:normal!important}
   .banque.err .zone{border-color:#c0392b;background:#fdf1f0}
   .ccal{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#fff;border:1px solid #e6e6e6;border-radius:12px;padding:12px 16px;margin-top:2px;color:#222}
   .ccal .cal{width:62px;border-radius:8px;overflow:hidden;border:1px solid #e0e0e0;text-align:center;background:#fff}
@@ -1209,7 +1210,7 @@
   var TYPES={arret:['Arrêt maladie','Prolongation d’arrêt maladie','Accident du travail','Prolongation d’accident du travail','Accident de trajet','Maladie professionnelle','Congé maternité','Congé paternité','Mi-temps thérapeutique'],
     depart:['Démission','Rupture conventionnelle','Fin de période d’essai, à l’initiative de l’employeur','Fin de période d’essai, à l’initiative du salarié','Licenciement','Départ à la retraite','Autre']};
   var DEPART_DOC={'Démission':true};
-  var ESSAI_MSG='Ne remettez aucun courrier au salarié avant notre appel : le cabinet vous contacte pour vérifier les délais.';
+  var ESSAI_MSG='La fin d’une période d’essai est soumise à un délai de prévenance. Le cabinet prendra contact avec vous pour en vérifier les conditions avant toute démarche.';
   var DEPART_MSG={'Démission':'Document obligatoire : <b>la lettre de démission du salarié</b>.',
     'Fin de période d’essai, à l’initiative de l’employeur':ESSAI_MSG,
     'Fin de période d’essai, à l’initiative du salarié':ESSAI_MSG,
@@ -1287,8 +1288,8 @@
       i.addEventListener(i.tagName==='SELECT'?'change':'input',function(){var f=i.closest('.f');if(f)f.classList.remove('err');if(i.classList.contains('sal')||i.classList.contains('pre'))cddDepart(i.closest('.banque'));
         if(i.classList.contains('typ')){var l=i.closest('.banque').querySelector('.libdat');if(l)l.textContent=/^Accident/.test(i.value)?'Date de l’accident':'Date de début de l’arrêt';
           var bq=i.closest('.banque'),di=bq.querySelector('.dinfo'),pv=bq.querySelector('.prvf'),z=bq.querySelector('.ztxt');
-          if(di){var m=DEPART_MSG[i.value]||'',es=m===ESSAI_MSG;di.innerHTML=m?(es?'⚠ ':'📎 ')+m:'';di.style.display=m?'':'none';
-            di.style.background=es?'#fff3ee':'#f3f6fb';di.style.borderColor=es?'#ff8a65':'#d6e0ef';di.style.borderLeft=es?'6px solid #ff8a65':'';di.style.color=es?'#d84315':'#2b3f5c';di.style.fontWeight=es?'bold':'';}
+          if(di){var m=DEPART_MSG[i.value]||'',es=m===ESSAI_MSG;di.innerHTML=m?(es?'':'📎 ')+m:'';di.style.display=m?'':'none';
+            di.style.background=es?'#fffbe6':'#f3f6fb';di.style.borderColor=es?'#e0e0e0':'#d6e0ef';di.style.borderLeft=es?'6px solid #ff8a65':'';di.style.color=es?'#333':'#2b3f5c';}
           if(pv)pv.style.display=/^(Démission|Licenciement)$/.test(i.value)?'':'none';
           if(z&&bq.getAttribute('data-cat')==='depart')z.innerHTML=(DEPART_DOC[i.value]?'Faites glisser ici le document':'Faites glisser ici le document (facultatif)')+'<br><b>ou sélectionnez un fichier</b>';}
         majSoc();});
@@ -1669,8 +1670,8 @@
     if(j===0)b+='<span class="bd" style="background:#c62828;color:#fff">⚠ Fin aujourd’hui</span>';
     else if(j>0&&j<=15)b+='<span class="bd" style="background:#fdecea;color:#8e1c1c">⚠ Fin dans '+j+' jour'+(j>1?'s':'')+'</span>';
     else if(j>15)b+='<span class="bd" style="background:#e8f5e9;color:#1b5e20">Fin dans '+j+' jours</span>';
-    if(L.n>0)b+='<span class="bd" style="background:#fff3e0;color:#8a4b00">Déjà renouvelé '+L.n+' fois'+(L.n>=2?' (maximum atteint)':'')+'</span>';
-    if(es)b+='<span class="bd" style="background:#fff3ee;color:#d84315">Période d’essai jusqu’au '+esc(x.finEssai)+'</span>';
+    if(L.n>0)b+='<span class="bd" style="background:#eeeeee;color:#444">Déjà renouvelé '+L.n+' fois'+(L.n>=2?' (maximum atteint)':'')+'</span>';
+    if(es)b+='<span class="bd" style="background:#eeeeee;color:#444">Période d’essai jusqu’au '+esc(x.finEssai)+'</span>';
     var h='<div class="ccarte'+(fait?' fait':'')+'" id="cc'+i+'"><div class="ctete"><div class="cnom">'+esc(x.salarie)+(x.emploi?' <span class="cemp">– '+esc(x.emploi)+'</span>':'')+'</div>'+(fait?'<span class="cstat">✓ '+esc(x.suite)+'</span>':'')+'</div>';
     h+='<div class="ccal">'+calC(x.debut,true)+'<div class="fl">→</div>'+calC(x.fin,false)+'<div class="bds">'+b+'</div></div>';
     if(et.length)h+='<button type="button" class="chist">Voir l’historique du contrat ('+et.length+' renouvellement'+(et.length>1?'s':'')+')</button><div class="chl"><div>Contrat initial : du '+esc(x.debut)+' au '+esc(et[0].ancienne)+'</div>'+
@@ -1695,7 +1696,7 @@
     h+='<div class="czone cache" data-z="non"><div class="cinfo r">Fin du contrat le <b>'+esc(x.fin)+'</b>.</div><button class="btn petit cr" data-e="non">✕ Confirmer la fin du CDD</button></div>';
     h+='<div class="czone cache" data-z="anticipe"><div class="cinfo o">La rupture d’un CDD avant son terme est strictement encadrée par la loi. Le cabinet prendra contact avec vous pour en examiner les conditions avant toute démarche.</div><button class="btn petit or" data-e="anticipe">Demander l’intervention du cabinet</button></div>';
     h+='<div class="czone cache" data-z="essai"><div class="grille"><div class="f large"><span>À l’initiative de</span><div class="choix"><label><input type="radio" name="qui'+i+'" value="employeur">L’employeur</label><label><input type="radio" name="qui'+i+'" value="salarie">Le salarié</label></div></div></div>'+
-      '<div class="cinfo o">Ne remettez aucun courrier au salarié avant notre appel : le cabinet vous contacte pour vérifier les délais.</div><button class="btn petit or" data-e="essai">Demander l’intervention du cabinet</button></div>';
+      '<div class="cinfo j">La fin d’une période d’essai est soumise à un délai de prévenance. Le cabinet prendra contact avec vous pour en vérifier les conditions avant toute démarche.</div><button class="btn petit or" data-e="essai">Demander l’intervention du cabinet</button></div>';
     return h+'<div class="erreur"></div></div>';
   }
   function afficherCdd(l){
