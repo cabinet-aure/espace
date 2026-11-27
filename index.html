@@ -253,6 +253,7 @@
   .abandeau.calme{background:#fafafa;border-color:#e6e6e6;border-left-color:#d9c98f}.abandeau.calme .an{background:#eadfb8;color:#8a6d1c}.abandeau.calme .al{background:#fff;color:#8a6d1c;border:1px solid #a8892b}.abandeau.calme:hover .al{background:#fbf7ea}
   .alien{text-align:center;margin:14px 0 18px;font-size:14px}.alien a{color:#8a6d1c;font-weight:bold}
   .rub.ac{background:#a8892b}
+  .abl{display:block;margin-top:2px}.abi{display:block;padding:1px 0 1px 14px;text-indent:-14px}.abi:before{content:'›';color:#a8892b;font-weight:bold;display:inline-block;width:14px;text-indent:0}.abr{display:block;font-size:13px;color:#8a6d1c;margin-top:2px}
   .asec{font-size:12px;font-weight:bold;letter-spacing:.6px;text-transform:uppercase;color:#8a6d1f;margin:20px 0 8px}
   .epas{display:inline-block;font-size:11px;font-weight:bold;color:#8a6d1f;background:#fdf6e3;border:1px solid #e6d9a8;border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:2px}
   .afil{display:flex;gap:6px;margin-bottom:10px}.afil b{font-size:13px;padding:5px 14px;border-radius:16px;border:1px solid #e6d9a8;color:#8a6d1f;background:#fff;cursor:pointer}.afil b.on{background:#a8892b;color:#fff;border-color:#a8892b}
@@ -1893,11 +1894,18 @@
   var CLE_LU='aure_actus_lues_'+(C||S||'');
   function actusLues(){try{return JSON.parse(localStorage.getItem(CLE_LU)||'[]');}catch(e){return [];}}
   function marquerLues(ids){try{var l=actusLues();ids.forEach(function(i){if(l.indexOf(i)<0)l.push(i);});localStorage.setItem(CLE_LU,JSON.stringify(l.slice(-200)));}catch(e){}}
+  // Bandeau : un titre par ligne, au plus deux, obligations d'abord ; le reste résumé (décision de Mario du 27/11/2026)
+  function bandeauListe(nv){
+    var cj=function(a){return /^conjoncture/i.test(a.public||'');},ob=nv.filter(function(a){return !cj(a);}),co=nv.filter(cj);
+    var vus=ob.concat(co).slice(0,2),reste=nv.length-vus.length,rc=co.filter(function(a){return vus.indexOf(a)<0;}).length;
+    return '<span class="abl">'+vus.map(function(a){return '<span class="abi">'+esc(a.titre)+'</span>';}).join('')+'</span>'+
+      (reste?'<span class="abr">et '+reste+(reste===rc?' article'+(reste>1?'s':'')+' de conjoncture':' autre'+(reste>1?'s':'')+' article'+(reste>1?'s':''))+'</span>':'');
+  }
   function bandeauActus(l){
     var lu=actusLues(),nv=l.filter(function(a){return lu.indexOf(a.id)<0;});
     // Toujours présent dès qu'il y a au moins un article : doré s'il y a du nouveau, discret sinon (décision de Mario du 27/11/2026)
     $('abandeau').innerHTML=!l.length?'':nv.length?'<a class="abandeau" href="'+lienVue('actus')+'"><span class="an">'+nv.length+'</span><span style="flex:1"><b style="color:#8a6d1c">'+(nv.length>1?'Actualités à lire':'Actualité à lire')+'</b><br><span style="font-size:14px;color:#444">'+
-      nv.slice(0,3).map(function(a){return esc(a.titre);}).join(' · ')+'</span></span><span class="al">Lire</span></a>'
+      bandeauListe(nv)+'</span></span><span class="al">Lire</span></a>'
       :'<a class="abandeau calme" href="'+lienVue('actus')+'"><span class="an">✓</span><span style="flex:1"><b style="color:#8a6d1c">Actualités</b><br><span style="font-size:14px;color:#444">Aucune nouvelle actualité · Dernière : '+esc(l[0].titre)+'</span></span><span class="al">Consulter</span></a>';
   }
   // Page Actualités (décision de Mario du 27/11/2026) : non lus en haut, lus du mois en cours, puis Archives repliées par mois avec filtre Obligations / Conjoncture.
