@@ -591,6 +591,14 @@
     <div id="c_cartes"></div>
    </div>
   </div>
+  <div id="reprise" style="display:none">
+   <div class="corps soc">
+    <a class="retourS" id="retourSocRep" href="#">← Retour à la rubrique Social</a>
+    <div class="rub or"><h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h-1a2 2 0 0 0 -2 2v3.5a5.5 5.5 0 0 0 11 0v-3.5a2 2 0 0 0 -2 -2h-1"/><path d="M8 15a6 6 0 1 0 12 0v-3"/><path d="M11 3v2"/><path d="M6 3v2"/><path d="M18 10a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/></svg>Reprise du travail</h2></div>
+    <div class="aucun" id="r_aucun" style="display:none;margin:18px 0">Aucun arrêt de travail en attente de réponse. Pour toute information : 01&nbsp;30&nbsp;49&nbsp;50&nbsp;05.</div>
+    <div id="r_cartes"></div>
+   </div>
+  </div>
   <div id="bilan" style="display:none">
    <div class="corps bil">
     <div class="rub"><h2 id="bTitre"></h2><span class="dl" id="bLimite" style="display:none">Date limite : <b id="bDate"></b></span></div>
@@ -811,7 +819,7 @@
   }
   function charger(){
     $('chargement').style.display='';$('chargement').innerHTML='<span class="rond"></span>Chargement de votre espace…';
-    $('formulaire').style.display='none';$('merci').style.display='none';$('accueil').style.display='none';$('social').style.display='none';$('embauche').style.display='none';$('bilan').style.display='none';$('cdd').style.display='none';$('paie').style.display='none';
+    $('formulaire').style.display='none';$('merci').style.display='none';$('accueil').style.display='none';$('social').style.display='none';$('embauche').style.display='none';$('bilan').style.display='none';$('cdd').style.display='none';$('paie').style.display='none';$('reprise').style.display='none';
     lireDonnees().then(function(d){
       if(!d.ok&&d.connexion){ecranConnexion(d);return;}
       if(!d.ok){erreurLien(d.erreur||'Ce lien n’est pas valide.');return;}
@@ -826,14 +834,15 @@
       if(mdl&&aFaire){$('bclim').textContent=d.dateLimite;$('bcm').textContent=['JANV.','FÉVR.','MARS','AVR.','MAI','JUIN','JUIL.','AOÛT','SEPT.','OCT.','NOV.','DÉC.'][+mdl[2]-1];$('bcj').textContent=+mdl[1];}
       else if(d.dateLimite&&aFaire){$('dateLimite').textContent=d.dateLimite;$('limite').style.display='';}
       $('rien').innerHTML='✔ Tout est à jour.<span class="pd calL" style="display:flex;align-items:center;margin-top:8px">'+calendrier(46)+'<span>Prochaine demande le <b>'+prochaineDemande()+'</b>, par e-mail.</span></span>';
-      if(!SOCIAL_OUVERT&&/^(social|cdd|embauche|paie|arret|depart|autre)$/.test(VUE))VUE='';
-      [].forEach.call(document.querySelectorAll('.retour'),function(a){a.href=lienVue(C?'':'accueil');a.style.display=(VUE&&VUE!=='accueil'&&!/^(paie|cdd|embauche|arret|depart|autre)$/.test(VUE))?'inline-block':'none';});
+      if(!SOCIAL_OUVERT&&/^(social|cdd|reprise|embauche|paie|arret|depart|autre)$/.test(VUE))VUE='';
+      [].forEach.call(document.querySelectorAll('.retour'),function(a){a.href=lienVue(C?'':'accueil');a.style.display=(VUE&&VUE!=='accueil'&&!/^(paie|cdd|reprise|embauche|arret|depart|autre)$/.test(VUE))?'inline-block':'none';});
       if(VUE==='banque'){afficher(d.documents||[],d.attente||[]);$('formulaire').style.display='';}
       else if(VUE==='social'){afficherSocial(d);$('social').style.display='';}
       else if(VUE==='bilan'&&d.bilan){afficherBilan(d.bilan);$('bilan').style.display='';}
       else if(/^(arret|depart|autre)$/.test(VUE)){afficherSocial(d,VUE);$('social').style.display='';}
       else if(VUE==='paie'){$('retourSocPaie').href=lienVue('social');afficherPaie(d);$('paie').style.display='';}
       else if(VUE==='cdd'){$('retourSocCdd').href=lienVue('social');afficherCdd(d.cdd||[]);$('cdd').style.display='';}
+      else if(VUE==='reprise'){$('retourSocRep').href=lienVue('social');afficherReprise(d.arrets||[]);$('reprise').style.display='';}
       else if(VUE==='embauche'){$('retourSoc').href=lienVue('social');window._siren=String(d.siren||'').replace(/\D/g,'');if(window.initConv)window.initConv(d.convention);lireBrouillon();majEmb();$('embauche').style.display='';}
       else{tuiles(d);document.body.classList.add('vacc');$('accueil').style.display='';}
       $('chargement').style.display='none';
@@ -1186,7 +1195,7 @@
     var fin=function(){
       try{localStorage.removeItem(CLE_JT);sessionStorage.removeItem(CLE_JT);localStorage.removeItem('aure_cabinet');sessionStorage.removeItem('aure_cabinet');}catch(e){}
       delete ID.jeton;delete ID.jc;
-      ['chargement','formulaire','merci','accueil','social','embauche','bilan','cdd'].forEach(function(k){if($(k))$(k).style.display='none';});
+      ['chargement','formulaire','merci','accueil','social','embauche','bilan','cdd','reprise'].forEach(function(k){if($(k))$(k).style.display='none';});
       document.body.classList.add('encx');window.scrollTo(0,0);
       $('cx').innerHTML='<div class="cxfin"><div class="cxcad">🔒</div><div class="cxft">Vous êtes déconnecté</div>'+
         '<p>Votre espace '+esc($('societe').textContent)+' est fermé sur cet appareil.<br>Un nouveau code vous sera demandé à la prochaine visite.</p>'+
@@ -1322,6 +1331,13 @@
       sl.closest('.f').classList.remove('err');cddDepart(b);majSoc();};});
     if($('p_rien'))$('p_rien').onclick=function(){envoyerPaie(true,this);};
     $('envoyerSoc').lot=null;$('erreurSoc').textContent='';
+    // Lien du mail de fin d'arrêt : …&r=arret&psal=NOM|Prénom&ptyp=Prolongation…
+    var bq=$('blocsSoc').querySelector('[data-cat="arret"]'),ps=P.get('psal'),pt=P.get('ptyp');
+    if(bq&&pt){var ty=bq.querySelector('select.typ');ty.value=pt;ty.dispatchEvent(new Event('change',{bubbles:true}));}
+    if(bq&&ps){var pp=ps.split('|'),k=mots(pp.join(' ')),sl=bq.querySelector('select.choixsal'),ix=-1;
+      SALS.forEach(function(x,i){if(mots(x.nom+' '+x.prenom)===k)ix=i;});
+      if(sl&&ix>=0){sl.value=String(ix);sl.onchange();}
+      else{if(sl){sl.value='autre';sl.onchange();}bq.querySelector('input.sal').value=nomMaj(pp[0]||'');bq.querySelector('input.pre').value=preMaj(pp[1]||'');}}
     majSoc();
   }
   function tuilesSoc(d,sal){
@@ -1405,7 +1421,7 @@
     $('merciTitre').textContent=titre;
     $('recap').innerHTML=recap.map(function(t){return '<li>'+esc(t)+'</li>';}).join('');
     $('revenir').href=lienVue(C?'':'accueil');
-    $('social').style.display='none';$('embauche').style.display='none';$('formulaire').style.display='none';$('bilan').style.display='none';$('cdd').style.display='none';$('paie').style.display='none';
+    $('social').style.display='none';$('embauche').style.display='none';$('formulaire').style.display='none';$('bilan').style.display='none';$('cdd').style.display='none';$('paie').style.display='none';$('reprise').style.display='none';
     $('merci').style.display='block';window.scrollTo(0,0);
   }
   $('envoyerSoc').onclick=function(){
@@ -1794,6 +1810,33 @@
     var lib=b.textContent;b.disabled=true;etat(b);
     poster(avecId(o)).then(function(){merci(titre,recap,texte);})
       .catch(function(e){finAttente();b.disabled=false;b.textContent=lib;afficherEchec(er,e,'L’envoi a échoué ('+(e.message||e)+'). Merci de réessayer.');});
+  }
+
+
+  // ===================== REPRISE DU TRAVAIL (fin d'arrêt, décision de Mario du 27/11/2026) =====================
+  var REPS=[];
+  function afficherReprise(l){
+    REPS=l;var voulu=P.get('ar')||'';
+    $('r_aucun').style.display=l.length?'none':'';
+    $('r_cartes').innerHTML=l.map(function(x,i){
+      var mi=dateFr(x.fin);mi.setDate(mi.getDate()+1);
+      return '<div class="ccarte'+(x.id===voulu?' vise':'')+'" id="rc'+i+'"><div class="ctete"><div class="cnom">'+esc(x.salarie)+'</div></div>'+
+        '<div style="font-size:14px;color:#444;margin-bottom:12px">'+esc(x.type)+(x.debut?' du '+esc(x.debut):'')+' '+(x.debut?'au':'jusqu’au')+' '+esc(x.fin)+'</div>'+
+        '<div class="grille" style="margin:0"><label class="f"><span>Date de reprise du travail</span><input class="rdat" type="date" value="'+iso(mi)+'"></label></div>'+
+        '<button class="btn petit cv" data-i="'+i+'">✓ Confirmer la reprise</button> '+
+        '<a class="ca" style="display:inline-block;margin-left:10px;text-decoration:none" href="'+lienVue('arret')+'&psal='+encodeURIComponent((x.nom||'')+'|'+(x.prenom||''))+'&ptyp='+encodeURIComponent(/accident du travail/i.test(x.type)?'Prolongation d’accident du travail':'Prolongation d’arrêt maladie')+'">L’arrêt est prolongé</a>'+
+        '<div class="erreur"></div></div>';}).join('');
+    l.forEach(function(x,i){var c=$('rc'+i);
+      if(x.id===voulu)setTimeout(function(){c.scrollIntoView({behavior:'smooth',block:'center'});},300);
+      c.querySelector('input.rdat').oninput=function(){this.closest('.f').classList.remove('err');c.querySelector('.erreur').textContent='';};
+      c.querySelector('button').onclick=function(){
+        var b=this,v=c.querySelector('input.rdat').value,er=c.querySelector('.erreur');
+        if(!v){c.querySelector('input.rdat').closest('.f').classList.add('err');er.textContent='Merci d’indiquer la date de reprise du travail.';return;}
+        b.disabled=true;etat(b);
+        poster(avecId({rubrique:'reprise',id:x.id,date:v})).then(function(){
+          merci('Nous vous remercions : votre réponse a bien été transmise au cabinet.',['Reprise du travail de '+x.salarie+' le '+v.split('-').reverse().join('/')],'Nous en tiendrons compte pour la paie et reviendrons vers vous si une démarche est nécessaire.');
+        }).catch(function(e){finAttente();b.disabled=false;b.textContent='✓ Confirmer la reprise';afficherEchec(er,e,'L’envoi a échoué ('+(e.message||e)+'). Merci de réessayer.');});
+      };});
   }
 
   // ===================== FORMULAIRE D'EMBAUCHE =====================
