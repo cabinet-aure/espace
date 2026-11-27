@@ -223,9 +223,9 @@
   .rub.or{background:#d84315}
   .btn.or{background:#d84315;border-bottom-color:#8c2b0d}
   a.btn{display:inline-block;text-decoration:none}
-  #cdd .choix label.v{border:2px solid #2e7d32;color:#2e7d32}#cdd .choix label.v:hover{background:#e8f5e9}#cdd .choix label.v.on,#cdd .choix label.v.on:hover{background:#2e7d32;border-color:#2e7d32;color:#fff}
-  #cdd .choix label.r{border:2px solid #c62828;color:#c62828}#cdd .choix label.r:hover{background:#fdecea}#cdd .choix label.r.on,#cdd .choix label.r.on:hover{background:#c62828;border-color:#c62828;color:#fff}
-  .btn.cv{background:#2e7d32;border-bottom-color:#1b5e20}.btn.cv:hover{background:#1b5e20}.btn.cr{background:#c62828;border-bottom-color:#8e1c1c}.btn.cr:hover{background:#8e1c1c}
+  #cdd .choix label.v,#cdd .choix label.r{transition:all .15s}#cdd .choix label.v{border:2px solid #2e7d32;color:#2e7d32}#cdd .choix label.v:hover{background:#c8e6c9;transform:translateY(-2px);box-shadow:0 4px 10px rgba(46,125,50,.35)}#cdd .choix label.v.on,#cdd .choix label.v.on:hover{background:#2e7d32;border-color:#2e7d32;color:#fff;transform:none;box-shadow:none}
+  #cdd .choix label.r{border:2px solid #c62828;color:#c62828}#cdd .choix label.r:hover{background:#ffcdd2;transform:translateY(-2px);box-shadow:0 4px 10px rgba(198,40,40,.35)}#cdd .choix label.r.on,#cdd .choix label.r.on:hover{background:#c62828;border-color:#c62828;color:#fff;transform:none;box-shadow:none}
+  .btn.cv,.btn.cr{transition:all .15s}.btn.cv{background:#2e7d32;border-bottom-color:#1b5e20}.btn.cv:hover{background:#1b5e20;transform:translateY(-2px);box-shadow:0 4px 10px rgba(46,125,50,.35)}.btn.cr{background:#c62828;border-bottom-color:#8e1c1c}.btn.cr:hover{background:#8e1c1c;transform:translateY(-2px);box-shadow:0 4px 10px rgba(198,40,40,.35)}
   .ccal{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#fff;border:1px solid #e6e6e6;border-radius:12px;padding:12px 16px;margin-top:2px;color:#222}
   .ccal .cal{width:62px;border-radius:8px;overflow:hidden;border:1px solid #e0e0e0;text-align:center;background:#fff}
   .ccal .cal .m{background:#c62828;color:#fff;font-size:11px;font-weight:bold;padding:3px 0;letter-spacing:.5px}.ccal .cal.dbt .m{background:#9e9e9e}
@@ -1691,7 +1691,7 @@
     if(!x){$('f_csal').classList.add('err');$('erreurCdd').textContent='Merci d’indiquer le salarié.';return;}
     b.disabled=true;etat(b);
     poster(avecId({rubrique:'cdd',ref:x.ref,choix:'non'})).then(function(){
-      merci('Nous vous remercions : votre réponse a bien été transmise au cabinet.',['Fin du CDD de '+x.salarie+' le '+x.fin+' (non renouvelé)'],'Le cabinet préparera les documents de fin de contrat.');
+      merci('Nous vous remercions : votre réponse a bien été transmise au cabinet.',['Fin du CDD de '+x.salarie+' le '+x.fin+' (non renouvelé)'],'Dernier jour de travail : '+x.fin+'. Nous vous transmettrons le dernier bulletin et les documents à remettre au salarié : certificat de travail, attestation France Travail, solde de tout compte.');
     }).catch(function(e){finAttente();b.disabled=false;b.textContent='✕ Confirmer la fin du CDD';
       afficherEchec($('erreurCdd'),e,'L’envoi a échoué ('+(e.message||e)+'). Merci de réessayer.');});
   };
