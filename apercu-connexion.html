@@ -230,7 +230,7 @@
   .ccal .cal{width:62px;border-radius:8px;overflow:hidden;border:1px solid #e0e0e0;text-align:center;background:#fff}
   .ccal .cal .m{background:#c62828;color:#fff;font-size:11px;font-weight:bold;padding:3px 0;letter-spacing:.5px}.ccal .cal.dbt .m{background:#9e9e9e}
   .ccal .cal .j{font-size:22px;font-weight:bold;padding:4px 0 0;line-height:1.1}.ccal .cal .a{font-size:11px;color:#777;padding:0 0 4px}
-  .ccal .lg{font-size:11.5px;color:#777;text-align:center;margin-top:3px}.ccal .fl{font-size:22px;color:#bbb}
+  .ccal .lg{font-size:14px;font-weight:bold;text-align:center;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;color:#616161}.ccal .lg.fin{color:#c62828}.ccal .cal{margin:0 auto}.ccal .fl{font-size:22px;color:#bbb;margin-top:22px}
   .ccal .bds{margin-left:auto;display:flex;flex-direction:column;gap:6px;align-items:flex-end}.ccal .bd{border-radius:16px;padding:6px 12px;font-size:13px;font-weight:bold}
   .cddnon{border:1px solid #f5c6c6;background:#fdecea;color:#8e1c1c;border-radius:8px;padding:10px 12px;font-size:14px}
   .btn.petit{padding:11px 22px;font-size:15px}
@@ -1625,7 +1625,7 @@
   function plusMois(d,n){var r=new Date(d.getFullYear(),d.getMonth()+n,1),der=new Date(r.getFullYear(),r.getMonth()+1,0).getDate();r.setDate(Math.min(d.getDate(),der));return r;}
   function carteCdd(x){ // carte du CDD : calendriers de début et de fin, jours restants, renouvellements
     var MO=['JANV.','FÉVR.','MARS','AVR.','MAI','JUIN','JUIL.','AOÛT','SEPT.','OCT.','NOV.','DÉC.'];
-    function cal(t,c,l){var d=dateFr(t);if(!d)return '';return '<div><div class="cal'+c+'"><div class="m">'+MO[d.getMonth()]+'</div><div class="j">'+d.getDate()+'</div><div class="a">'+d.getFullYear()+'</div></div><div class="lg">'+l+'</div></div>';}
+    function cal(t,c,l){var d=dateFr(t);if(!d)return '';return '<div><div class="lg'+(c?'':' fin')+'">'+l+'</div><div class="cal'+c+'"><div class="m">'+MO[d.getMonth()]+'</div><div class="j">'+d.getDate()+'</div><div class="a">'+d.getFullYear()+'</div></div></div>';}
     var j=joursAvant(x.fin),n=+x.renouvellements||0,b='';
     if(j===0)b+='<span class="bd" style="background:#c62828;color:#fff">⚠ Fin aujourd’hui</span>';
     else if(j>0&&j<=15)b+='<span class="bd" style="background:#fdecea;color:#8e1c1c">⚠ Fin dans '+j+' jour'+(j>1?'s':'')+'</span>';
