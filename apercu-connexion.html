@@ -811,7 +811,7 @@
       else if(/^(arret|depart|autre)$/.test(VUE)){afficherSocial(d,VUE);$('social').style.display='';}
       else if(VUE==='paie'){$('retourSocPaie').href=lienVue('social');afficherPaie(d);$('paie').style.display='';}
       else if(VUE==='cdd'){$('retourSocCdd').href=lienVue('social');afficherCdd(d.cdd||[]);$('cdd').style.display='';}
-      else if(VUE==='embauche'){$('retourSoc').href=lienVue('social');if(window.initConv)window.initConv(d.convention);lireBrouillon();majEmb();$('embauche').style.display='';}
+      else if(VUE==='embauche'){$('retourSoc').href=lienVue('social');window._siren=String(d.siren||'').replace(/\D/g,'');if(window.initConv)window.initConv(d.convention);lireBrouillon();majEmb();$('embauche').style.display='';}
       else{tuiles(d);document.body.classList.add('vacc');$('accueil').style.display='';}
       $('chargement').style.display='none';
     }).catch(function(){erreurLien('La page n’a pas pu être chargée. Merci de réessayer dans quelques instants.');});
@@ -2060,6 +2060,7 @@ window.initConv=function(conv){
     var S37='avenant n° 10 du 16 juin 2026 (date d’effet à vérifier)',N37='Métiers du commerce de détail alimentaire spécialisé';
     CLIENT={secteur:'Commerce',region:'National',ccn:'Convention collective : <b>Métiers du commerce de détail alimentaire spécialisé</b> (IDCC 3237)',
       statuts:[['Employe','Employé'],['Maitrise','Agent de maîtrise'],['Cadre','Cadre']],
+      marches:window._siren==='519278816'?[['mardi','Le Chesnay-Rocquencourt','06:00','13:30'],['mercredi','Versailles','06:00','13:30'],['vendredi','Versailles','06:00','13:30'],['samedi','Le Chesnay-Rocquencourt','06:00','13:30'],['dimanche','Versailles','05:30','13:00']]:null,
       emplois:{Employe:['Vendeur(se)','Vendeur(se) crémier-fromager','Préparateur(trice)','Caissier(e)','Employé(e) polyvalent(e)'],Maitrise:['Responsable de magasin adjoint','Responsable de magasin'],Cadre:['Gérant(e) de magasin','Directeur / dirigeant salarié']}};
     GRILLES={
       Employe:{idcc:'3237',nom:N37,base:35,source:S37,lib:'Niveau du salarié',niveaux:[
@@ -2295,6 +2296,7 @@ window.initConv=function(conv){
     }
     function special(){var st=radioV('statut');return (CLIENT.secteur==='Syntec'&&st==='Cadre'&&/^[23]$/.test(radioV('modalite')))||(CLIENT.secteur==='Immobilier'&&st==='NegoVRP');}
     function calc(){
+      if(window.MARCHES)return; // PLF : horaires donnés par le bloc « Marchés travaillés »
       var FD=document.getElementById('f_duree');
       if(FD){var du=radioV('duree')||'35',sp=special();
         FD.style.display=sp?'none':'';
@@ -2333,6 +2335,51 @@ window.initConv=function(conv){
     document.getElementById('embauche').addEventListener('change',function(e){if(e.target.name==='statut'||e.target.name==='modalite')calc();});
     F.addEventListener('change',function(e){if(e.target.tagName==='SELECT')hTouche=true;if(e.target.closest('.jours')||e.target.id==='h_diff'){if(document.getElementById('h_diff').checked)construireJours();}calc();});
     calc();
+  })();
+  // ===== Marchés travaillés (PLF, décision de Mario du 27/11/2026) : jours cochés, heures par 30 min, pause de 30 min =====
+  if(CLIENT.marches)(function(){
+    window.MARCHES=true;var M=CLIENT.marches,PAUSE=30;
+    ['f_duree','f_hor','f_lieu','f_lieuAutre'].forEach(function(id){var z=document.getElementById(id);if(z)z.style.display='none';});
+    var T=[];for(var m=240;m<=960;m+=30)T.push(('0'+Math.floor(m/60)).slice(-2)+':'+('0'+m%60).slice(-2));
+    function mn(s){var p=s.split(':');return +p[0]*60+ +p[1];}
+    function hl(s){return s.replace(/^0/,'').replace(':','h');}
+    function hTxt(m){return Math.floor(m/60)+' h'+(m%60?' '+('0'+m%60).slice(-2):'');}
+    function opt(l,v){return l.map(function(t){return '<option value="'+t+'"'+(t===v?' selected':'')+'>'+hl(t)+'</option>';}).join('');}
+    var lignes=M.map(function(j,i){var dim=j[0]==='dimanche',fins=dim?T.filter(function(t){return mn(t)<=780;}):T;
+      return '<tr data-i="'+i+'"><td style="padding:6px 4px"><label style="cursor:pointer"><input type="checkbox" class="mc" checked style="width:auto;margin-right:6px"><b>'+j[0].charAt(0).toUpperCase()+j[0].slice(1)+'</b><br><span style="font-size:12.5px;color:#666">'+j[1]+'</span></label></td>'+
+        '<td style="padding:6px 4px"><select class="md">'+opt(T,j[2])+'</select></td>'+
+        '<td style="padding:6px 4px"><select class="mf">'+opt(fins,j[3])+'</select>'+(dim?'<div style="font-size:11.5px;color:#888">13h00 au plus tard</div>':'')+'</td>'+
+        '<td style="padding:6px 4px;font-size:13px;color:#666">30 min</td><td class="mw" style="padding:6px 4px;font-weight:bold"></td></tr>';}).join('');
+    document.getElementById('f_hor').insertAdjacentHTML('afterend',
+      '<div class="f large" id="f_marches"><span>Marchés travaillés</span>'+
+      '<div class="consigne" style="margin:0 0 6px;font-size:13.5px;color:#666">Cochez les jours où le salarié travaille et ajustez les heures si besoin.</div>'+
+      '<table style="width:100%;border-collapse:collapse;font-size:14px"><tr style="font-size:12.5px;color:#666;text-align:left"><th style="padding:4px;font-weight:normal">Marché</th><th style="padding:4px;font-weight:normal">Début</th><th style="padding:4px;font-weight:normal">Fin</th><th style="padding:4px;font-weight:normal">Pause</th><th style="padding:4px;font-weight:normal">Travail</th></tr>'+lignes+'</table>'+
+      '<div class="htot" id="m_tot"></div>'+
+      '<label id="m_dem" class="cache" style="display:block;margin-top:8px;font-size:13.5px;cursor:pointer"><input type="checkbox" id="m_demande" style="width:auto;margin-right:6px">Le salarié demande un temps partiel de moins de 24 h (autre emploi, études…)</label></div>');
+    var B=document.getElementById('f_marches'),fhe=document.getElementById('e_heures');
+    function calcM(){
+      var tot=0,err=[],parts=[],lieux=[];
+      B.querySelectorAll('tr[data-i]').forEach(function(r){var j=M[+r.dataset.i],on=r.querySelector('.mc').checked;
+        r.querySelectorAll('select').forEach(function(s){s.disabled=!on;});r.style.opacity=on?'':'0.45';
+        var w=on?mn(r.querySelector('.mf').value)-mn(r.querySelector('.md').value)-PAUSE:0;
+        r.querySelector('.mw').textContent=on&&w>0?hTxt(w):'–';if(!on)return;
+        if(w<=0){err.push(j[0]+' : la fin doit être après le début');return;}
+        if(w>600)err.push(j[0]+' : plus de 10 h de travail');
+        tot+=w;parts.push(j[0]+' '+j[1]+' '+hl(r.querySelector('.md').value)+'-'+hl(r.querySelector('.mf').value));
+        if(lieux.indexOf(j[1])<0)lieux.push(j[1]);});
+      var h=Math.round(tot/60*100)/100,dem=document.getElementById('m_demande').checked,moins24=tot>0&&tot<1440;
+      document.getElementById('m_dem').classList.toggle('cache',!moins24);
+      if(!tot&&!err.length)err.push('cochez au moins un marché');
+      if(tot>2880)err.push('plus de 48 h par semaine');
+      if(moins24&&!dem)err.push('moins de 24 h : cochez la case si le salarié le demande');
+      var el=document.getElementById('m_tot');el.className='htot'+(err.length?' bas':'');
+      el.textContent=err.length?'⚠ '+err.join(' ; ')+'.':'Total : '+hTxt(tot)+' par semaine'+(tot===2100?' – temps plein':tot>2100?' dont '+hTxt(tot-2100)+' d’heures supplémentaires':' – temps partiel');
+      fhe.value=h?String(h):'';
+      document.getElementById('e_horaires').value=parts.length?parts.join(' ; ')+' (pause de 30 min par jour), soit '+String(h).replace('.',',')+' h par semaine'+(moins24&&dem?' ; temps partiel de moins de 24 h à la demande du salarié':''):'';
+      window.MARCHES_LIEU='Marchés : '+lieux.join(' et ');
+      fhe.dispatchEvent(new Event('input',{bubbles:true}));
+    }
+    B.addEventListener('change',calcM);calcM();
   })();
   // d) CDD de remplacement : personne remplacée
   document.getElementById('e_finCdd').closest('.f').insertAdjacentHTML('afterend',
@@ -2458,14 +2505,15 @@ window.initConv=function(conv){
         else{var n=g.niveaux.filter(function(x){return String(x.c)===nv;})[0];
           if(n){v.niveau=n.c+' – '+n.t+(n.coef?' (coef. '+n.coef+')':'');
             var mb=Math.max(n.min,(g.base===35&&!g.sansSmic)?SMIC:0),hh=parseFloat(String(el('e_heures').value).replace(',','.'))||35;
-            if(g.base===35&&hh!==35&&!el('f_hor').style.display.match(/none/)){ // durée du travail : minimum proratisé, heures supplémentaires majorées de 25 %
+            if(g.base===35&&hh!==35&&(window.MARCHES||!el('f_hor').style.display.match(/none/))){ // durée du travail : minimum proratisé, heures supplémentaires majorées de 25 %
               var he=hh>35?35+(hh-35)*1.25:hh;v.minimumNiveau=eur(mb*he/35)+' brut par mois pour '+String(hh).replace('.',',')+' h par semaine'+(hh>35?' (heures supplémentaires majorées comprises)':'');}
             else v.minimumNiveau=eur(mb)+' brut par mois'+(g.base!==35?' pour '+g.base+' h':'');}}}
     }
     v.modalite='';
     if(CLIENT.secteur==='Syntec'&&st==='Cadre'){v.modalite=radioT('modalite');if(!v.modalite)err.push([el('f_mod'),'organisation du temps de travail']);}
     var li=radioV('lieu');v.lieu='';
-    if(CLIENT.secteur==='Propreté')v.lieu='Sites indiqués avec les horaires';
+    if(window.MARCHES)v.lieu=window.MARCHES_LIEU||'';
+    else if(CLIENT.secteur==='Propreté')v.lieu='Sites indiqués avec les horaires';
     else if(CHANTIER){if(!li)err.push([el('f_lieu'),'lieu de travail']);else v.lieu=radioT('lieu');}
     else if(li){v.lieu=radioT('lieu');if(li==='Autre'){var ad=valeur('e_lieuAutre');if(!ad)err.push([el('e_lieuAutre'),'adresse du lieu de travail']);v.lieu+=' : '+ad;}}
     v.essai=window.essaiChoisi||'';
@@ -2476,7 +2524,7 @@ window.initConv=function(conv){
       if(!rn)err.push([el('e_remplNom'),'personne remplacée']);if(!rp)err.push([el('e_remplPoste'),'emploi de la personne remplacée']);
       v.remplace=rn+(rp?' ('+rp+')':'');
     }
-    var tot=el(CLIENT.secteur==='Propreté'?'sitesTot':'h_tot');
+    var tot=el(CLIENT.secteur==='Propreté'?'sitesTot':window.MARCHES?'m_tot':'h_tot');
     if(!String(el('e_horaires').value).trim()||(tot&&tot.classList.contains('bas')))err.push([tot?tot.closest('.f'):el('e_horaires'),'jours et horaires de travail']);
     return {v:v,err:err};
   };
