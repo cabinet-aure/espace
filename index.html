@@ -1687,15 +1687,15 @@
       '<div class="f large cddnouv cnouv"></div>'+
       '<div class="f large"><span>Les conditions changent-elles ?</span><div class="choix"><label><input type="radio" name="chg'+i+'" value="Non">Non, mêmes conditions</label><label><input type="radio" name="chg'+i+'" value="Oui">Oui</label></div></div>'+
       '<label class="f large cache cprecf"><span>Ce qui change</span><textarea class="cprec" maxlength="2000" placeholder="ex. : passage à 39 h, nouveau salaire…"></textarea></label>'+
-      '</div><button class="btn cv" data-e="oui">✓ Envoyer la demande de renouvellement</button></div>';
+      '</div><button class="btn petit cv" data-e="oui">✓ Envoyer la demande de renouvellement</button></div>';
     if(L.plein)h+='<div class="czone cache" data-z="cdi"><div class="cinfo v">CDI à compter du <b>'+fr(mi)+'</b>.</div><div class="grille">'+
       '<div class="f large"><span>Les conditions changent-elles ?</span><div class="choix"><label><input type="radio" name="chgc'+i+'" value="Non">Non, mêmes conditions</label><label><input type="radio" name="chgc'+i+'" value="Oui">Oui</label></div></div>'+
       '<label class="f large cache cprecf"><span>Ce qui change</span><textarea class="cprec" maxlength="2000" placeholder="ex. : nouveau poste, nouveau salaire…"></textarea></label>'+
-      '</div><button class="btn cv" data-e="cdi">✓ Confirmer l’embauche en CDI</button></div>';
-    h+='<div class="czone cache" data-z="non"><div class="cinfo r">Fin du contrat le <b>'+esc(x.fin)+'</b>.</div><button class="btn cr" data-e="non">✕ Confirmer la fin du CDD</button></div>';
-    h+='<div class="czone cache" data-z="anticipe"><div class="cinfo o">La rupture d’un CDD avant son terme est strictement encadrée par la loi. Le cabinet prendra contact avec vous pour en examiner les conditions avant toute démarche.</div><button class="btn or" data-e="anticipe">Demander l’intervention du cabinet</button></div>';
+      '</div><button class="btn petit cv" data-e="cdi">✓ Confirmer l’embauche en CDI</button></div>';
+    h+='<div class="czone cache" data-z="non"><div class="cinfo r">Fin du contrat le <b>'+esc(x.fin)+'</b>.</div><button class="btn petit cr" data-e="non">✕ Confirmer la fin du CDD</button></div>';
+    h+='<div class="czone cache" data-z="anticipe"><div class="cinfo o">La rupture d’un CDD avant son terme est strictement encadrée par la loi. Le cabinet prendra contact avec vous pour en examiner les conditions avant toute démarche.</div><button class="btn petit or" data-e="anticipe">Demander l’intervention du cabinet</button></div>';
     h+='<div class="czone cache" data-z="essai"><div class="grille"><div class="f large"><span>À l’initiative de</span><div class="choix"><label><input type="radio" name="qui'+i+'" value="employeur">L’employeur</label><label><input type="radio" name="qui'+i+'" value="salarie">Le salarié</label></div></div></div>'+
-      '<div class="cinfo o">Ne remettez aucun courrier au salarié avant notre appel : le cabinet vous contacte pour vérifier les délais.</div><button class="btn or" data-e="essai">Demander l’intervention du cabinet</button></div>';
+      '<div class="cinfo o">Ne remettez aucun courrier au salarié avant notre appel : le cabinet vous contacte pour vérifier les délais.</div><button class="btn petit or" data-e="essai">Demander l’intervention du cabinet</button></div>';
     return h+'<div class="erreur"></div></div>';
   }
   function afficherCdd(l){
