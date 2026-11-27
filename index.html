@@ -253,6 +253,7 @@
   .abandeau.calme{background:#fafafa;border-color:#e6e6e6;border-left-color:#d9c98f}.abandeau.calme .an{background:#eadfb8;color:#8a6d1c}.abandeau.calme .al{background:#fff;color:#8a6d1c;border:1px solid #a8892b}.abandeau.calme:hover .al{background:#fbf7ea}
   .alien{text-align:center;margin:14px 0 18px;font-size:14px}.alien a{color:#8a6d1c;font-weight:bold}
   .rub.ac{background:#a8892b}
+  .etq{display:inline-block;font-size:11px;font-weight:bold;letter-spacing:.5px;text-transform:uppercase;color:#5f6b70;background:#eceff1;border-radius:10px;padding:2px 8px;margin-right:8px;vertical-align:1px}
   .actu{border-left:6px solid #a8892b}.actu .cnom{font-size:16px}.actu .adt{font-size:13px;color:#888;margin:-4px 0 8px}.actu .atx{font-size:15px;color:#333;line-height:1.5;white-space:pre-line}
   .actu .cinfo{border-left-color:#a8892b!important}.actu .asrc{font-size:13px;margin-top:6px}.actu .asrc a{color:#8a6d1c}
   .cstat.nv{background:#a8892b;color:#fff}
@@ -1881,8 +1882,10 @@
     $('a_aucun').style.display=l.length?'none':'';
     function carte(a,i,plie){
       var c='<div class="ctete"'+(plie?' style="margin:0;cursor:pointer"':'')+'><div class="cnom">'+esc(a.titre)+(plie?' <span class="cemp">· '+esc(a.date)+'</span>':'')+'</div><span class="cstat'+(plie?'':' nv')+'">'+(plie?'Lu <span class="flp">▸</span>':'Nouveau')+'</span></div>';
-      var d='<div class="adt">'+esc(a.date)+(a.public?' · '+esc(a.public):'')+'</div><div class="atx">'+esc(a.texte)+'</div>'+
-        (a.faire?'<div class="cinfo o" style="margin-top:10px"><b>Ce que vous devez faire :</b> '+esc(a.faire)+'</div>':'')+
+      // Article de conjoncture (Public commençant par « Conjoncture ») : étiquette grise et « Pour votre entreprise » (décision de Mario du 27/11/2026)
+      var cj=/^conjoncture/i.test(a.public||''),pub=cj?String(a.public).replace(/^conjoncture\s*[·:–-]?\s*/i,''):a.public;
+      var d='<div class="adt">'+(cj?'<span class="etq">Conjoncture</span>':'')+esc(a.date)+(pub?' · '+esc(pub):'')+'</div><div class="atx">'+esc(a.texte)+'</div>'+
+        (a.faire?'<div class="cinfo o" style="margin-top:10px"><b>'+(cj?'Pour votre entreprise :':'Ce que vous devez faire :')+'</b> '+esc(a.faire)+'</div>':'')+
         (a.source?'<div class="asrc">'+(a.lien?'<a href="'+esc(a.lien)+'" target="_blank" rel="noopener">Source : '+esc(a.source)+'</a>':'Source : '+esc(a.source))+'</div>':'');
       return '<div class="ccarte actu'+(plie?' fait plie':'')+(a.id===voulu?' vise':'')+'" id="ac'+i+'">'+c+(plie?'<div class="cdet" style="display:none;margin-top:10px">'+d+'</div>':d)+'</div>';
     }
