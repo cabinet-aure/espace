@@ -769,8 +769,7 @@
     if(DEMO)return Promise.resolve(DEMO);
     if(ESSAI)return lireReel().then(function(d){
       // Essai : documents bancaires de novembre affichés pour l'exemple (la vraie liste est créée le 1er décembre)
-      var EX={'833417744':[['Caisse d’Épargne','Compte courant (se terminant par 8920)','Relevé de compte de novembre 2026']],
-        '509976742':[['Crédit Agricole','Compte courant (se terminant par 2056)','Relevé de compte de novembre 2026'],['Crédit Agricole','Compte courant (se terminant par 2056)','Relevé de carte bancaire de novembre 2026'],['Crédit Agricole','Compte courant (se terminant par 2056)','Relevé des LCR de novembre 2026'],['Caixa Geral de Depósitos','Compte courant (se terminant par 1015)','Relevé de compte de novembre 2026'],['Caixa Geral de Depósitos','Compte courant (se terminant par 1015)','Relevé des LCR de novembre 2026']]};
+      var EX={'833417744':[['Caisse d’Épargne','Compte courant (se terminant par 8920)','Relevé de compte de novembre 2026']]};
       var ex=d&&d.ok&&EX[String(d.siren).replace(/\D/g,'')];
       if(ex&&!(d.documents||[]).length){d.documents=ex.map(function(x,k){return {ref:'E'+(k+1),banque:x[0],compte:x[1],document:x[2],statut:'À déposer'};});d.periode='Relevés de novembre 2026';d.dateLimite='05/12/2026';}
       return d;});
