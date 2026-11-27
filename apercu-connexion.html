@@ -253,6 +253,11 @@
   .abandeau.calme{background:#fafafa;border-color:#e6e6e6;border-left-color:#d9c98f}.abandeau.calme .an{background:#eadfb8;color:#8a6d1c}.abandeau.calme .al{background:#fff;color:#8a6d1c;border:1px solid #a8892b}.abandeau.calme:hover .al{background:#fbf7ea}
   .alien{text-align:center;margin:14px 0 18px;font-size:14px}.alien a{color:#8a6d1c;font-weight:bold}
   .rub.ac{background:#a8892b}
+  .asec{font-size:12px;font-weight:bold;letter-spacing:.6px;text-transform:uppercase;color:#8a6d1f;margin:20px 0 8px}
+  .epas{display:inline-block;font-size:11px;font-weight:bold;color:#8a6d1f;background:#fdf6e3;border:1px solid #e6d9a8;border-radius:10px;padding:1px 7px;margin-left:8px;vertical-align:2px}
+  .afil{display:flex;gap:6px;margin-bottom:10px}.afil b{font-size:13px;padding:5px 14px;border-radius:16px;border:1px solid #e6d9a8;color:#8a6d1f;background:#fff;cursor:pointer}.afil b.on{background:#a8892b;color:#fff;border-color:#a8892b}
+  .amois{margin-bottom:8px}.amois.vide{display:none}.amt{display:flex;justify-content:space-between;background:#fff;border:1px solid #e3e3e3;border-radius:10px;padding:11px 16px;font-size:15px;font-weight:bold;color:#333;cursor:pointer}.amt span{font-weight:normal;color:#777;font-size:14px}
+  .amc{padding:8px 0 0 12px}.aplusb{text-align:center;font-size:14px;color:#8a6d1f;cursor:pointer;margin-top:8px}
   .etq{display:inline-block;font-size:11px;font-weight:bold;letter-spacing:.5px;text-transform:uppercase;color:#5f6b70;background:#eceff1;border-radius:10px;padding:2px 8px;margin-right:8px;vertical-align:1px}
   .actu{border-left:6px solid #a8892b}.actu .cnom{font-size:16px}.actu .adt{font-size:13px;color:#888;margin:-4px 0 8px}.actu .atx{font-size:15px;color:#333;line-height:1.5;white-space:pre-line}
   .actu .cinfo{border-left-color:#a8892b!important}.actu .asrc{font-size:13px;margin-top:6px}.actu .asrc a{color:#8a6d1c}
@@ -1901,21 +1906,45 @@
       nv.slice(0,3).map(function(a){return esc(a.titre);}).join(' · ')+'</span></span><span class="al">Lire</span></a>'
       :'<a class="abandeau calme" href="'+lienVue('actus')+'"><span class="an">✓</span><span style="flex:1"><b style="color:#8a6d1c">Actualités</b><br><span style="font-size:14px;color:#444">Aucune nouvelle actualité · Dernière : '+esc(l[0].titre)+'</span></span><span class="al">Consulter</span></a>';
   }
+  // Page Actualités (décision de Mario du 27/11/2026) : non lus en haut, lus du mois en cours, puis Archives repliées par mois avec filtre Obligations / Conjoncture.
+  var MOIS=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+  function dActu(s){var m=String(s||'').replace(/^'/,'').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);return m?new Date(+m[3],+m[2]-1,+m[1]):null;}
   function afficherActus(l){
-    var lu=actusLues(),voulu=P.get('art')||'';
+    var lu=actusLues(),voulu=P.get('art')||'',auj=new Date();auj.setHours(0,0,0,0);
+    function cle(a){var d=dActu(a.date);return d?d.getFullYear()*100+d.getMonth():0;}
+    var cm=auj.getFullYear()*100+auj.getMonth();
     var nv=l.filter(function(a){return lu.indexOf(a.id)<0||a.id===voulu;}),an=l.filter(function(a){return nv.indexOf(a)<0;});
+    var duMois=an.filter(function(a){return cle(a)>=cm;}),arch=an.filter(function(a){return cle(a)<cm;});
     $('a_aucun').style.display=l.length?'none':'';
-    function carte(a,i,plie){
-      var c='<div class="ctete"'+(plie?' style="margin:0;cursor:pointer"':'')+'><div class="cnom">'+esc(a.titre)+(plie?' <span class="cemp">· '+esc(a.date)+'</span>':'')+'</div><span class="cstat'+(plie?'':' nv')+'">'+(plie?'Lu <span class="flp">▸</span>':'Nouveau')+'</span></div>';
-      // Article de conjoncture (Public commençant par « Conjoncture ») : étiquette grise et « Pour votre entreprise » (décision de Mario du 27/11/2026)
+    var n=0;
+    function carte(a,plie){
+      var i=n++;
+      // Article de conjoncture (Public commençant par « Conjoncture ») : étiquette grise et « Pour votre entreprise »
       var cj=/^conjoncture/i.test(a.public||''),pub=cj?String(a.public).replace(/^conjoncture\s*[·:–-]?\s*/i,''):a.public;
-      var d='<div class="adt">'+(cj?'<span class="etq">Conjoncture</span>':'')+esc(a.date)+(pub?' · '+esc(pub):'')+'</div><div class="atx">'+esc(a.texte)+'</div>'+
+      var ec=dActu(a.echeance),passe=ec&&ec<auj;
+      var c='<div class="ctete"'+(plie?' style="margin:0;cursor:pointer"':'')+'><div class="cnom">'+(plie&&cj?'<span class="etq">Conjoncture</span>':'')+esc(a.titre)+(passe?'<span class="epas">Échéance passée</span>':'')+(plie?' <span class="cemp">· '+esc(a.date)+'</span>':'')+'</div><span class="cstat'+(plie?'':' nv')+'">'+(plie?'Lu <span class="flp">▸</span>':'Nouveau')+'</span></div>';
+      var d='<div class="adt">'+(cj&&!plie?'<span class="etq">Conjoncture</span>':'')+esc(a.date)+(pub?' · '+esc(pub):'')+'</div><div class="atx">'+esc(a.texte)+'</div>'+
         (a.faire?'<div class="cinfo o" style="margin-top:10px"><b>'+(cj?'Pour votre entreprise :':'Ce que vous devez faire :')+'</b> '+esc(a.faire)+'</div>':'')+
         (a.source?'<div class="asrc">'+(a.lien?'<a href="'+esc(a.lien)+'" target="_blank" rel="noopener">Source : '+esc(a.source)+'</a>':'Source : '+esc(a.source))+'</div>':'');
-      return '<div class="ccarte actu'+(plie?' fait plie':'')+(a.id===voulu?' vise':'')+'" id="ac'+i+'">'+c+(plie?'<div class="cdet" style="display:none;margin-top:10px">'+d+'</div>':d)+'</div>';
+      return '<div class="ccarte actu'+(plie?' fait plie':'')+(a.id===voulu?' vise':'')+'" data-k="'+(cj?'c':'o')+'" id="ac'+i+'">'+c+(plie?'<div class="cdet" style="display:none;margin-top:10px">'+d+'</div>':d)+'</div>';
     }
-    $('a_cartes').innerHTML=nv.map(function(a,i){return carte(a,i,false);}).join('')+an.map(function(a,i){return carte(a,nv.length+i,true);}).join('');
+    var h=nv.map(function(a){return carte(a,false);}).join('');
+    if(duMois.length)h+='<div class="asec">Déjà lus ce mois-ci</div>'+duMois.map(function(a){return carte(a,true);}).join('');
+    if(arch.length){
+      var g={},ordre=[];arch.forEach(function(a){var k=cle(a);if(!g[k]){g[k]=[];ordre.push(k);}g[k].push(a);});
+      ordre.sort(function(x,y){return y-x;});
+      h+='<div class="asec">Archives</div><div class="afil"><b class="on" data-f="">Tout</b><b data-f="o">Obligations</b><b data-f="c">Conjoncture</b></div>'+
+        ordre.map(function(k,x){var nb=g[k].length;return '<div class="amois'+(x>=6?' aplus':'')+'"'+(x>=6?' style="display:none"':'')+'><div class="amt">'+(k?MOIS[k%100]+' '+Math.floor(k/100):'Sans date')+' <span>'+nb+' article'+(nb>1?'s':'')+' <span class="flp">▸</span></span></div><div class="amc" style="display:none">'+g[k].map(function(a){return carte(a,true);}).join('')+'</div></div>';}).join('')+
+        (ordre.length>6?'<div class="aplusb">Afficher les mois précédents ▾</div>':'');
+    }
+    $('a_cartes').innerHTML=h;
     [].forEach.call($('a_cartes').querySelectorAll('.plie .ctete'),function(t){t.onclick=function(){var c=t.parentNode,dd=c.querySelector('.cdet'),o=dd.style.display==='none';dd.style.display=o?'':'none';c.querySelector('.flp').textContent=o?'▾':'▸';};});
+    [].forEach.call($('a_cartes').querySelectorAll('.amt'),function(t){t.onclick=function(){var b=t.nextSibling,o=b.style.display==='none';b.style.display=o?'':'none';t.querySelector('.flp').textContent=o?'▾':'▸';};});
+    [].forEach.call($('a_cartes').querySelectorAll('.afil b'),function(b){b.onclick=function(){var f=b.getAttribute('data-f');
+      [].forEach.call($('a_cartes').querySelectorAll('.afil b'),function(x){x.classList.toggle('on',x===b);});
+      [].forEach.call($('a_cartes').querySelectorAll('.amois'),function(m){var vis=0;[].forEach.call(m.querySelectorAll('.ccarte'),function(c){var ok=!f||c.getAttribute('data-k')===f;c.style.display=ok?'':'none';if(ok)vis++;});
+        var s=m.querySelector('.amt>span');s.firstChild.nodeValue=vis+' article'+(vis>1?'s':'')+' ';m.classList.toggle('vide',!vis);});};});
+    var pb=$('a_cartes').querySelector('.aplusb');if(pb)pb.onclick=function(){[].forEach.call($('a_cartes').querySelectorAll('.aplus'),function(m){m.style.display='';});pb.style.display='none';};
     if(voulu){var v=$('a_cartes').querySelector('.vise');if(v)setTimeout(function(){v.scrollIntoView({behavior:'smooth',block:'center'});},300);}
     marquerLues(l.map(function(a){return a.id;})); // affichés = lus pour la prochaine visite
   }
