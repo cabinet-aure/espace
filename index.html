@@ -263,6 +263,19 @@
   .actu .cinfo{border-left-color:#a8892b!important}.actu .asrc{font-size:13px;margin-top:6px}.actu .asrc a{color:#8a6d1c}
   .cstat.nv{background:#a8892b;color:#fff}
   @media(max-width:600px){.abandeau{margin:6px 16px 0}}
+  .rub.sl{background:#455a64}
+  .sg h4{margin:18px 0 8px;font-size:13px;letter-spacing:.5px;text-transform:uppercase;color:#455a64}.sg h4:first-child{margin-top:6px}
+  .sgr{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.sgc{display:block;background:#fff;border:1px solid #e0e4e7;border-radius:10px;padding:12px 14px;text-decoration:none;color:#263238;transition:background .15s}
+  .sgr2{grid-template-columns:1fr 1fr}.sgc:hover{background:#f5f7f8}.sgc b{display:block;font-size:15px}.sgc span{font-size:13px;color:#666}.sgc.on{border-color:#455a64;box-shadow:0 0 0 2px #455a64 inset}
+  @media(max-width:600px){.sgr{grid-template-columns:1fr 1fr}}
+  .osim{display:flex;align-items:center;gap:12px;margin:16px 30px 18px;padding:12px 16px;border:1px solid #cfd8dc;border-left:6px solid #455a64;border-radius:10px;background:#fff;text-decoration:none;color:#263238;font-size:15px;transition:background .15s}.osim:hover{background:#f5f7f8}
+  .osim .osi svg{width:22px;height:22px;fill:none;stroke:#455a64;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;display:block}.osim .osd{font-size:14px;color:#555}.osim .osc{color:#455a64;font-weight:bold;white-space:nowrap}
+  @media(max-width:600px){.osim{margin:16px 16px 18px}}
+  .sim{border-left:6px solid #455a64}.sim h3{margin:0 0 4px;font-size:17px;color:#222}.sim .sd{font-size:14px;color:#666;margin-bottom:12px}
+  .sim .res{background:#eceff1;border-radius:8px;padding:12px 14px;margin-top:6px;font-size:15px;color:#263238;line-height:1.55}.sim .res b{font-size:18px;color:#263238}.sim .res .rd{font-size:13px;color:#555}
+  .sim .savert{font-size:12.5px;color:#888;margin-top:8px}
+  .sim .choix label.on{background:#455a64;border-color:#455a64;color:#fff}.sim .choix label:hover{background:#eceff1}.sim .choix label.on:hover{background:#455a64}
+  #outils .retourS{color:#455a64;border-color:#b0bec5;background:#fff}
   .banque.err .zone{border-color:#c0392b;background:#fdf1f0}
   .ccal{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#fff;border:1px solid #e6e6e6;border-radius:12px;padding:12px 16px;margin-top:2px;color:#222}
   .ccal .cal{width:62px;border-radius:8px;overflow:hidden;border:1px solid #e0e0e0;text-align:center;background:#fff}
@@ -523,6 +536,11 @@
   <div id="cx" style="display:none"></div>
   <div class="chargement" id="chargement"><span class="rond"></span>Chargement de votre espace…</div>
   <div id="accueil" style="display:none"><div id="abandeau"></div><div class="tuiles" id="tuiles"></div></div>
+  <div id="outils" style="display:none"><div class="corps soc">
+    <a class="retourS" id="retourOutils" href="#">← Retour à l’accueil</a>
+    <div class="rub sl"><h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"/><path d="M8 7h8"/><path d="M8 11h.01"/><path d="M12 11h.01"/><path d="M16 11h.01"/><path d="M8 15h.01"/><path d="M12 15h.01"/><path d="M16 15h.01"/></svg>Simulateurs</h2></div>
+    <div id="o_cartes"></div>
+  </div></div>
   <div id="actus" style="display:none"><div class="corps soc">
     <a class="retourS" id="retourActu" href="#" style="color:#8a6d1f;border-color:#e6d9a8;background:#fdfaf0">← Retour à l’accueil</a>
     <div class="rub ac"><h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 6h3a1 1 0 0 1 1 1v11a2 2 0 0 1 -4 0v-13a1 1 0 0 0 -1 -1h-10a1 1 0 0 0 -1 1v12a3 3 0 0 0 3 3h11"/><path d="M8 8l4 0"/><path d="M8 12l4 0"/><path d="M8 16l4 0"/></svg>Actualités</h2></div>
@@ -847,7 +865,7 @@
   }
   function charger(){
     $('chargement').style.display='';$('chargement').innerHTML='<span class="rond"></span>Chargement de votre espace…';
-    $('formulaire').style.display='none';$('merci').style.display='none';$('accueil').style.display='none';$('social').style.display='none';$('embauche').style.display='none';$('bilan').style.display='none';$('cdd').style.display='none';$('paie').style.display='none';$('reprise').style.display='none';$('actus').style.display='none';
+    $('formulaire').style.display='none';$('merci').style.display='none';$('accueil').style.display='none';$('social').style.display='none';$('embauche').style.display='none';$('bilan').style.display='none';$('cdd').style.display='none';$('paie').style.display='none';$('reprise').style.display='none';$('actus').style.display='none';$('outils').style.display='none';
     lireDonnees().then(function(d){
       if(!d.ok&&d.connexion){ecranConnexion(d);return;}
       if(!d.ok){erreurLien(d.erreur||'Ce lien n’est pas valide.');return;}
@@ -863,17 +881,18 @@
       else if(d.dateLimite&&aFaire){$('dateLimite').textContent=d.dateLimite;$('limite').style.display='';}
       $('rien').innerHTML='✔ Tout est à jour.<span class="pd calL" style="display:flex;align-items:center;margin-top:8px">'+calendrier(46)+'<span>Prochaine demande le <b>'+prochaineDemande()+'</b>, par e-mail.</span></span>';
       if(!SOCIAL_OUVERT&&/^(social|cdd|reprise|embauche|paie|arret|depart|autre)$/.test(VUE))VUE='';
-      [].forEach.call(document.querySelectorAll('.retour'),function(a){a.href=lienVue(C?'':'accueil');a.style.display=(VUE&&VUE!=='accueil'&&!/^(paie|cdd|reprise|actus|embauche|arret|depart|autre)$/.test(VUE))?'inline-block':'none';});
+      [].forEach.call(document.querySelectorAll('.retour'),function(a){a.href=lienVue(C?'':'accueil');a.style.display=(VUE&&VUE!=='accueil'&&!/^(paie|cdd|reprise|actus|outils|embauche|arret|depart|autre)$/.test(VUE))?'inline-block':'none';});
       if(VUE==='banque'){afficher(d.documents||[],d.attente||[]);$('formulaire').style.display='';}
       else if(VUE==='social'){afficherSocial(d);$('social').style.display='';}
       else if(VUE==='bilan'&&d.bilan){afficherBilan(d.bilan);$('bilan').style.display='';}
       else if(/^(arret|depart|autre)$/.test(VUE)){afficherSocial(d,VUE);$('social').style.display='';}
       else if(VUE==='paie'){$('retourSocPaie').href=lienVue('social');afficherPaie(d);$('paie').style.display='';}
       else if(VUE==='cdd'){$('retourSocCdd').href=lienVue('social');afficherCdd(d.cdd||[]);$('cdd').style.display='';}
+      else if(VUE==='outils'){$('retourOutils').href=lienVue(C?'':'accueil');afficherOutils();$('outils').style.display='';}
       else if(VUE==='actus'){$('retourActu').href=lienVue(C?'':'accueil');afficherActus(d.actus||[]);$('actus').style.display='';}
       else if(VUE==='reprise'){$('retourSocRep').href=lienVue('social');afficherReprise(d.arrets||[]);$('reprise').style.display='';}
       else if(VUE==='embauche'){$('retourSoc').href=lienVue('social');window._siren=String(d.siren||'').replace(/\D/g,'');if(window.initConv)window.initConv(d.convention);lireBrouillon();majEmb();$('embauche').style.display='';}
-      else{tuiles(d);bandeauActus(d.actus||[]);document.body.classList.add('vacc');$('accueil').style.display='';}
+      else{tuiles(d);tuileOutils();bandeauActus(d.actus||[]);document.body.classList.add('vacc');$('accueil').style.display='';}
       $('chargement').style.display='none';
     }).catch(function(){erreurLien('La page n’a pas pu être chargée. Merci de réessayer dans quelques instants.');});
   }
@@ -1224,7 +1243,7 @@
     var fin=function(){
       try{localStorage.removeItem(CLE_JT);sessionStorage.removeItem(CLE_JT);localStorage.removeItem('aure_cabinet');sessionStorage.removeItem('aure_cabinet');}catch(e){}
       delete ID.jeton;delete ID.jc;
-      ['chargement','formulaire','merci','accueil','social','embauche','bilan','cdd','reprise','actus'].forEach(function(k){if($(k))$(k).style.display='none';});
+      ['chargement','formulaire','merci','accueil','social','embauche','bilan','cdd','reprise','actus','outils'].forEach(function(k){if($(k))$(k).style.display='none';});
       document.body.classList.add('encx');window.scrollTo(0,0);
       $('cx').innerHTML='<div class="cxfin"><div class="cxcad">🔒</div><div class="cxft">Vous êtes déconnecté</div>'+
         '<p>Votre espace '+esc($('societe').textContent)+' est fermé sur cet appareil.<br>Un nouveau code vous sera demandé à la prochaine visite.</p>'+
@@ -1450,7 +1469,7 @@
     $('merciTitre').textContent=titre;
     $('recap').innerHTML=recap.map(function(t){return '<li>'+esc(t)+'</li>';}).join('');
     $('revenir').href=lienVue(C?'':'accueil');
-    $('social').style.display='none';$('embauche').style.display='none';$('formulaire').style.display='none';$('bilan').style.display='none';$('cdd').style.display='none';$('paie').style.display='none';$('reprise').style.display='none';$('actus').style.display='none';
+    $('social').style.display='none';$('embauche').style.display='none';$('formulaire').style.display='none';$('bilan').style.display='none';$('cdd').style.display='none';$('paie').style.display='none';$('reprise').style.display='none';$('actus').style.display='none';$('outils').style.display='none';
     $('merci').style.display='block';window.scrollTo(0,0);
   }
   $('envoyerSoc').onclick=function(){
@@ -1922,6 +1941,97 @@
     var pb=$('a_cartes').querySelector('.aplusb');if(pb)pb.onclick=function(){[].forEach.call($('a_cartes').querySelectorAll('.aplus'),function(m){m.style.display='';});pb.style.display='none';};
     if(voulu){var v=$('a_cartes').querySelector('.vise');if(v)setTimeout(function(){v.scrollIntoView({behavior:'smooth',block:'center'});},300);}
     marquerLues(l.map(function(a){return a.id;})); // affichés = lus pour la prochaine visite
+  }
+
+
+  // ===================== SIMULATEURS (décision de Mario du 27/11/2026 ; barèmes vérifiés le 27/11/2026) =====================
+  // Calculs faits dans la page : rien n'est envoyé au cabinet. Barèmes à mettre à jour chaque année (tâche Actualités).
+  function eur(n,dec){var x=(Math.round(n*(dec?100:1))/(dec?100:1)).toLocaleString('fr-FR',{minimumFractionDigits:dec?2:0,maximumFractionDigits:dec?2:0});return x.replace(/ /g,' ')+' EUR';}
+  function nb(v){var x=parseFloat(String(v||'').replace(/\s| | /g,'').replace(',','.'));return isNaN(x)?0:x;}
+  function jd(v){if(!v)return null;var t=v.split('-');return new Date(+t[0],+t[1]-1,+t[2]);}
+  function frd(d){return fr(d);}
+  var SIMS=[
+   {id:'ik',t:'Indemnités kilométriques',d:'Frais d’un véhicule personnel utilisé pour l’entreprise (barème fiscal 2026, voitures).',
+    h:'<label class="f"><span>Puissance fiscale (carte grise, case P.6)</span><select data-k="cv"><option value="3">3 CV et moins</option><option value="4">4 CV</option><option value="5" selected>5 CV</option><option value="6">6 CV</option><option value="7">7 CV et plus</option></select></label>'+
+      '<label class="f"><span>Kilomètres professionnels de l’année</span><input data-k="km" inputmode="numeric" placeholder="ex. : 8000"></label>'+
+      '<div class="f large"><span>Énergie</span><div class="choix"><label><input type="radio" name="ik_en" value="t" checked>Thermique ou hybride</label><label><input type="radio" name="ik_en" value="e">100 % électrique (+20 %)</label></div></div>',
+    a:'Barème fiscal 2026.',
+    c:function(v){var B={3:[[.529,0],[.316,1065],[.370,0]],4:[[.606,0],[.340,1330],[.407,0]],5:[[.636,0],[.357,1395],[.427,0]],6:[[.665,0],[.374,1457],[.447,0]],7:[[.697,0],[.394,1515],[.470,0]]};
+      var km=nb(v.km);if(!km)return '';var t=B[v.cv][km<=5000?0:km<=20000?1:2],r=km*t[0]+t[1],el=v.ik_en==='e';if(el)r*=1.2;
+      return 'Indemnités kilométriques : <b>'+eur(r)+'</b><br><span class="rd">Calcul : '+(t[1]?'('+km.toLocaleString('fr-FR')+' km × '+String(t[0]).replace('.',',')+') + '+eur(t[1]):km.toLocaleString('fr-FR')+' km × '+String(t[0]).replace('.',','))+(el?', majoré de 20 %':'')+'</span>';}},
+   {id:'ap',t:'Aide à l’embauche d’un apprenti',d:'Aide de l’État pour un contrat d’apprentissage conclu à partir du 8 mars 2026 et commencé avant le 1er janvier 2027.',
+    h:'<div class="f large"><span>Effectif de l’entreprise</span><div class="choix"><label><input type="radio" name="ap_e" value="p" checked>Moins de 250 salariés</label><label><input type="radio" name="ap_e" value="g">250 salariés et plus</label></div></div>'+
+      '<label class="f large"><span>Diplôme préparé</span><select data-k="niv"><option value="34">CAP, BEP, Bac, Brevet professionnel (niveaux 3 et 4)</option><option value="5">BTS, BUT, DEUST (niveau 5)</option><option value="67">Licence, Master, ingénieur (niveaux 6 et 7)</option></select></label>'+
+      '<label class="f large" style="cursor:pointer"><span style="font-weight:normal"><input type="checkbox" data-k="hand" style="width:auto;margin-right:8px">Apprenti en situation de handicap</span></label>',
+    c:function(v){var p=v.ap_e==='p',m=v.hand?6000:(v.niv==='34'?(p?5000:2000):v.niv==='5'?(p?4500:1500):(p?2000:750));
+      return 'Aide pour la première année : <b>'+eur(m)+'</b> au maximum<br><span class="rd">Versée mois par mois, pour la seule première année du contrat'+(p?'':' ; entreprises de 250 salariés et plus : sous conditions d’objectifs d’alternants')+'.</span>';},
+    a:'Montants applicables aux contrats conclus depuis le 8 mars 2026.'},
+   {id:'re',t:'Pénalités de retard d’une facture',d:'Intérêts de retard et indemnité forfaitaire de 40 EUR que vous pouvez réclamer à un client professionnel.',
+    h:'<label class="f"><span>Montant TTC de la facture</span><input data-k="mt" inputmode="decimal" placeholder="ex. : 3000"></label>'+
+      '<label class="f"><span>Date d’échéance</span><input type="date" data-k="ec"></label><label class="f"><span>Date du paiement (ou aujourd’hui)</span><input type="date" data-k="pa"></label>',
+    c:function(v){var m=nb(v.mt),a=jd(v.ec),b=jd(v.pa)||new Date();if(!m||!a||b<=a)return '';
+      // Taux légal entre professionnels à défaut de taux prévu au contrat : taux BCE du semestre + 10 points
+      var T={'2026-1':12.15,'2026-2':12.40,'2027-1':12.65},tot=0,d=new Date(a);d.setDate(d.getDate()+1);var j=0;
+      while(d<=b){var k=d.getFullYear()+'-'+(d.getMonth()<6?1:2),t=T[k]||12.65;tot+=m*t/100/365;j++;d.setDate(d.getDate()+1);}
+      return 'Intérêts de retard : <b>'+eur(tot,1)+'</b> ('+j+' jour'+(j>1?'s':'')+' de retard)<br>Indemnité forfaitaire de recouvrement : <b>40,00 EUR</b><br><span class="rd">Taux : taux de la BCE + 10 points (12,15 % au 1er semestre 2026, 12,40 % au 2nd), sauf taux prévu dans vos conditions générales.</span>';},
+    a:'Applicable entre professionnels uniquement.'},
+   {id:'se',t:'Seuils de TVA et de micro-entreprise',d:'Savoir si vous restez en franchise de TVA et au régime micro (seuils 2026).',
+    h:'<div class="f large"><span>Activité</span><div class="choix"><label><input type="radio" name="se_a" value="v" checked>Vente de marchandises, restauration, hébergement</label><label><input type="radio" name="se_a" value="s">Prestations de services</label></div></div>'+
+      '<label class="f"><span>Chiffre d’affaires HT de 2025</span><input data-k="c1" inputmode="decimal" placeholder="ex. : 70000"></label><label class="f"><span>Chiffre d’affaires HT 2026 (à ce jour)</span><input data-k="c2" inputmode="decimal" placeholder="ex. : 40000"></label>',
+    c:function(v){var s=v.se_a==='s',b=s?37500:85000,mj=s?41250:93500,mi=s?83600:203100,c1=nb(v.c1),c2=nb(v.c2);if(!c1&&!c2)return '';
+      var tva=c1<=b?(c2<=mj?'oui, sauf si le chiffre d’affaires 2026 dépasse '+eur(mj):'non : le seuil de '+eur(mj)+' est dépassé en 2026'):(c2<=b?'à vérifier avec le cabinet (2025 au-dessus de '+eur(b)+')':'non');
+      return 'Franchise de TVA en 2026 : <b>'+tva+'</b><br>Régime micro-entreprise : <b>'+(c1<=mi?'oui':'non')+'</b> (seuil : '+eur(mi)+')<br><span class="rd">Seuils de franchise : '+eur(b)+' (seuil majoré '+eur(mj)+').</span>';},
+    a:'Un dépassement de seuil produit ses effets immédiatement.'},
+   {id:'tn',t:'Cotisations du gérant',d:'Cotisations sociales d’un gérant majoritaire de SARL ou d’un associé unique d’EURL (artisan ou commerçant, barème 2026).',
+    h:'<label class="f large"><span>Rémunération nette souhaitée sur l’année</span><input data-k="net" inputmode="decimal" placeholder="ex. : 40000"></label>',
+    c:function(v){var n=nb(v.net);if(!n)return '';var PS=48060;
+      // Base de calcul unique 2026 : revenu avant cotisations, abattement de 26 % (plancher 1,76 % du PASS, plafond 130 % du PASS)
+      function cot(R){var ab=Math.min(Math.max(.26*R,.0176*PS),1.3*PS),A=Math.max(R-ab,0),q=A/PS,t=0,pts=[[.2,0],[.4,1.5],[.6,4],[1.1,6.5],[2,7.7],[3,8.5]];
+        for(var i=1;i<pts.length;i++)if(q>=pts[i-1][0]&&q<pts[i][0]){t=pts[i-1][1]+(pts[i][1]-pts[i-1][1])*(q-pts[i-1][0])/(pts[i][0]-pts[i-1][0]);break;}
+        var mal=q>=3?.085*3*PS+.065*(A-3*PS):t/100*A,ij=.005*Math.min(Math.max(A,.4*PS),5*PS);
+        var rb=.1787*Math.max(Math.min(A,PS),.1125*PS)+.0072*Math.max(A-PS,0),rc=.081*Math.min(A,PS)+.091*Math.min(Math.max(A-PS,0),3*PS);
+        var id=.013*Math.max(Math.min(A,PS),.115*PS),af=q<=1.1?0:(q>=1.4?.031:.031*(q-1.1)/.3);
+        return mal+ij+rb+rc+id+af*A+.097*A+120;}
+      var lo=n,hi=n*3+20000;for(var k=0;k<60;k++){var md=(lo+hi)/2;if(md-cot(md)<n)lo=md;else hi=md;}
+      return 'Cotisations sociales : <b>'+eur(lo-n)+'</b> par an<br>Coût total pour la société : <b>'+eur(lo)+'</b> par an<br><span class="rd">Par mois : '+eur(n/12)+' net pour vous, '+eur(lo/12)+' pour la société. Avant impôt sur le revenu.</span>';},
+    a:'Estimation pour un artisan ou un commerçant, hors professions libérales.'},
+   {id:'vs',t:'Taxes sur une voiture de société (ex-TVS)',d:'Taxes annuelles sur une voiture particulière utilisée par la société, pour l’année 2026 (à payer en janvier 2027).',
+    h:'<label class="f large"><span>Énergie</span><select data-k="en"><option value="1">Essence, hybride ou gaz</option><option value="2">Diesel ou autre</option><option value="0">100 % électrique</option></select></label>'+
+      '<label class="f"><span>CO2 (carte grise, case V.7)</span><input data-k="co" inputmode="numeric" placeholder="ex. : 130"></label>'+
+      '<label class="f"><span>Nombre de jours d’utilisation en 2026</span><input data-k="jo" inputmode="numeric" value="365"></label>',
+    c:function(v){var e=+v.en,g=e===0?0:nb(v.co),j=Math.min(Math.max(nb(v.jo),0),365);if(!j||(e!==0&&!g))return '';
+      // Barème CO2 WLTP 2026 (tarif marginal par gramme)
+      var b=[[4,0],[45,1],[53,2],[85,3],[105,4],[125,10],[145,50],[165,60],[1e9,65]],p=0,s=0;
+      for(var i=0;i<b.length&&g>p;i++){s+=(Math.min(g,b[i][0])-p)*b[i][1];p=b[i][0];}
+      // Taxe polluants : 100 / 500 EUR jusqu’au 28/02/2026, 130 / 650 EUR à partir du 01/03/2026 (loi de finances 2026)
+      var pol=[0,(100*59+130*306)/365,(500*59+650*306)/365][e],t1=s*j/365,t2=pol*j/365;
+      return 'Taxe CO2 : <b>'+eur(t1)+'</b><br>Taxe polluants : <b>'+eur(t2)+'</b><br>Total : <b>'+eur(t1+t2)+'</b><br><span class="rd">À déclarer et payer en janvier 2027. Calcul pour une voiture immatriculée depuis mars 2020.</span>';},
+    a:'Estimation hors cas d’exonération.'}
+  ];
+  // Page rangée par thème : une petite case par simulateur, un seul ouvert à la fois (décision de Mario du 27/11/2026)
+  var SIM_G=[['',[['ik','Indemnités kilométriques','Barème 2026'],['re','Pénalités de retard','Facture impayée'],['se','Seuils de TVA et micro','Franchise, régime micro'],['ap','Aide à l’embauche d’un apprenti','Montant de l’aide'],['tn','Cotisations du gérant','Gérant majoritaire, EURL'],['vs','Taxes voiture de société','Ex-TVS, année 2026']]]];
+  function afficherOutils(){
+    var parId={};SIMS.forEach(function(s){parId[s.id]=s;});
+    $('o_cartes').innerHTML='<div class="sg">'+SIM_G.map(function(g){return (g[0]?'<h4>'+g[0]+'</h4>':'')+'<div class="sgr sgr2">'+g[1].map(function(x){return '<a class="sgc" href="#" data-s="'+x[0]+'"><b>'+x[1]+'</b><span>'+x[2]+'</span></a>';}).join('')+'</div>'+
+      g[1].map(function(x){var s=parId[x[0]];return '<div class="ccarte sim" id="sim_'+s.id+'" style="display:none;margin-top:12px"><h3>'+s.t+'</h3><div class="sd">'+s.d+'</div><div class="grille" style="margin:0">'+s.h+'</div><div class="res" style="display:none"></div>'+
+        (s.a?'<div class="savert">'+s.a+'</div>':'')+'</div>';}).join('');}).join('')+'</div>';
+    SIMS.forEach(function(s){var c=$('sim_'+s.id);
+      function maj(){var v={};[].forEach.call(c.querySelectorAll('[data-k]'),function(e){v[e.getAttribute('data-k')]=e.type==='checkbox'?e.checked:e.value;});
+        [].forEach.call(c.querySelectorAll('input[type=radio]:checked'),function(e){v[e.name]=e.value;});
+        [].forEach.call(c.querySelectorAll('.choix label'),function(l){l.classList.toggle('on',l.querySelector('input').checked);});
+        if(s.m)s.m(c,v);var r=s.c(v),z=c.querySelector('.res');z.innerHTML=r||'';z.style.display=r?'':'none';}
+      c.addEventListener('input',maj);c.addEventListener('change',maj);maj();});
+    function ouvrir(id){[].forEach.call($('o_cartes').querySelectorAll('.sgc'),function(a){a.classList.toggle('on',a.getAttribute('data-s')===id);});
+      SIMS.forEach(function(s){$('sim_'+s.id).style.display=s.id===id?'':'none';});
+      if(id){var c=$('sim_'+id);setTimeout(function(){c.scrollIntoView({behavior:'smooth',block:'nearest'});},50);}}
+    [].forEach.call($('o_cartes').querySelectorAll('.sgc'),function(a){a.onclick=function(e){e.preventDefault();var id=a.getAttribute('data-s');ouvrir(a.classList.contains('on')?'':id);};});
+    if(P.get('sim'))ouvrir(P.get('sim'));
+  }
+  // Accès aux simulateurs : bandeau sous les tuiles, pas de 4e tuile (décision de Mario du 27/11/2026)
+  function tuileOutils(){
+    var ex=$('osim');if(ex)ex.parentNode.removeChild(ex);
+    $('tuiles').insertAdjacentHTML('afterend','<a id="osim" class="osim" href="'+lienVue('outils')+'"><span class="osi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"/><path d="M8 7h8"/><path d="M8 11h.01"/><path d="M12 11h.01"/><path d="M16 11h.01"/><path d="M8 15h.01"/><path d="M12 15h.01"/><path d="M16 15h.01"/></svg></span>'+
+      '<span style="flex:1"><b>Simulateurs</b><br><span class="osd">Indemnités kilométriques, cotisations du gérant, voiture de société et autres calculs</span></span><span class="osc">Calculer ›</span></a>');
   }
 
   // ===================== FORMULAIRE D'EMBAUCHE =====================
