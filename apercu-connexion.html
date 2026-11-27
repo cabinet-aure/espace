@@ -258,6 +258,10 @@
   .cstat.nv{background:#a8892b;color:#fff}
   @media(max-width:600px){.abandeau{margin:6px 16px 0}}
   .rub.sl{background:#455a64}
+  .sg h4{margin:18px 0 8px;font-size:13px;letter-spacing:.5px;text-transform:uppercase;color:#455a64}.sg h4:first-child{margin-top:6px}
+  .sgr{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.sgc{display:block;background:#fff;border:1px solid #e0e4e7;border-radius:10px;padding:12px 14px;text-decoration:none;color:#263238;transition:background .15s}
+  .sgc:hover{background:#f5f7f8}.sgc b{display:block;font-size:15px}.sgc span{font-size:13px;color:#666}.sgc.on{border-color:#455a64;box-shadow:0 0 0 2px #455a64 inset}
+  @media(max-width:600px){.sgr{grid-template-columns:1fr 1fr}}
   .osim{display:flex;align-items:center;gap:12px;margin:16px 30px 18px;padding:12px 16px;border:1px solid #cfd8dc;border-left:6px solid #455a64;border-radius:10px;background:#fff;text-decoration:none;color:#263238;font-size:15px;transition:background .15s}.osim:hover{background:#f5f7f8}
   .osim .osi svg{width:22px;height:22px;fill:none;stroke:#455a64;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;display:block}.osim .osd{font-size:14px;color:#555}.osim .osc{color:#455a64;font-weight:bold;white-space:nowrap}
   @media(max-width:600px){.osim{margin:16px 16px 18px}}
@@ -2018,17 +2022,27 @@
     c:function(v){var n=nb(v.nr),u=nb(v.sit);return n?'Indemnités exonérées : <b>'+eur(n*u,1)+'</b> pour le mois<br><span class="rd">'+n+' repas × '+eur(u,1)+'.</span>':'';},
     a:'Montants maximaux sans cotisations ; la convention collective (paniers du bâtiment, par exemple) peut prévoir d’autres montants.'}
   ];
+  // Page rangée par thème : une petite case par simulateur, un seul ouvert à la fois (décision de Mario du 27/11/2026)
+  var SIM_G=[['Salariés',[['hs','Heures supplémentaires','Majorations 25 % et 50 %'],['cp','Congés payés','Jours acquis et indemnité'],['fin','Fin de contrat','Licenciement, rupture, CDD'],['pe','Période d’essai','Délai de prévenance'],['ap','Apprenti','Aide à l’embauche']]],
+    ['Véhicule et frais',[['ik','Indemnités kilométriques','Barème 2026'],['av','Avantage en nature véhicule','Voiture de société'],['rp','Frais de repas','Montants URSSAF 2026']]],
+    ['Factures et entreprise',[['re','Pénalités de retard','Facture impayée'],['dp','Date limite de paiement','Échéance légale'],['se','Seuils de TVA et micro','Franchise, régime micro']]]];
   function afficherOutils(){
-    $('o_cartes').innerHTML=SIMS.map(function(s){return '<div class="ccarte sim" id="sim_'+s.id+'"><h3>'+s.t+'</h3><div class="sd">'+s.d+'</div><div class="grille" style="margin:0">'+s.h+'</div><div class="res" style="display:none"></div>'+
-      '<div class="savert">'+(s.a?s.a+' ':'')+'Estimation indicative. Pour une décision, contactez le cabinet.</div></div>';}).join('');
+    var parId={};SIMS.forEach(function(s){parId[s.id]=s;});
+    $('o_cartes').innerHTML='<div class="sg">'+SIM_G.map(function(g){return '<h4>'+g[0]+'</h4><div class="sgr">'+g[1].map(function(x){return '<a class="sgc" href="#" data-s="'+x[0]+'"><b>'+x[1]+'</b><span>'+x[2]+'</span></a>';}).join('')+'</div>'+
+      g[1].map(function(x){var s=parId[x[0]];return '<div class="ccarte sim" id="sim_'+s.id+'" style="display:none;margin-top:12px"><h3>'+s.t+'</h3><div class="sd">'+s.d+'</div><div class="grille" style="margin:0">'+s.h+'</div><div class="res" style="display:none"></div>'+
+        '<div class="savert">'+(s.a?s.a+' ':'')+'Estimation indicative. Pour une décision, contactez le cabinet.</div></div>';}).join('');}).join('')+'</div>';
     SIMS.forEach(function(s){var c=$('sim_'+s.id);
       function maj(){var v={};[].forEach.call(c.querySelectorAll('[data-k]'),function(e){v[e.getAttribute('data-k')]=e.type==='checkbox'?e.checked:e.value;});
         [].forEach.call(c.querySelectorAll('input[type=radio]:checked'),function(e){v[e.name]=e.value;});
         [].forEach.call(c.querySelectorAll('.choix label'),function(l){l.classList.toggle('on',l.querySelector('input').checked);});
         if(s.m)s.m(c,v);var r=s.c(v),z=c.querySelector('.res');z.innerHTML=r||'';z.style.display=r?'':'none';}
       c.addEventListener('input',maj);c.addEventListener('change',maj);maj();});
+    function ouvrir(id){[].forEach.call($('o_cartes').querySelectorAll('.sgc'),function(a){a.classList.toggle('on',a.getAttribute('data-s')===id);});
+      SIMS.forEach(function(s){$('sim_'+s.id).style.display=s.id===id?'':'none';});
+      if(id){var c=$('sim_'+id);setTimeout(function(){c.scrollIntoView({behavior:'smooth',block:'nearest'});},50);}}
+    [].forEach.call($('o_cartes').querySelectorAll('.sgc'),function(a){a.onclick=function(e){e.preventDefault();var id=a.getAttribute('data-s');ouvrir(a.classList.contains('on')?'':id);};});
+    if(P.get('sim'))ouvrir(P.get('sim'));
   }
-
   // Accès aux simulateurs : bandeau sous les tuiles, pas de 4e tuile (décision de Mario du 27/11/2026)
   function tuileOutils(){
     var ex=$('osim');if(ex)ex.parentNode.removeChild(ex);
