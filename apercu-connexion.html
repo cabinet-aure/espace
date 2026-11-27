@@ -257,6 +257,12 @@
   .actu .cinfo{border-left-color:#a8892b!important}.actu .asrc{font-size:13px;margin-top:6px}.actu .asrc a{color:#8a6d1c}
   .cstat.nv{background:#a8892b;color:#fff}
   @media(max-width:600px){.abandeau{margin:6px 16px 0}}
+  .rub.sl{background:#455a64}
+  .sim{border-left:6px solid #455a64}.sim h3{margin:0 0 4px;font-size:17px;color:#222}.sim .sd{font-size:14px;color:#666;margin-bottom:12px}
+  .sim .res{background:#eceff1;border-radius:8px;padding:12px 14px;margin-top:6px;font-size:15px;color:#263238;line-height:1.55}.sim .res b{font-size:18px;color:#263238}.sim .res .rd{font-size:13px;color:#555}
+  .sim .savert{font-size:12.5px;color:#888;margin-top:8px}
+  .sim .choix label.on{background:#455a64;border-color:#455a64;color:#fff}.sim .choix label:hover{background:#eceff1}.sim .choix label.on:hover{background:#455a64}
+  #outils .retourS{color:#455a64;border-color:#b0bec5;background:#fff}
   .banque.err .zone{border-color:#c0392b;background:#fdf1f0}
   .ccal{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#fff;border:1px solid #e6e6e6;border-radius:12px;padding:12px 16px;margin-top:2px;color:#222}
   .ccal .cal{width:62px;border-radius:8px;overflow:hidden;border:1px solid #e0e0e0;text-align:center;background:#fff}
@@ -517,6 +523,11 @@
   <div id="cx" style="display:none"></div>
   <div class="chargement" id="chargement"><span class="rond"></span>Chargement de votre espace…</div>
   <div id="accueil" style="display:none"><div id="abandeau"></div><div class="tuiles" id="tuiles"></div></div>
+  <div id="outils" style="display:none"><div class="corps soc">
+    <a class="retourS" id="retourOutils" href="#">← Retour à l’accueil</a>
+    <div class="rub sl"><h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"/><path d="M8 7h8"/><path d="M8 11h.01"/><path d="M12 11h.01"/><path d="M16 11h.01"/><path d="M8 15h.01"/><path d="M12 15h.01"/><path d="M16 15h.01"/></svg>Simulateurs</h2></div>
+    <div id="o_cartes"></div>
+  </div></div>
   <div id="actus" style="display:none"><div class="corps soc">
     <a class="retourS" id="retourActu" href="#">← Retour à l’accueil</a>
     <div class="rub ac"><h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 6h3a1 1 0 0 1 1 1v11a2 2 0 0 1 -4 0v-13a1 1 0 0 0 -1 -1h-10a1 1 0 0 0 -1 1v12a3 3 0 0 0 3 3h11"/><path d="M8 8l4 0"/><path d="M8 12l4 0"/><path d="M8 16l4 0"/></svg>Actualités</h2></div>
@@ -847,7 +858,7 @@
   }
   function charger(){
     $('chargement').style.display='';$('chargement').innerHTML='<span class="rond"></span>Chargement de votre espace…';
-    $('formulaire').style.display='none';$('merci').style.display='none';$('accueil').style.display='none';$('social').style.display='none';$('embauche').style.display='none';$('bilan').style.display='none';$('cdd').style.display='none';$('paie').style.display='none';$('reprise').style.display='none';$('actus').style.display='none';
+    $('formulaire').style.display='none';$('merci').style.display='none';$('accueil').style.display='none';$('social').style.display='none';$('embauche').style.display='none';$('bilan').style.display='none';$('cdd').style.display='none';$('paie').style.display='none';$('reprise').style.display='none';$('actus').style.display='none';$('outils').style.display='none';
     lireDonnees().then(function(d){
       if(!d.ok&&d.connexion){ecranConnexion(d);return;}
       if(!d.ok){erreurLien(d.erreur||'Ce lien n’est pas valide.');return;}
@@ -863,17 +874,18 @@
       else if(d.dateLimite&&aFaire){$('dateLimite').textContent=d.dateLimite;$('limite').style.display='';}
       $('rien').innerHTML='✔ Tout est à jour.<span class="pd calL" style="display:flex;align-items:center;margin-top:8px">'+calendrier(46)+'<span>Prochaine demande le <b>'+prochaineDemande()+'</b>, par e-mail.</span></span>';
       if(!SOCIAL_OUVERT&&/^(social|cdd|reprise|embauche|paie|arret|depart|autre)$/.test(VUE))VUE='';
-      [].forEach.call(document.querySelectorAll('.retour'),function(a){a.href=lienVue(C?'':'accueil');a.style.display=(VUE&&VUE!=='accueil'&&!/^(paie|cdd|reprise|actus|embauche|arret|depart|autre)$/.test(VUE))?'inline-block':'none';});
+      [].forEach.call(document.querySelectorAll('.retour'),function(a){a.href=lienVue(C?'':'accueil');a.style.display=(VUE&&VUE!=='accueil'&&!/^(paie|cdd|reprise|actus|outils|embauche|arret|depart|autre)$/.test(VUE))?'inline-block':'none';});
       if(VUE==='banque'){afficher(d.documents||[],d.attente||[]);$('formulaire').style.display='';}
       else if(VUE==='social'){afficherSocial(d);$('social').style.display='';}
       else if(VUE==='bilan'&&d.bilan){afficherBilan(d.bilan);$('bilan').style.display='';}
       else if(/^(arret|depart|autre)$/.test(VUE)){afficherSocial(d,VUE);$('social').style.display='';}
       else if(VUE==='paie'){$('retourSocPaie').href=lienVue('social');afficherPaie(d);$('paie').style.display='';}
       else if(VUE==='cdd'){$('retourSocCdd').href=lienVue('social');afficherCdd(d.cdd||[]);$('cdd').style.display='';}
+      else if(VUE==='outils'){$('retourOutils').href=lienVue(C?'':'accueil');afficherOutils();$('outils').style.display='';}
       else if(VUE==='actus'){$('retourActu').href=lienVue(C?'':'accueil');afficherActus(d.actus||[]);$('actus').style.display='';}
       else if(VUE==='reprise'){$('retourSocRep').href=lienVue('social');afficherReprise(d.arrets||[]);$('reprise').style.display='';}
       else if(VUE==='embauche'){$('retourSoc').href=lienVue('social');window._siren=String(d.siren||'').replace(/\D/g,'');if(window.initConv)window.initConv(d.convention);lireBrouillon();majEmb();$('embauche').style.display='';}
-      else{tuiles(d);bandeauActus(d.actus||[]);document.body.classList.add('vacc');$('accueil').style.display='';}
+      else{tuiles(d);tuileOutils();bandeauActus(d.actus||[]);document.body.classList.add('vacc');$('accueil').style.display='';}
       $('chargement').style.display='none';
     }).catch(function(){erreurLien('La page n’a pas pu être chargée. Merci de réessayer dans quelques instants.');});
   }
@@ -1224,7 +1236,7 @@
     var fin=function(){
       try{localStorage.removeItem(CLE_JT);sessionStorage.removeItem(CLE_JT);localStorage.removeItem('aure_cabinet');sessionStorage.removeItem('aure_cabinet');}catch(e){}
       delete ID.jeton;delete ID.jc;
-      ['chargement','formulaire','merci','accueil','social','embauche','bilan','cdd','reprise','actus'].forEach(function(k){if($(k))$(k).style.display='none';});
+      ['chargement','formulaire','merci','accueil','social','embauche','bilan','cdd','reprise','actus','outils'].forEach(function(k){if($(k))$(k).style.display='none';});
       document.body.classList.add('encx');window.scrollTo(0,0);
       $('cx').innerHTML='<div class="cxfin"><div class="cxcad">🔒</div><div class="cxft">Vous êtes déconnecté</div>'+
         '<p>Votre espace '+esc($('societe').textContent)+' est fermé sur cet appareil.<br>Un nouveau code vous sera demandé à la prochaine visite.</p>'+
@@ -1450,7 +1462,7 @@
     $('merciTitre').textContent=titre;
     $('recap').innerHTML=recap.map(function(t){return '<li>'+esc(t)+'</li>';}).join('');
     $('revenir').href=lienVue(C?'':'accueil');
-    $('social').style.display='none';$('embauche').style.display='none';$('formulaire').style.display='none';$('bilan').style.display='none';$('cdd').style.display='none';$('paie').style.display='none';$('reprise').style.display='none';$('actus').style.display='none';
+    $('social').style.display='none';$('embauche').style.display='none';$('formulaire').style.display='none';$('bilan').style.display='none';$('cdd').style.display='none';$('paie').style.display='none';$('reprise').style.display='none';$('actus').style.display='none';$('outils').style.display='none';
     $('merci').style.display='block';window.scrollTo(0,0);
   }
   $('envoyerSoc').onclick=function(){
@@ -1896,6 +1908,127 @@
     [].forEach.call($('a_cartes').querySelectorAll('.plie .ctete'),function(t){t.onclick=function(){var c=t.parentNode,dd=c.querySelector('.cdet'),o=dd.style.display==='none';dd.style.display=o?'':'none';c.querySelector('.flp').textContent=o?'▾':'▸';};});
     if(voulu){var v=$('a_cartes').querySelector('.vise');if(v)setTimeout(function(){v.scrollIntoView({behavior:'smooth',block:'center'});},300);}
     marquerLues(l.map(function(a){return a.id;})); // affichés = lus pour la prochaine visite
+  }
+
+
+  // ===================== SIMULATEURS (décision de Mario du 27/11/2026 ; barèmes vérifiés le 27/11/2026) =====================
+  // Calculs faits dans la page : rien n'est envoyé au cabinet. Barèmes à mettre à jour chaque année (tâche Actualités).
+  function eur(n,dec){var x=(Math.round(n*(dec?100:1))/(dec?100:1)).toLocaleString('fr-FR',{minimumFractionDigits:dec?2:0,maximumFractionDigits:dec?2:0});return x.replace(/ /g,' ')+' EUR';}
+  function nb(v){var x=parseFloat(String(v||'').replace(/\s| | /g,'').replace(',','.'));return isNaN(x)?0:x;}
+  function jd(v){if(!v)return null;var t=v.split('-');return new Date(+t[0],+t[1]-1,+t[2]);}
+  function frd(d){return fr(d);}
+  var SIMS=[
+   {id:'ik',t:'Indemnités kilométriques',d:'Frais d’un véhicule personnel utilisé pour l’entreprise (barème fiscal 2026, voitures).',
+    h:'<label class="f"><span>Puissance fiscale (carte grise, case P.6)</span><select data-k="cv"><option value="3">3 CV et moins</option><option value="4">4 CV</option><option value="5" selected>5 CV</option><option value="6">6 CV</option><option value="7">7 CV et plus</option></select></label>'+
+      '<label class="f"><span>Kilomètres professionnels de l’année</span><input data-k="km" inputmode="numeric" placeholder="ex. : 8000"></label>'+
+      '<div class="f large"><span>Énergie</span><div class="choix"><label><input type="radio" name="ik_en" value="t" checked>Thermique ou hybride</label><label><input type="radio" name="ik_en" value="e">100 % électrique (+20 %)</label></div></div>',
+    c:function(v){var B={3:[[.529,0],[.316,1065],[.370,0]],4:[[.606,0],[.340,1330],[.407,0]],5:[[.636,0],[.357,1395],[.427,0]],6:[[.665,0],[.374,1457],[.447,0]],7:[[.697,0],[.394,1515],[.470,0]]};
+      var km=nb(v.km);if(!km)return '';var t=B[v.cv][km<=5000?0:km<=20000?1:2],r=km*t[0]+t[1],el=v.ik_en==='e';if(el)r*=1.2;
+      return 'Indemnités kilométriques : <b>'+eur(r)+'</b><br><span class="rd">Calcul : '+(t[1]?'('+km.toLocaleString('fr-FR')+' km × '+String(t[0]).replace('.',',')+') + '+eur(t[1]):km.toLocaleString('fr-FR')+' km × '+String(t[0]).replace('.',','))+(el?', majoré de 20 %':'')+'</span>';}},
+   {id:'fin',t:'Indemnité de fin de contrat',d:'Indemnité légale de licenciement (et minimum d’une rupture conventionnelle), ou indemnité de fin de CDD.',
+    h:'<div class="f large"><span>Situation</span><div class="choix"><label><input type="radio" name="fin_s" value="l" checked>Licenciement ou rupture conventionnelle</label><label><input type="radio" name="fin_s" value="c">Fin de CDD</label></div></div>'+
+      '<label class="f fl"><span>Date d’entrée</span><input type="date" data-k="de"></label><label class="f fl"><span>Date de sortie (fin du préavis)</span><input type="date" data-k="ds"></label>'+
+      '<label class="f large fl"><span>Salaire brut mensuel moyen (12 ou 3 derniers mois, le plus favorable)</span><input data-k="sal" inputmode="decimal" placeholder="ex. : 2400"></label>'+
+      '<label class="f large fc" style="display:none"><span>Total des salaires bruts versés pendant le CDD</span><input data-k="tot" inputmode="decimal" placeholder="ex. : 12000"></label>',
+    m:function(c,v){[].forEach.call(c.querySelectorAll('.fl'),function(e){e.style.display=v.fin_s==='c'?'none':'';});c.querySelector('.fc').style.display=v.fin_s==='c'?'':'none';},
+    c:function(v){
+      if(v.fin_s==='c'){var t=nb(v.tot);return t?'Indemnité de fin de contrat (10 %) : <b>'+eur(t*.1,1)+'</b><br><span class="rd">Pas d’indemnité en cas de CDI à la suite, de rupture anticipée par le salarié, de faute grave ou de contrat saisonnier (selon les cas).</span>':'';}
+      var a=jd(v.de),b=jd(v.ds),s=nb(v.sal);if(!a||!b||!s||b<=a)return '';
+      var b1=new Date(b);b1.setDate(b1.getDate()+1);var m=(b1.getFullYear()-a.getFullYear())*12+(b1.getMonth()-a.getMonth())-(b1.getDate()<a.getDate()?1:0),ans=m/12;
+      if(m<8)return 'Ancienneté de '+m+' mois : <b>pas d’indemnité légale</b> (8 mois d’ancienneté au minimum).';
+      var r=s*.25*Math.min(ans,10)+(ans>10?s/3*(ans-10):0),y=Math.floor(m/12),mm=m%12;
+      return 'Indemnité minimale : <b>'+eur(r)+'</b><br><span class="rd">'+y+' an'+(y>1?'s':'')+(mm?' et '+mm+' mois':'')+' d’ancienneté : 1/4 de mois de salaire par année jusqu’à 10 ans, 1/3 au-delà.</span>';},
+    a:'Minimum légal : la convention collective peut prévoir davantage. Contactez le cabinet avant toute démarche.'},
+   {id:'hs',t:'Heures supplémentaires',d:'Montant brut des heures au-delà de 35 h par semaine (majorations légales).',
+    h:'<label class="f"><span>Taux horaire brut</span><input data-k="th" inputmode="decimal" placeholder="ex. : 12,50"></label>'+
+      '<label class="f"><span>Heures travaillées dans la semaine</span><input data-k="hw" inputmode="decimal" placeholder="ex. : 42"></label>'+
+      '<label class="f"><span>Nombre de semaines concernées</span><input data-k="ns" inputmode="numeric" value="1"></label>',
+    c:function(v){var th=nb(v.th),hw=nb(v.hw),n=nb(v.ns)||1;if(!th||!hw)return '';if(hw<=35)return 'Pas d’heures supplémentaires (35 h ou moins).';
+      var h25=Math.min(hw-35,8),h50=Math.max(hw-43,0),m=(h25*th*1.25+h50*th*1.5)*n;
+      return 'Heures supplémentaires : <b>'+eur(m,1)+'</b> brut<br><span class="rd">'+(h25*n)+' h à 25 %'+(h50?' et '+(h50*n)+' h à 50 %':'')+' (de la 36e à la 43e heure : 25 %, au-delà : 50 %).</span>';},
+    a:'Majorations légales : un accord d’entreprise ou de branche peut prévoir d’autres taux (10 % au minimum).'},
+   {id:'cp',t:'Congés payés',d:'Jours acquis et estimation de l’indemnité de congés payés.',
+    h:'<label class="f"><span>Mois travaillés sur la période (1er juin – 31 mai)</span><input data-k="mo" inputmode="numeric" placeholder="ex. : 12"></label>'+
+      '<label class="f"><span>Salaire brut mensuel</span><input data-k="sb" inputmode="decimal" placeholder="ex. : 2200"></label>'+
+      '<label class="f"><span>Jours de congés pris (jours ouvrables)</span><input data-k="jp" inputmode="numeric" placeholder="ex. : 6"></label>',
+    c:function(v){var mo=Math.min(nb(v.mo),12),sb=nb(v.sb),jp=nb(v.jp);if(!mo)return '';var ac=Math.min(Math.round(mo*2.5*10)/10,30),r='Jours acquis : <b>'+String(ac).replace('.',',')+' jours ouvrables</b>';
+      if(sb&&jp){var dix=sb*mo/10*jp/ac,mai=sb/26*jp,m=Math.max(dix,mai);r+='<br>Indemnité pour '+jp+' jour'+(jp>1?'s':'')+' : <b>'+eur(m,1)+'</b><br><span class="rd">Règle du dixième : '+eur(dix,1)+' · maintien du salaire : '+eur(mai,1)+' (la plus favorable est retenue).</span>';}
+      return r;},
+    a:'Estimation sur un salaire fixe : primes, heures supplémentaires et absences peuvent modifier le montant.'},
+   {id:'pe',t:'Délai de prévenance (période d’essai)',d:'Délai à respecter pour mettre fin à une période d’essai.',
+    h:'<div class="f large"><span>Qui met fin à l’essai ?</span><div class="choix"><label><input type="radio" name="pe_q" value="e" checked>L’employeur</label><label><input type="radio" name="pe_q" value="s">Le salarié</label></div></div>'+
+      '<label class="f"><span>Date d’entrée</span><input type="date" data-k="de"></label><label class="f"><span>Date où la rupture est annoncée</span><input type="date" data-k="da"></label>'+
+      '<label class="f large"><span>Fin de la période d’essai (facultatif)</span><input type="date" data-k="fe"></label>',
+    c:function(v){var a=jd(v.de),b=jd(v.da),f=jd(v.fe);if(!a||!b||b<a)return '';var j=Math.round((b-a)/86400000)+1,dl,txt;
+      if(v.pe_q==='s'){dl=j<8?1:2;txt=dl===1?'24 heures':'48 heures';}
+      else{var mois=(b.getFullYear()-a.getFullYear())*12+(b.getMonth()-a.getMonth())+(b.getDate()>=a.getDate()?0:-1);
+        if(j<8){dl=1;txt='24 heures';}else if(mois<1){dl=2;txt='48 heures';}else if(mois<3){dl=14;txt='2 semaines';}else{dl=30;txt='1 mois';}}
+      var fin=new Date(b);fin.setDate(fin.getDate()+dl);
+      var r='Délai de prévenance : <b>'+txt+'</b> ('+j+' jour'+(j>1?'s':'')+' de présence)<br>Fin du contrat au plus tôt le <b>'+frd(fin)+'</b>';
+      if(f&&fin>f&&v.pe_q==='e')r+='<br><span class="rd" style="color:#b00020">Le délai dépasse la fin de l’essai : le contrat s’arrête le '+frd(f)+' et le délai non respecté donne lieu à une indemnité.</span>';
+      return r;},
+    a:'Pour un CDD, le délai de l’employeur ne s’applique que si l’essai dure au moins une semaine. Ne remettez aucun courrier avant d’avoir appelé le cabinet.'},
+   {id:'ap',t:'Aide à l’embauche d’un apprenti',d:'Aide de l’État pour un contrat d’apprentissage conclu à partir du 8 mars 2026 et commencé avant le 1er janvier 2027.',
+    h:'<div class="f large"><span>Effectif de l’entreprise</span><div class="choix"><label><input type="radio" name="ap_e" value="p" checked>Moins de 250 salariés</label><label><input type="radio" name="ap_e" value="g">250 salariés et plus</label></div></div>'+
+      '<label class="f large"><span>Diplôme préparé</span><select data-k="niv"><option value="34">CAP, BEP, Bac, Brevet professionnel (niveaux 3 et 4)</option><option value="5">BTS, BUT, DEUST (niveau 5)</option><option value="67">Licence, Master, ingénieur (niveaux 6 et 7)</option></select></label>'+
+      '<label class="f large" style="cursor:pointer"><span style="font-weight:normal"><input type="checkbox" data-k="hand" style="width:auto;margin-right:8px">Apprenti en situation de handicap</span></label>',
+    c:function(v){var p=v.ap_e==='p',m=v.hand?6000:(v.niv==='34'?(p?5000:2000):v.niv==='5'?(p?4500:1500):(p?2000:750));
+      return 'Aide pour la première année : <b>'+eur(m)+'</b> au maximum<br><span class="rd">Versée mois par mois, pour la seule première année du contrat'+(p?'':' ; entreprises de 250 salariés et plus : sous conditions d’objectifs d’alternants')+'.</span>';},
+    a:'Montants en vigueur pour les contrats conclus à partir du 8 mars 2026 ; ils changent souvent. Le cabinet vérifie les conditions avant l’embauche.'},
+   {id:'re',t:'Pénalités de retard d’une facture',d:'Intérêts de retard et indemnité forfaitaire de 40 EUR que vous pouvez réclamer à un client professionnel.',
+    h:'<label class="f"><span>Montant TTC de la facture</span><input data-k="mt" inputmode="decimal" placeholder="ex. : 3000"></label>'+
+      '<label class="f"><span>Date d’échéance</span><input type="date" data-k="ec"></label><label class="f"><span>Date du paiement (ou aujourd’hui)</span><input type="date" data-k="pa"></label>',
+    c:function(v){var m=nb(v.mt),a=jd(v.ec),b=jd(v.pa)||new Date();if(!m||!a||b<=a)return '';
+      // Taux légal entre professionnels à défaut de taux prévu au contrat : taux BCE du semestre + 10 points
+      var T={'2026-1':12.15,'2026-2':12.40,'2027-1':12.65},tot=0,d=new Date(a);d.setDate(d.getDate()+1);var j=0;
+      while(d<=b){var k=d.getFullYear()+'-'+(d.getMonth()<6?1:2),t=T[k]||12.65;tot+=m*t/100/365;j++;d.setDate(d.getDate()+1);}
+      return 'Intérêts de retard : <b>'+eur(tot,1)+'</b> ('+j+' jour'+(j>1?'s':'')+' de retard)<br>Indemnité forfaitaire de recouvrement : <b>40,00 EUR</b><br><span class="rd">Taux : taux de la BCE + 10 points (12,15 % au 1er semestre 2026, 12,40 % au 2nd), sauf taux prévu dans vos conditions générales.</span>';},
+    a:'Seulement entre professionnels. Le cabinet peut vous aider à rédiger la relance.'},
+   {id:'dp',t:'Date limite de paiement d’une facture',d:'Échéance légale d’une facture entre professionnels.',
+    h:'<label class="f"><span>Date de la facture</span><input type="date" data-k="df"></label>'+
+      '<label class="f"><span>Délai prévu</span><select data-k="dl"><option value="30">Aucun délai prévu (30 jours)</option><option value="60">60 jours date de facture</option><option value="45">45 jours fin de mois</option></select></label>',
+    c:function(v){var d=jd(v.df);if(!d)return '';var e=new Date(d);if(v.dl==='45'){e.setDate(e.getDate()+45);e=new Date(e.getFullYear(),e.getMonth()+1,0);}else e.setDate(e.getDate()+(+v.dl));
+      return 'Paiement au plus tard le <b>'+frd(e)+'</b>'+(v.dl==='30'?'<br><span class="rd">Sans délai prévu, 30 jours après la réception des marchandises ou la fin de la prestation.</span>':'');},
+    a:'60 jours date de facture ou 45 jours fin de mois au maximum, sauf règles particulières (transport, produits alimentaires…).'},
+   {id:'se',t:'Seuils de TVA et de micro-entreprise',d:'Savoir si vous restez en franchise de TVA et au régime micro (seuils 2026).',
+    h:'<div class="f large"><span>Activité</span><div class="choix"><label><input type="radio" name="se_a" value="v" checked>Vente de marchandises, restauration, hébergement</label><label><input type="radio" name="se_a" value="s">Prestations de services</label></div></div>'+
+      '<label class="f"><span>Chiffre d’affaires HT de 2025</span><input data-k="c1" inputmode="decimal" placeholder="ex. : 70000"></label><label class="f"><span>Chiffre d’affaires HT 2026 (à ce jour)</span><input data-k="c2" inputmode="decimal" placeholder="ex. : 40000"></label>',
+    c:function(v){var s=v.se_a==='s',b=s?37500:85000,mj=s?41250:93500,mi=s?83600:203100,c1=nb(v.c1),c2=nb(v.c2);if(!c1&&!c2)return '';
+      var tva=c1<=b?(c2<=mj?'oui, sauf si le chiffre d’affaires 2026 dépasse '+eur(mj):'non : le seuil de '+eur(mj)+' est dépassé en 2026'):(c2<=b?'à vérifier avec le cabinet (2025 au-dessus de '+eur(b)+')':'non');
+      return 'Franchise de TVA en 2026 : <b>'+tva+'</b><br>Régime micro-entreprise : <b>'+(c1<=mi?'oui':'non')+'</b> (seuil : '+eur(mi)+')<br><span class="rd">Seuils de franchise : '+eur(b)+' (seuil majoré '+eur(mj)+').</span>';},
+    a:'Le dépassement entraîne des obligations dès le premier jour : contactez le cabinet si vous approchez d’un seuil.'},
+   {id:'av',t:'Avantage en nature véhicule',d:'Montant à déclarer sur la paie pour une voiture de l’entreprise utilisée aussi à titre privé (véhicule mis à disposition depuis le 1er février 2025, forfait).',
+    h:'<div class="f large"><span>Le véhicule est</span><div class="choix"><label><input type="radio" name="av_t" value="a" checked>Acheté par l’entreprise</label><label><input type="radio" name="av_t" value="l">Loué (LLD, LOA)</label></div></div>'+
+      '<label class="f"><span class="avl">Prix d’achat TTC</span><input data-k="px" inputmode="decimal" placeholder="ex. : 30000"></label>'+
+      '<label class="f av5"><span>Âge du véhicule</span><select data-k="age"><option value="n">5 ans ou moins</option><option value="v">Plus de 5 ans</option></select></label>'+
+      '<div class="f large"><span>Carburant payé par l’entreprise ?</span><div class="choix"><label><input type="radio" name="av_c" value="n" checked>Non</label><label><input type="radio" name="av_c" value="o">Oui</label></div></div>'+
+      '<label class="f large" style="cursor:pointer"><span style="font-weight:normal"><input type="checkbox" data-k="el" style="width:auto;margin-right:8px">Voiture 100 % électrique</span></label>',
+    m:function(c,v){c.querySelector('.avl').textContent=v.av_t==='l'?'Coût annuel de la location (loyers, entretien, assurance)':'Prix d’achat TTC';c.querySelector('.av5').style.display=v.av_t==='l'?'none':'';},
+    c:function(v){var p=nb(v.px);if(!p)return '';var carb=v.av_c==='o',t;
+      if(v.el)carb=false;if(v.av_t==='l')t=carb?.67:.5;else t=v.age==='n'?(carb?.20:.15):(carb?.15:.10);
+      var an=p*t,ab=0;if(v.el){ab=Math.min(an*.7,4641.60);an-=ab;}
+      return 'Avantage en nature : <b>'+eur(an/12,1)+' par mois</b> ('+eur(an)+' par an)<br><span class="rd">Forfait de '+Math.round(t*100)+' %'+(ab?', abattement électrique de 70 % ('+eur(ab)+')':'')+'.</span>';},
+    a:'Forfait ; l’évaluation au réel peut être plus avantageuse. Véhicules mis à disposition avant le 1er février 2025 : anciennes règles, demandez au cabinet.'},
+   {id:'rp',t:'Frais de repas',d:'Montants 2026 des indemnités de repas exonérées de cotisations (barème URSSAF).',
+    h:'<label class="f large"><span>Situation du salarié</span><select data-k="sit"><option value="7.5">Repas sur le lieu de travail (horaires particuliers) : 7,50 EUR</option><option value="10.4">Repas sur un chantier ou hors des locaux, sans restaurant : 10,40 EUR</option><option value="21.4">Repas au restaurant en déplacement : 21,40 EUR</option></select></label>'+
+      '<label class="f"><span>Nombre de repas dans le mois</span><input data-k="nr" inputmode="numeric" placeholder="ex. : 20"></label>',
+    c:function(v){var n=nb(v.nr),u=nb(v.sit);return n?'Indemnités exonérées : <b>'+eur(n*u,1)+'</b> pour le mois<br><span class="rd">'+n+' repas × '+eur(u,1)+'.</span>':'';},
+    a:'Montants maximaux sans cotisations ; la convention collective (paniers du bâtiment, par exemple) peut prévoir d’autres montants.'}
+  ];
+  function afficherOutils(){
+    $('o_cartes').innerHTML=SIMS.map(function(s){return '<div class="ccarte sim" id="sim_'+s.id+'"><h3>'+s.t+'</h3><div class="sd">'+s.d+'</div><div class="grille" style="margin:0">'+s.h+'</div><div class="res" style="display:none"></div>'+
+      '<div class="savert">'+(s.a?s.a+' ':'')+'Estimation indicative. Pour une décision, contactez le cabinet.</div></div>';}).join('');
+    SIMS.forEach(function(s){var c=$('sim_'+s.id);
+      function maj(){var v={};[].forEach.call(c.querySelectorAll('[data-k]'),function(e){v[e.getAttribute('data-k')]=e.type==='checkbox'?e.checked:e.value;});
+        [].forEach.call(c.querySelectorAll('input[type=radio]:checked'),function(e){v[e.name]=e.value;});
+        [].forEach.call(c.querySelectorAll('.choix label'),function(l){l.classList.toggle('on',l.querySelector('input').checked);});
+        if(s.m)s.m(c,v);var r=s.c(v),z=c.querySelector('.res');z.innerHTML=r||'';z.style.display=r?'':'none';}
+      c.addEventListener('input',maj);c.addEventListener('change',maj);maj();});
+  }
+
+  function tuileOutils(){
+    var h='<a class="t" style="--c:#455a64" href="'+lienVue('outils')+'"><div class="tin"><span class="tic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"/><path d="M8 7h8"/><path d="M8 11h.01"/><path d="M12 11h.01"/><path d="M16 11h.01"/><path d="M8 15h.01"/><path d="M12 15h.01"/><path d="M16 15h.01"/></svg></span><div class="tti">Simulateurs</div><div class="tb">Indemnités kilométriques,<br>fin de contrat, congés…</div></div><div class="go">Calculer</div></a>';
+    var t=$('tuiles'),ina=t.querySelector('.t.inactif');if(ina)ina.insertAdjacentHTML('beforebegin',h);else t.insertAdjacentHTML('beforeend',h);
   }
 
   // ===================== FORMULAIRE D'EMBAUCHE =====================
