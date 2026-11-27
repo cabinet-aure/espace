@@ -247,6 +247,15 @@
   .cinfo.r{background:#fdecea;border:1px solid #f5c6c6;color:#8e1c1c}.cinfo.v{background:#e8f5e9;border:1px solid #c8e6c9;color:#1b5e20}.cinfo.o{background:#fff3ee;border:1px solid #ff8a65;border-left:6px solid #ff8a65;color:#d84315;font-weight:bold}
   .ccarte .erreur{margin-top:8px}
   .cinfo.j,.cinfo.o,.cmax{background:#fffbe6!important;border:1px solid #e0e0e0!important;border-left:6px solid #ff8a65!important;color:#333!important;font-weight:normal!important}
+  .abandeau{display:flex;align-items:center;gap:12px;background:#fbf7ea;border:1px solid #eadfb8;border-left:6px solid #a8892b;border-radius:10px;padding:12px 16px;margin:6px 30px 0;text-decoration:none;color:#222;font-size:15px}
+  .abandeau .an{width:34px;height:34px;border-radius:50%;background:#a8892b;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:bold;flex:none}
+  .abandeau .al{background:#a8892b;color:#fff;font-weight:bold;border-radius:6px;padding:8px 16px;font-size:14px;flex:none;transition:background .15s}.abandeau:hover .al{background:#8a6d1c}
+  .alien{text-align:center;margin:14px 0 18px;font-size:14px}.alien a{color:#8a6d1c;font-weight:bold}
+  .rub.ac{background:#a8892b}
+  .actu{border-left:6px solid #a8892b}.actu .cnom{font-size:16px}.actu .adt{font-size:13px;color:#888;margin:-4px 0 8px}.actu .atx{font-size:15px;color:#333;line-height:1.5;white-space:pre-line}
+  .actu .cinfo{border-left-color:#a8892b!important}.actu .asrc{font-size:13px;margin-top:6px}.actu .asrc a{color:#8a6d1c}
+  .cstat.nv{background:#a8892b;color:#fff}
+  @media(max-width:600px){.abandeau{margin:6px 16px 0}}
   .banque.err .zone{border-color:#c0392b;background:#fdf1f0}
   .ccal{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#fff;border:1px solid #e6e6e6;border-radius:12px;padding:12px 16px;margin-top:2px;color:#222}
   .ccal .cal{width:62px;border-radius:8px;overflow:hidden;border:1px solid #e0e0e0;text-align:center;background:#fff}
@@ -506,7 +515,13 @@
     </div></div></div>
   <div id="cx" style="display:none"></div>
   <div class="chargement" id="chargement"><span class="rond"></span>Chargement de votre espace…</div>
-  <div id="accueil" style="display:none"><div class="tuiles" id="tuiles"></div></div>
+  <div id="accueil" style="display:none"><div id="abandeau"></div><div class="tuiles" id="tuiles"></div><div class="alien" id="alien" style="display:none"><a href="#" id="alienA">Actualités du cabinet</a></div></div>
+  <div id="actus" style="display:none"><div class="corps soc">
+    <a class="retourS" id="retourActu" href="#">← Retour à l’accueil</a>
+    <div class="rub ac"><h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 6h3a1 1 0 0 1 1 1v11a2 2 0 0 1 -4 0v-13a1 1 0 0 0 -1 -1h-10a1 1 0 0 0 -1 1v12a3 3 0 0 0 3 3h11"/><path d="M8 8l4 0"/><path d="M8 12l4 0"/><path d="M8 16l4 0"/></svg>Actualités du cabinet</h2></div>
+    <div class="aucun" id="a_aucun" style="display:none;margin:18px 0">Aucune actualité pour le moment.</div>
+    <div id="a_cartes"></div>
+  </div></div>
   <div id="formulaire" style="display:none">
    <div class="corps">
     <div class="rub"><h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21l18 0"/><path d="M3 10l18 0"/><path d="M5 6l7 -3l7 3"/><path d="M4 10l0 11"/><path d="M20 10l0 11"/><path d="M8 14l0 3"/><path d="M12 14l0 3"/><path d="M16 14l0 3"/></svg><span id="titre"></span></h2><span class="dl" id="limite" style="display:none">Date limite : <b id="dateLimite"></b></span></div>
@@ -697,6 +712,18 @@
     }).catch(function(){erreurLien('L’enregistrement a échoué. Merci de réessayer dans quelques instants.');});
     return;
   }
+  // Liens du mail « Actualités » à Mario : ?actu=ID&k=JETON&quoi=bloquer|mail
+  var AC=P.get('actu');
+  if(AC){
+    $('chargement').innerHTML='<span class="rond"></span>Enregistrement…';
+    fetch(X,{method:'POST',body:JSON.stringify({action:'actu',id:AC,k:K,quoi:P.get('quoi')||''})}).then(function(r){return r.json();}).then(function(d){
+      if(!d.ok){erreurLien(d.erreur||'Ce lien n’est pas valide.');return;}
+      $('societe').textContent='Actualités du cabinet';
+      $('chargement').className='traite';
+      $('chargement').innerHTML='<div class="ok">✔</div><h2>'+esc(d.titre)+'</h2><p>'+esc(d.message)+'</p><p style="color:#777;font-size:13px">Vous pouvez fermer cette page.</p>';
+    }).catch(function(){erreurLien('L’enregistrement a échoué. Merci de réessayer dans quelques instants.');});
+    return;
+  }
   var FC=P.get('fincdd');
   if(FC){
     $('chargement').innerHTML='<span class="rond"></span>Enregistrement…';
@@ -813,7 +840,7 @@
   }
   function charger(){
     $('chargement').style.display='';$('chargement').innerHTML='<span class="rond"></span>Chargement de votre espace…';
-    $('formulaire').style.display='none';$('merci').style.display='none';$('accueil').style.display='none';$('social').style.display='none';$('embauche').style.display='none';$('bilan').style.display='none';$('cdd').style.display='none';$('paie').style.display='none';$('reprise').style.display='none';
+    $('formulaire').style.display='none';$('merci').style.display='none';$('accueil').style.display='none';$('social').style.display='none';$('embauche').style.display='none';$('bilan').style.display='none';$('cdd').style.display='none';$('paie').style.display='none';$('reprise').style.display='none';$('actus').style.display='none';
     lireDonnees().then(function(d){
       if(!d.ok&&d.connexion){ecranConnexion(d);return;}
       if(!d.ok){erreurLien(d.erreur||'Ce lien n’est pas valide.');return;}
@@ -829,16 +856,17 @@
       else if(d.dateLimite&&aFaire){$('dateLimite').textContent=d.dateLimite;$('limite').style.display='';}
       $('rien').innerHTML='✔ Tout est à jour.<span class="pd calL" style="display:flex;align-items:center;margin-top:8px">'+calendrier(46)+'<span>Prochaine demande le <b>'+prochaineDemande()+'</b>, par e-mail.</span></span>';
       if(!SOCIAL_OUVERT&&/^(social|cdd|reprise|embauche|paie|arret|depart|autre)$/.test(VUE))VUE='';
-      [].forEach.call(document.querySelectorAll('.retour'),function(a){a.href=lienVue(C?'':'accueil');a.style.display=(VUE&&VUE!=='accueil'&&!/^(paie|cdd|reprise|embauche|arret|depart|autre)$/.test(VUE))?'inline-block':'none';});
+      [].forEach.call(document.querySelectorAll('.retour'),function(a){a.href=lienVue(C?'':'accueil');a.style.display=(VUE&&VUE!=='accueil'&&!/^(paie|cdd|reprise|actus|embauche|arret|depart|autre)$/.test(VUE))?'inline-block':'none';});
       if(VUE==='banque'){afficher(d.documents||[],d.attente||[]);$('formulaire').style.display='';}
       else if(VUE==='social'){afficherSocial(d);$('social').style.display='';}
       else if(VUE==='bilan'&&d.bilan){afficherBilan(d.bilan);$('bilan').style.display='';}
       else if(/^(arret|depart|autre)$/.test(VUE)){afficherSocial(d,VUE);$('social').style.display='';}
       else if(VUE==='paie'){$('retourSocPaie').href=lienVue('social');afficherPaie(d);$('paie').style.display='';}
       else if(VUE==='cdd'){$('retourSocCdd').href=lienVue('social');afficherCdd(d.cdd||[]);$('cdd').style.display='';}
+      else if(VUE==='actus'){$('retourActu').href=lienVue(C?'':'accueil');afficherActus(d.actus||[]);$('actus').style.display='';}
       else if(VUE==='reprise'){$('retourSocRep').href=lienVue('social');afficherReprise(d.arrets||[]);$('reprise').style.display='';}
       else if(VUE==='embauche'){$('retourSoc').href=lienVue('social');window._siren=String(d.siren||'').replace(/\D/g,'');if(window.initConv)window.initConv(d.convention);lireBrouillon();majEmb();$('embauche').style.display='';}
-      else{tuiles(d);document.body.classList.add('vacc');$('accueil').style.display='';}
+      else{tuiles(d);bandeauActus(d.actus||[]);document.body.classList.add('vacc');$('accueil').style.display='';}
       $('chargement').style.display='none';
     }).catch(function(){erreurLien('La page n’a pas pu être chargée. Merci de réessayer dans quelques instants.');});
   }
@@ -1189,7 +1217,7 @@
     var fin=function(){
       try{localStorage.removeItem(CLE_JT);sessionStorage.removeItem(CLE_JT);localStorage.removeItem('aure_cabinet');sessionStorage.removeItem('aure_cabinet');}catch(e){}
       delete ID.jeton;delete ID.jc;
-      ['chargement','formulaire','merci','accueil','social','embauche','bilan','cdd','reprise'].forEach(function(k){if($(k))$(k).style.display='none';});
+      ['chargement','formulaire','merci','accueil','social','embauche','bilan','cdd','reprise','actus'].forEach(function(k){if($(k))$(k).style.display='none';});
       document.body.classList.add('encx');window.scrollTo(0,0);
       $('cx').innerHTML='<div class="cxfin"><div class="cxcad">🔒</div><div class="cxft">Vous êtes déconnecté</div>'+
         '<p>Votre espace '+esc($('societe').textContent)+' est fermé sur cet appareil.<br>Un nouveau code vous sera demandé à la prochaine visite.</p>'+
@@ -1415,7 +1443,7 @@
     $('merciTitre').textContent=titre;
     $('recap').innerHTML=recap.map(function(t){return '<li>'+esc(t)+'</li>';}).join('');
     $('revenir').href=lienVue(C?'':'accueil');
-    $('social').style.display='none';$('embauche').style.display='none';$('formulaire').style.display='none';$('bilan').style.display='none';$('cdd').style.display='none';$('paie').style.display='none';$('reprise').style.display='none';
+    $('social').style.display='none';$('embauche').style.display='none';$('formulaire').style.display='none';$('bilan').style.display='none';$('cdd').style.display='none';$('paie').style.display='none';$('reprise').style.display='none';$('actus').style.display='none';
     $('merci').style.display='block';window.scrollTo(0,0);
   }
   $('envoyerSoc').onclick=function(){
@@ -1831,6 +1859,35 @@
           merci('Nous vous remercions : votre réponse a bien été transmise au cabinet.',['Reprise du travail de '+x.salarie+' le '+v.split('-').reverse().join('/')],'Nous en tiendrons compte pour la paie et reviendrons vers vous si une démarche est nécessaire.');
         }).catch(function(e){finAttente();b.disabled=false;b.textContent='✓ Confirmer la reprise';afficherEchec(er,e,'L’envoi a échoué ('+(e.message||e)+'). Merci de réessayer.');});
       };});
+  }
+
+
+  // ===================== ACTUALITÉS DU CABINET (décision de Mario du 27/11/2026) =====================
+  // Bandeau doré sur l'accueil s'il y a des articles non lus (lus = mémorisés dans ce navigateur) ; lien « Actualités » en bas sinon.
+  var CLE_LU='aure_actus_lues_'+(C||S||'');
+  function actusLues(){try{return JSON.parse(localStorage.getItem(CLE_LU)||'[]');}catch(e){return [];}}
+  function marquerLues(ids){try{var l=actusLues();ids.forEach(function(i){if(l.indexOf(i)<0)l.push(i);});localStorage.setItem(CLE_LU,JSON.stringify(l.slice(-200)));}catch(e){}}
+  function bandeauActus(l){
+    var lu=actusLues(),nv=l.filter(function(a){return lu.indexOf(a.id)<0;});
+    $('abandeau').innerHTML=nv.length?'<a class="abandeau" href="'+lienVue('actus')+'"><span class="an">'+nv.length+'</span><span style="flex:1"><b style="color:#8a6d1c">'+(nv.length>1?'Actualités à lire':'Actualité à lire')+'</b><br><span style="font-size:14px;color:#444">'+
+      nv.slice(0,3).map(function(a){return esc(a.titre);}).join(' · ')+'</span></span><span class="al">Lire</span></a>':'';
+    $('alien').style.display=(!nv.length&&l.length)?'':'none';$('alienA').href=lienVue('actus');
+  }
+  function afficherActus(l){
+    var lu=actusLues(),voulu=P.get('art')||'';
+    var nv=l.filter(function(a){return lu.indexOf(a.id)<0||a.id===voulu;}),an=l.filter(function(a){return nv.indexOf(a)<0;});
+    $('a_aucun').style.display=l.length?'none':'';
+    function carte(a,i,plie){
+      var c='<div class="ctete"'+(plie?' style="margin:0;cursor:pointer"':'')+'><div class="cnom">'+esc(a.titre)+(plie?' <span class="cemp">· '+esc(a.date)+'</span>':'')+'</div><span class="cstat'+(plie?'':' nv')+'">'+(plie?'Lu <span class="flp">▸</span>':'Nouveau')+'</span></div>';
+      var d='<div class="adt">'+esc(a.date)+(a.public?' · '+esc(a.public):'')+'</div><div class="atx">'+esc(a.texte)+'</div>'+
+        (a.faire?'<div class="cinfo o" style="margin-top:10px"><b>Ce que vous devez faire :</b> '+esc(a.faire)+'</div>':'')+
+        (a.source?'<div class="asrc">'+(a.lien?'<a href="'+esc(a.lien)+'" target="_blank" rel="noopener">Source : '+esc(a.source)+'</a>':'Source : '+esc(a.source))+'</div>':'');
+      return '<div class="ccarte actu'+(plie?' fait plie':'')+(a.id===voulu?' vise':'')+'" id="ac'+i+'">'+c+(plie?'<div class="cdet" style="display:none;margin-top:10px">'+d+'</div>':d)+'</div>';
+    }
+    $('a_cartes').innerHTML=nv.map(function(a,i){return carte(a,i,false);}).join('')+an.map(function(a,i){return carte(a,nv.length+i,true);}).join('');
+    [].forEach.call($('a_cartes').querySelectorAll('.plie .ctete'),function(t){t.onclick=function(){var c=t.parentNode,dd=c.querySelector('.cdet'),o=dd.style.display==='none';dd.style.display=o?'':'none';c.querySelector('.flp').textContent=o?'▾':'▸';};});
+    if(voulu){var v=$('a_cartes').querySelector('.vise');if(v)setTimeout(function(){v.scrollIntoView({behavior:'smooth',block:'center'});},300);}
+    marquerLues(l.map(function(a){return a.id;})); // affichés = lus pour la prochaine visite
   }
 
   // ===================== FORMULAIRE D'EMBAUCHE =====================
