@@ -250,6 +250,7 @@
   .abandeau{display:flex;align-items:center;gap:12px;background:#fbf7ea;border:1px solid #eadfb8;border-left:6px solid #a8892b;border-radius:10px;padding:12px 16px;margin:6px 30px 0;text-decoration:none;color:#222;font-size:15px}
   .abandeau .an{width:34px;height:34px;border-radius:50%;background:#a8892b;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:bold;flex:none}
   .abandeau .al{background:#a8892b;color:#fff;font-weight:bold;border-radius:6px;padding:8px 16px;font-size:14px;flex:none;transition:background .15s}.abandeau:hover .al{background:#8a6d1c}
+  .abandeau.calme{background:#fafafa;border-color:#e6e6e6;border-left-color:#d9c98f}.abandeau.calme .an{background:#eadfb8;color:#8a6d1c}.abandeau.calme .al{background:#fff;color:#8a6d1c;border:1px solid #a8892b}.abandeau.calme:hover .al{background:#fbf7ea}
   .alien{text-align:center;margin:14px 0 18px;font-size:14px}.alien a{color:#8a6d1c;font-weight:bold}
   .rub.ac{background:#a8892b}
   .actu{border-left:6px solid #a8892b}.actu .cnom{font-size:16px}.actu .adt{font-size:13px;color:#888;margin:-4px 0 8px}.actu .atx{font-size:15px;color:#333;line-height:1.5;white-space:pre-line}
@@ -515,10 +516,10 @@
     </div></div></div>
   <div id="cx" style="display:none"></div>
   <div class="chargement" id="chargement"><span class="rond"></span>Chargement de votre espace…</div>
-  <div id="accueil" style="display:none"><div id="abandeau"></div><div class="tuiles" id="tuiles"></div><div class="alien" id="alien" style="display:none"><a href="#" id="alienA">Actualités du cabinet</a></div></div>
+  <div id="accueil" style="display:none"><div id="abandeau"></div><div class="tuiles" id="tuiles"></div></div>
   <div id="actus" style="display:none"><div class="corps soc">
     <a class="retourS" id="retourActu" href="#">← Retour à l’accueil</a>
-    <div class="rub ac"><h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 6h3a1 1 0 0 1 1 1v11a2 2 0 0 1 -4 0v-13a1 1 0 0 0 -1 -1h-10a1 1 0 0 0 -1 1v12a3 3 0 0 0 3 3h11"/><path d="M8 8l4 0"/><path d="M8 12l4 0"/><path d="M8 16l4 0"/></svg>Actualités du cabinet</h2></div>
+    <div class="rub ac"><h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 6h3a1 1 0 0 1 1 1v11a2 2 0 0 1 -4 0v-13a1 1 0 0 0 -1 -1h-10a1 1 0 0 0 -1 1v12a3 3 0 0 0 3 3h11"/><path d="M8 8l4 0"/><path d="M8 12l4 0"/><path d="M8 16l4 0"/></svg>Actualités</h2></div>
     <div class="aucun" id="a_aucun" style="display:none;margin:18px 0">Aucune actualité pour le moment.</div>
     <div id="a_cartes"></div>
   </div></div>
@@ -724,7 +725,7 @@
     $('chargement').innerHTML='<span class="rond"></span>Enregistrement…';
     fetch(X,{method:'POST',body:JSON.stringify({action:'actu',id:AC,k:K,quoi:P.get('quoi')||''})}).then(function(r){return r.json();}).then(function(d){
       if(!d.ok){erreurLien(d.erreur||'Ce lien n’est pas valide.');return;}
-      $('societe').textContent='Actualités du cabinet';
+      $('societe').textContent='Actualités';
       $('chargement').className='traite';
       $('chargement').innerHTML='<div class="ok">✔</div><h2>'+esc(d.titre)+'</h2><p>'+esc(d.message)+'</p><p style="color:#777;font-size:13px">Vous pouvez fermer cette page.</p>';
     }).catch(function(){erreurLien('L’enregistrement a échoué. Merci de réessayer dans quelques instants.');});
@@ -1875,9 +1876,10 @@
   function marquerLues(ids){try{var l=actusLues();ids.forEach(function(i){if(l.indexOf(i)<0)l.push(i);});localStorage.setItem(CLE_LU,JSON.stringify(l.slice(-200)));}catch(e){}}
   function bandeauActus(l){
     var lu=actusLues(),nv=l.filter(function(a){return lu.indexOf(a.id)<0;});
-    $('abandeau').innerHTML=nv.length?'<a class="abandeau" href="'+lienVue('actus')+'"><span class="an">'+nv.length+'</span><span style="flex:1"><b style="color:#8a6d1c">'+(nv.length>1?'Actualités à lire':'Actualité à lire')+'</b><br><span style="font-size:14px;color:#444">'+
-      nv.slice(0,3).map(function(a){return esc(a.titre);}).join(' · ')+'</span></span><span class="al">Lire</span></a>':'';
-    $('alien').style.display=(!nv.length&&l.length)?'':'none';$('alienA').href=lienVue('actus');
+    // Toujours présent dès qu'il y a au moins un article : doré s'il y a du nouveau, discret sinon (décision de Mario du 27/11/2026)
+    $('abandeau').innerHTML=!l.length?'':nv.length?'<a class="abandeau" href="'+lienVue('actus')+'"><span class="an">'+nv.length+'</span><span style="flex:1"><b style="color:#8a6d1c">'+(nv.length>1?'Actualités à lire':'Actualité à lire')+'</b><br><span style="font-size:14px;color:#444">'+
+      nv.slice(0,3).map(function(a){return esc(a.titre);}).join(' · ')+'</span></span><span class="al">Lire</span></a>'
+      :'<a class="abandeau calme" href="'+lienVue('actus')+'"><span class="an">✓</span><span style="flex:1"><b style="color:#8a6d1c">Actualités</b><br><span style="font-size:14px;color:#444">Aucune nouvelle actualité · Dernière : '+esc(l[0].titre)+'</span></span><span class="al">Consulter</span></a>';
   }
   function afficherActus(l){
     var lu=actusLues(),voulu=P.get('art')||'';
