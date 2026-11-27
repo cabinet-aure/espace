@@ -223,9 +223,30 @@
   .rub.or{background:#d84315}
   .btn.or{background:#d84315;border-bottom-color:#8c2b0d}
   a.btn{display:inline-block;text-decoration:none}
-  #cdd .choix label.v,#cdd .choix label.r{transition:all .15s}#cdd .choix label.v{border:2px solid #2e7d32;color:#2e7d32}#cdd .choix label.v:hover{background:#c8e6c9;transform:translateY(-2px);box-shadow:0 4px 10px rgba(46,125,50,.35)}#cdd .choix label.v.on,#cdd .choix label.v.on:hover{background:#2e7d32;border-color:#2e7d32;color:#fff;transform:none;box-shadow:none}
-  #cdd .choix label.r{border:2px solid #c62828;color:#c62828}#cdd .choix label.r:hover{background:#ffcdd2;transform:translateY(-2px);box-shadow:0 4px 10px rgba(198,40,40,.35)}#cdd .choix label.r.on,#cdd .choix label.r.on:hover{background:#c62828;border-color:#c62828;color:#fff;transform:none;box-shadow:none}
-  .btn.cv,.btn.cr{transition:all .15s}.btn.cv{background:#2e7d32;border-bottom-color:#1b5e20}.btn.cv:hover{background:#1b5e20;transform:translateY(-2px);box-shadow:0 4px 10px rgba(46,125,50,.35)}.btn.cr{background:#c62828;border-bottom-color:#8e1c1c}.btn.cr:hover{background:#8e1c1c;transform:translateY(-2px);box-shadow:0 4px 10px rgba(198,40,40,.35)}
+  #cdd .choix label.v,#cdd .choix label.r{transition:background .15s,color .15s}#cdd .choix label.v{border:2px solid #2e7d32;color:#2e7d32}#cdd .choix label.v:hover{background:#c8e6c9}#cdd .choix label.v.on,#cdd .choix label.v.on:hover{background:#2e7d32;border-color:#2e7d32;color:#fff}
+  #cdd .choix label.r{border:2px solid #c62828;color:#c62828}#cdd .choix label.r:hover{background:#ffcdd2}#cdd .choix label.r.on,#cdd .choix label.r.on:hover{background:#c62828;border-color:#c62828;color:#fff}
+  .btn.cv,.btn.cr{transition:background .15s}.btn.cv{background:#2e7d32;border-bottom-color:#1b5e20}.btn.cv:hover{background:#1b5e20}.btn.cr{background:#c62828;border-bottom-color:#8e1c1c}.btn.cr:hover{background:#8e1c1c}
+  .ccompte{font-size:15px;color:#444;margin:4px 0 14px}.ccompte b{color:#d84315}
+  .ccarte{background:#fff;border:1px solid #e6e6e6;border-radius:12px;padding:16px 18px;margin:0 0 18px;box-shadow:0 1px 3px rgba(0,0,0,.06);transition:box-shadow .3s,border-color .3s}
+  .ccarte.vise{border-color:#d84315;box-shadow:0 0 0 4px #fbe9e7}
+  .ccarte.fait{background:#f5f5f5;color:#777}.ccarte.fait .cal{filter:grayscale(1);opacity:.75}.ccarte.fait .bd{display:none}
+  .ctete{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+  .cnom{font-size:17px;font-weight:bold;color:#222}.ccarte.fait .cnom{color:#666}.cemp{font-size:14px;color:#666;font-weight:normal}
+  .cstat{font-size:13px;font-weight:bold;background:#e0e0e0;color:#555;border-radius:12px;padding:4px 10px}
+  .chist{background:none;border:0;color:#1f5f9e;font-size:14px;cursor:pointer;padding:10px 0 0;text-decoration:underline;font-family:inherit}
+  .chl{display:none;margin-top:8px;border-left:3px solid #e0e0e0;padding:2px 0 2px 12px;font-size:14px;color:#555}.chl.ouvert{display:block}.chl div{margin:3px 0}
+  .cmax{background:#fff8e1;border:1px solid #ffe082;color:#6d4c00;border-radius:8px;padding:10px 12px;font-size:14px;margin-top:14px}
+  .cch{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .cch button{border-radius:20px;padding:9px 20px;font-weight:bold;font-size:15px;background:#fff;cursor:pointer;transition:background .15s,color .15s;font-family:inherit}
+  .cch .v{border:2px solid #2e7d32;color:#2e7d32}.cch .v:hover{background:#c8e6c9}.cch .v.on,.cch .v.on:hover{background:#2e7d32;color:#fff}
+  .cch .r{border:2px solid #c62828;color:#c62828}.cch .r:hover{background:#ffcdd2}.cch .r.on,.cch .r.on:hover{background:#c62828;color:#fff}
+  .csep{border-top:1px solid #e6e6e6;margin:14px 0 10px}
+  .ca{border:1px solid #ff8a65;color:#d84315;background:#fff;border-radius:16px;padding:6px 14px;font-size:13px;font-weight:bold;cursor:pointer;transition:background .15s,color .15s;font-family:inherit}.ca:hover{background:#fbe9e7}.ca.on,.ca.on:hover{background:#ff8a65;color:#fff}
+  .czone{margin-top:14px}.czone .grille{margin:0 0 6px}
+  .cinfo{border-radius:8px;padding:10px 12px;font-size:14px;margin:4px 0 12px;line-height:1.45}
+  .cinfo.r{background:#fdecea;border:1px solid #f5c6c6;color:#8e1c1c}.cinfo.v{background:#e8f5e9;border:1px solid #c8e6c9;color:#1b5e20}.cinfo.o{background:#fbe9e7;border:1px solid #ffccbc;color:#8c2b0d}
+  .ccarte .erreur{margin-top:8px}
+  .banque.err .zone{border-color:#c0392b;background:#fdf1f0}
   .ccal{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#fff;border:1px solid #e6e6e6;border-radius:12px;padding:12px 16px;margin-top:2px;color:#222}
   .ccal .cal{width:62px;border-radius:8px;overflow:hidden;border:1px solid #e0e0e0;text-align:center;background:#fff}
   .ccal .cal .m{background:#c62828;color:#fff;font-size:11px;font-weight:bold;padding:3px 0;letter-spacing:.5px}.ccal .cal.dbt .m{background:#9e9e9e}
@@ -564,21 +585,10 @@
    <div class="corps soc">
     <a class="retourS" id="retourSocCdd" href="#">← Retour à la rubrique Social</a>
     <div class="rub or"><h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M4 11h16"/><path d="M11 15h1"/><path d="M12 15v3"/></svg>Fin de CDD</h2></div>
-    <div class="consigne" style="font-size:14px;color:#666">Indiquez-nous la suite que vous souhaitez donner au contrat. Un renouvellement doit être signé avant la date de fin du CDD.</div>
+    <div class="ccompte" id="c_compte"></div>
     <div class="aucun" id="c_aucun" style="display:none;margin:18px 0">Aucun CDD en cours n’est enregistré pour votre société. Pour toute information : 01&nbsp;30&nbsp;49&nbsp;50&nbsp;05.</div>
-    <div class="sect" id="c_form"><h3>Le CDD</h3><div class="grille">
-      <label class="f large" id="f_csal"><span>Salarié</span><select id="c_sal"></select></label>
-      <div class="f large cddinfo" id="c_info"></div>
-      <div class="f large" id="f_suite"><span>Que souhaitez-vous faire ?</span><div class="choix"><label class="v"><input type="radio" name="suite" value="oui">✓ Renouveler le CDD</label><label class="r"><input type="radio" name="suite" value="non">✕ Ne pas renouveler</label></div></div>
-      <div class="f large cddnon cache" id="c_non"></div>
-      <div class="f large cren cache" id="f_duree"><span>Prolonger de</span><div class="choix"><label><input type="radio" name="duree" value="1">1 mois</label><label><input type="radio" name="duree" value="3">3 mois</label><label><input type="radio" name="duree" value="6">6 mois</label><label><input type="radio" name="duree" value="autre">Autre date</label></div></div>
-      <label class="f cache cren" id="f_cfin"><span>Nouvelle date de fin</span><input id="c_fin" type="date"></label>
-      <div class="f large cddnouv cren cache" id="c_nouv"></div>
-      <div class="f large cren cache" id="f_chg"><span>Les conditions changent-elles ?</span><div class="choix"><label><input type="radio" name="chg" value="Non">Non, mêmes conditions</label><label><input type="radio" name="chg" value="Oui">Oui</label></div></div>
-      <label class="f large cache cren" id="f_cprec"><span>Ce qui change</span><textarea id="c_prec" maxlength="2000" placeholder="ex. : passage à 39 h, nouveau salaire…"></textarea></label>
-    </div></div>
+    <div id="c_cartes"></div>
    </div>
-   <div class="actions" id="c_actions"><button class="btn cv cache" id="envoyerCdd">✓ Envoyer la demande de renouvellement</button><button class="btn cr cache" id="finCdd">✕ Confirmer la fin du CDD</button><div class="erreur" id="erreurCdd"></div></div>
   </div>
   <div id="bilan" style="display:none">
    <div class="corps bil">
@@ -1203,12 +1213,13 @@
       '<div><div class="bq-nom">'+titre+'</div><div class="bq-cpt">'+sous+'</div></div><div class="droite"><span class="pret"></span>'+bt+'</div></div><div class="bq-corps">'+corps+'</div>'+hi+'</div>';
   }
   var TYPES={arret:['Arrêt maladie','Prolongation d’arrêt maladie','Accident du travail','Prolongation d’accident du travail','Accident de trajet','Maladie professionnelle','Congé maternité','Congé paternité','Mi-temps thérapeutique'],
-    depart:['Démission','Rupture conventionnelle','Fin de CDD','Fin de période d’essai','Licenciement','Départ à la retraite','Autre']};
-  var DEPART_DOC={'Démission':true,'Fin de période d’essai':true};
+    depart:['Démission','Rupture conventionnelle','Fin de période d’essai, à l’initiative de l’employeur','Fin de période d’essai, à l’initiative du salarié','Licenciement','Départ à la retraite','Autre']};
+  var DEPART_DOC={'Démission':true};
+  var ESSAI_MSG='Ne remettez aucun courrier au salarié avant notre appel : le cabinet vous contacte pour vérifier les délais.';
   var DEPART_MSG={'Démission':'Document obligatoire : <b>la lettre de démission du salarié</b>.',
-    'Fin de période d’essai':'Document obligatoire : <b>le courrier remis au salarié</b> (ou celui du salarié s’il est à son initiative).',
+    'Fin de période d’essai, à l’initiative de l’employeur':ESSAI_MSG,
+    'Fin de période d’essai, à l’initiative du salarié':ESSAI_MSG,
     'Rupture conventionnelle':'Si elle est déjà signée, joignez la convention (facultatif). Sinon, nous vous contacterons pour la préparer.',
-    'Fin de CDD':'Aucun document à fournir.',
     'Licenciement':'Aucun document à fournir : <b>nous vous contacterons avant toute démarche.</b>',
     'Départ à la retraite':'Document conseillé : le courrier du salarié (facultatif).',
     'Autre':'Précisez la situation dans le cadre ci-dessous ; document facultatif.'};
@@ -1220,15 +1231,26 @@
       '<label class="f nomlibre"'+cache+'><span>Prénom du salarié</span><input class="pre" type="text" maxlength="40" placeholder="ex. : Jean" autocomplete="off"></label>'+
       '<label class="f'+(cat==='arret'?'':' large')+'" style="margin:0"><span>'+(cat==='arret'?'Type d’arrêt':'Type de départ')+'</span><select class="typ"><option value="">Choisir…</option>'+
       TYPES[cat].map(function(t){return '<option>'+t+'</option>';}).join('')+'</select></label>'+
-      (cat==='depart'?'<label class="f" style="margin:0"><span>Dernier jour travaillé (ou fin du contrat)</span><input class="datd" type="date"></label>'+
+      (cat==='depart'?'<label class="f" style="margin:0"><span>Dernier jour travaillé envisagé</span><input class="datd" type="date"></label>'+
         '<label class="f prvf" style="margin:0;display:none"><span>Préavis effectué ?</span><select class="prv"><option value="">Choisir…</option><option>Oui</option><option>Non</option><option>Dispensé</option></select></label>'+
-        '<div class="dinfo" style="grid-column:1/-1;display:none;background:#f3f6fb;border:1px solid #d6e0ef;border-radius:8px;padding:9px 12px;font-size:14px;color:#2b3f5c"></div>':'')+
+        '<div class="dinfo" style="grid-column:1/-1;display:none;background:#f3f6fb;border:1px solid #d6e0ef;border-radius:8px;padding:9px 12px;font-size:14px;color:#2b3f5c"></div>'+
+        '<div class="dcdd cinfo o" style="grid-column:1/-1;display:none;margin:0"></div>':'')+
       (cat==='arret'?'<label class="f" style="margin:0"><span class="libdat">Date de début de l’arrêt</span><input class="dat" type="date"></label><label class="f" style="margin:0"><span>Date de fin de l’arrêt</span><input class="datf" type="date"></label>':'')+'</div>';
   }
-  var SALS=[];
+  var SALS=[],CDD_ACT=[];
+  function mots(t){return cle(t).split(/[\s-]+/).filter(Boolean).sort().join(' ');}
+  // Départ : si le salarié choisi est en CDD, renvoyer vers sa carte « Fin de CDD »
+  function cddDepart(b){
+    var bx=b&&b.querySelector('.dcdd');if(!bx)return;
+    var n=b.querySelector('input.sal').value,p=b.querySelector('input.pre').value,k=mots(n+' '+p);
+    var x=k?CDD_ACT.filter(function(c){return mots(c.salarie)===k;})[0]:null;
+    bx.style.display=x?'':'none';
+    if(x)bx.innerHTML='Ce salarié est en CDD jusqu’au <b>'+esc(x.fin)+'</b>. Pour ne pas le renouveler ou l’arrêter avant son terme, utilisez la rubrique <a href="'+lienVue('cdd')+'&ref='+encodeURIComponent(x.ref)+'" style="color:#d84315;font-weight:bold">Fin de CDD</a>.';
+  }
   function afficherSocial(d,seul){
     document.body.classList.add('fsoc');
     var sal=d.paie!=='X',h='';ENVOIS=d.envois||[];
+    CDD_ACT=(d.cdd||[]).filter(function(x){return !x.suite;});
     SALS=(d.salaries||[]).slice().sort(function(a,b){return cle(a.nom+' '+a.prenom)<cle(b.nom+' '+b.prenom)?-1:1;});
     $('retourSocSeul').style.display=seul?'':'none';$('retourSocSeul').href=lienVue('social');
     $('consSoc').style.display='none';$('envoyerSoc').parentNode.style.display=seul?'':'none';
@@ -1268,10 +1290,11 @@
     szones=[].slice.call($('blocsSoc').querySelectorAll('.banque')).filter(function(b){return b.querySelector('.zone');});
     szones.forEach(function(b){brancherZone(b,majSoc,'erreurSoc');});
     [].forEach.call($('blocsSoc').querySelectorAll('input.sal,input.pre,input.dat,input.datf,input.datd,textarea.prec,select.typ,select.prv'),function(i){
-      i.addEventListener(i.tagName==='SELECT'?'change':'input',function(){var f=i.closest('.f');if(f)f.classList.remove('err');
+      i.addEventListener(i.tagName==='SELECT'?'change':'input',function(){var f=i.closest('.f');if(f)f.classList.remove('err');if(i.classList.contains('sal')||i.classList.contains('pre'))cddDepart(i.closest('.banque'));
         if(i.classList.contains('typ')){var l=i.closest('.banque').querySelector('.libdat');if(l)l.textContent=/^Accident/.test(i.value)?'Date de l’accident':'Date de début de l’arrêt';
           var bq=i.closest('.banque'),di=bq.querySelector('.dinfo'),pv=bq.querySelector('.prvf'),z=bq.querySelector('.ztxt');
-          if(di){var m=DEPART_MSG[i.value]||'';di.innerHTML=m?'📎 '+m:'';di.style.display=m?'':'none';}
+          if(di){var m=DEPART_MSG[i.value]||'',es=m===ESSAI_MSG;di.innerHTML=m?(es?'⚠ ':'📎 ')+m:'';di.style.display=m?'':'none';
+            di.style.background=es?'#fbe9e7':'#f3f6fb';di.style.borderColor=es?'#ffccbc':'#d6e0ef';di.style.color=es?'#8c2b0d':'#2b3f5c';di.style.fontWeight=es?'bold':'';}
           if(pv)pv.style.display=/^(Démission|Licenciement)$/.test(i.value)?'':'none';
           if(z&&bq.getAttribute('data-cat')==='depart')z.innerHTML=(DEPART_DOC[i.value]?'Faites glisser ici le document':'Faites glisser ici le document (facultatif)')+'<br><b>ou sélectionnez un fichier</b>';}
         majSoc();});
@@ -1282,7 +1305,7 @@
       if(autre){n.value='';pr.value='';n.focus();}
       else if(sl.value!==''){var x=SALS[+sl.value];n.value=nomMaj(x.nom);pr.value=preMaj(x.prenom);}
       else{n.value='';pr.value='';}
-      sl.closest('.f').classList.remove('err');majSoc();};});
+      sl.closest('.f').classList.remove('err');cddDepart(b);majSoc();};});
     if($('p_rien'))$('p_rien').onclick=function(){envoyerPaie(true,this);};
     $('envoyerSoc').lot=null;$('erreurSoc').textContent='';
     majSoc();
@@ -1342,7 +1365,7 @@
     var n=szones.reduce(function(s,d){return s+d.files.length;},0),p=$('blocsSoc').querySelector('.prec');
     var dep=$('blocsSoc').querySelector('[data-cat="depart"]'),okDep=false;
     if(dep){var q=function(x){var e=dep.querySelector(x);return e?e.value:'';};okDep=!!(q('input.sal')&&q('select.typ')&&q('input.datd'));}
-    $('envoyerSoc').disabled=!(n||(p&&p.value.trim())||okDep);
+    $('envoyerSoc').disabled=false; // toujours actif : message d'erreur au clic si rien n'est rempli
   }
   // Encadré d'attente au-dessus du bouton pendant un envoi (barre + « ne fermez pas cette page »)
   var ENVOI_EN_COURS=false;
@@ -1402,10 +1425,17 @@
       else if(cat==='depart'&&nomS&&typ&&datd)recap.push(titre+' – '+sal);
       else if(prec)recap.push(titre+' : précision transmise');
     });
-    if(docManque){$('erreurSoc').textContent='Pour une '+(docManque==='Démission'?'démission':'fin de période d’essai')+', merci de déposer le document demandé.';if(!manque)return;}
+    if(docManque){$('erreurSoc').textContent='Pour une démission, merci de déposer la lettre de démission du salarié.';if(!manque)return;}
     if(finAvant){$('erreurSoc').textContent='La date de fin de l’arrêt est avant la date de début : merci de la corriger.';return;}
     if(manque){$('erreurSoc').textContent='Merci de compléter les cases en rouge (salarié, motif ou type, dates'+(docManque?', document':'')+').';return;}
-    if(!taches.length)return;
+    if(!taches.length){
+      szones.forEach(function(d){
+        if(d.getAttribute('data-cat')==='depart'){['select.choixsal','select.typ','input.datd'].forEach(function(q){var e=d.querySelector(q);if(e&&e.closest('.f').style.display!=='none')e.closest('.f').classList.add('err');});}
+        else d.classList.add('err');
+      });
+      $('erreurSoc').textContent=$('blocsSoc').querySelector('[data-cat="depart"]')?'Merci de compléter les cases en rouge (salarié, type de départ, dernier jour travaillé envisagé).':'Merci de déposer au moins un document avant d’envoyer.';
+      return;
+    }
     b.lot=b.lot||('L'+Date.now().toString(36)+Math.random().toString(36).slice(2,8));
     b.disabled=true;
     var i=0;
@@ -1623,78 +1653,116 @@
   function iso(d){function p(n){return (n<10?'0':'')+n;}return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
   function joursAvant(t){var d=dateFr(t),a=new Date();if(!d)return -1;a=new Date(a.getFullYear(),a.getMonth(),a.getDate());return Math.round((d-a)/86400000);}
   function plusMois(d,n){var r=new Date(d.getFullYear(),d.getMonth()+n,1),der=new Date(r.getFullYear(),r.getMonth()+1,0).getDate();r.setDate(Math.min(d.getDate(),der));return r;}
-  function carteCdd(x){ // carte du CDD : calendriers de début et de fin, jours restants, renouvellements
-    var MO=['JANV.','FÉVR.','MARS','AVR.','MAI','JUIN','JUIL.','AOÛT','SEPT.','OCT.','NOV.','DÉC.'];
-    function cal(t,c,l){var d=dateFr(t);if(!d)return '';return '<div><div class="lg'+(c?'':' fin')+'">'+l+'</div><div class="cal'+c+'"><div class="m">'+MO[d.getMonth()]+'</div><div class="j">'+d.getDate()+'</div><div class="a">'+d.getFullYear()+'</div></div></div>';}
-    var j=joursAvant(x.fin),n=+x.renouvellements||0,b='';
+  // Fin de CDD : une carte par salarié, toujours dépliée, triée par date de fin (décisions de Mario du 27/11/2026)
+  var MO_C=['JANV.','FÉVR.','MARS','AVR.','MAI','JUIN','JUIL.','AOÛT','SEPT.','OCT.','NOV.','DÉC.'];
+  function calC(t,dbt){var d=dateFr(t);if(!d)return '';return '<div><div class="lg'+(dbt?'':' fin')+'">'+(dbt?'Début':'Fin')+'</div><div class="cal'+(dbt?' dbt':'')+'"><div class="m">'+MO_C[d.getMonth()]+'</div><div class="j">'+d.getDate()+'</div><div class="a">'+d.getFullYear()+'</div></div></div>';}
+  // Limites : 2 renouvellements ; durée totale de 18 mois (9 mois : attente d'un salarié en CDI, travaux urgents ;
+  // 24 mois : départ avant suppression du poste, commande exceptionnelle à l'export) ; CDD saisonnier : pas de limite automatique
+  function limitesCdd(x){
+    var m=x.motif||'',saison=/saison/i.test(m),mo=saison?0:/(attente|urgen)/i.test(m)?9:/(export|suppression)/i.test(m)?24:18,d=dateFr(x.debut),fin=dateFr(x.fin),n=+x.renouvellements||0;
+    var lim=mo&&d?new Date(d.getFullYear(),d.getMonth()+mo,d.getDate()-1):null;
+    return {lim:lim,plein:!saison&&(n>=2||!!(lim&&fin&&lim<=fin)),n:n};
+  }
+  function enEssai(x){return !!(x.finEssai&&joursAvant(x.finEssai)>=0);}
+  function lendemain(t){var d=dateFr(t);d.setDate(d.getDate()+1);return d;}
+  function finChoisie(x,i){
+    var c=$('cc'+i),d=c.querySelector('input[name="duree'+i+'"]:checked');if(!d)return null;
+    if(d.value==='autre'){var v=c.querySelector('.cfin').value;if(!v)return null;var t=v.split('-');return new Date(+t[0],+t[1]-1,+t[2]);}
+    return plusMois(dateFr(x.fin),+d.value);
+  }
+  function carteCdd(x,i){
+    var L=limitesCdd(x),j=joursAvant(x.fin),b='',fait=!!x.suite,es=enEssai(x),et=x.etapes||[];
     if(j===0)b+='<span class="bd" style="background:#c62828;color:#fff">⚠ Fin aujourd’hui</span>';
     else if(j>0&&j<=15)b+='<span class="bd" style="background:#fdecea;color:#8e1c1c">⚠ Fin dans '+j+' jour'+(j>1?'s':'')+'</span>';
     else if(j>15)b+='<span class="bd" style="background:#e8f5e9;color:#1b5e20">Fin dans '+j+' jours</span>';
-    if(n>0)b+='<span class="bd" style="background:#fff3e0;color:#8a4b00">Déjà renouvelé '+n+' fois</span>';
-    return '<div class="ccal">'+cal(x.debut,' dbt','Début')+'<div class="fl">→</div>'+cal(x.fin,'','Fin')+'<div class="bds">'+b+'</div></div>';
+    if(L.n>0)b+='<span class="bd" style="background:#fff3e0;color:#8a4b00">Déjà renouvelé '+L.n+' fois'+(L.n>=2?' (maximum atteint)':'')+'</span>';
+    if(es)b+='<span class="bd" style="background:#e3eef8;color:#1f5f9e">Période d’essai jusqu’au '+esc(x.finEssai)+'</span>';
+    var h='<div class="ccarte'+(fait?' fait':'')+'" id="cc'+i+'"><div class="ctete"><div class="cnom">'+esc(x.salarie)+(x.emploi?' <span class="cemp">– '+esc(x.emploi)+'</span>':'')+'</div>'+(fait?'<span class="cstat">✓ '+esc(x.suite)+'</span>':'')+'</div>';
+    h+='<div class="ccal">'+calC(x.debut,true)+'<div class="fl">→</div>'+calC(x.fin,false)+'<div class="bds">'+b+'</div></div>';
+    if(et.length)h+='<button type="button" class="chist">Voir l’historique du contrat ('+et.length+' renouvellement'+(et.length>1?'s':'')+')</button><div class="chl"><div>Contrat initial : du '+esc(x.debut)+' au '+esc(et[0].ancienne)+'</div>'+
+      et.map(function(e,k){return '<div>Renouvellement '+(k+1)+' (demandé le '+esc(e.jour)+') : jusqu’au '+esc(e.nouvelle)+(e.conditions?' – '+esc(e.conditions):'')+'</div>';}).join('')+'</div>';
+    if(fait)return h+'</div>';
+    if(L.plein)h+='<div class="cmax">Au-delà du '+esc(x.fin)+', la collaboration ne peut se poursuivre qu’en CDI.</div>';
+    h+='<div class="cch">'+(L.plein?'<button type="button" class="v" data-c="cdi">✓ Embaucher en CDI</button><button type="button" class="r" data-c="non">✕ Mettre fin au contrat</button>'
+      :'<button type="button" class="v" data-c="oui">✓ Renouveler le CDD</button><button type="button" class="r" data-c="non">✕ Ne pas renouveler</button>')+'</div>';
+    h+='<div class="csep"></div><button type="button" class="ca" data-c="'+(es?'essai':'anticipe')+'">'+(es?'Mettre fin à la période d’essai':'Arrêter le contrat avant le terme')+'</button>';
+    var dur=[1,3,6].filter(function(n){return !L.lim||plusMois(dateFr(x.fin),n)<=L.lim;}),mi=lendemain(x.fin);
+    if(!L.plein)h+='<div class="czone cache" data-z="oui"><div class="grille">'+
+      '<div class="f large"><span>Prolonger de</span><div class="choix">'+dur.map(function(n){return '<label><input type="radio" name="duree'+i+'" value="'+n+'">'+n+' mois</label>';}).join('')+'<label><input type="radio" name="duree'+i+'" value="autre">Autre date</label></div></div>'+
+      '<label class="f cache cfinf"><span>Nouvelle date de fin</span><input class="cfin" type="date" min="'+iso(mi)+'"'+(L.lim?' max="'+iso(L.lim)+'"':'')+'></label>'+
+      '<div class="f large cddnouv cnouv"></div>'+
+      '<div class="f large"><span>Les conditions changent-elles ?</span><div class="choix"><label><input type="radio" name="chg'+i+'" value="Non">Non, mêmes conditions</label><label><input type="radio" name="chg'+i+'" value="Oui">Oui</label></div></div>'+
+      '<label class="f large cache cprecf"><span>Ce qui change</span><textarea class="cprec" maxlength="2000" placeholder="ex. : passage à 39 h, nouveau salaire…"></textarea></label>'+
+      '</div><button class="btn cv" data-e="oui">✓ Envoyer la demande de renouvellement</button></div>';
+    if(L.plein)h+='<div class="czone cache" data-z="cdi"><div class="cinfo v">CDI à compter du <b>'+fr(mi)+'</b>.</div><div class="grille">'+
+      '<div class="f large"><span>Les conditions changent-elles ?</span><div class="choix"><label><input type="radio" name="chgc'+i+'" value="Non">Non, mêmes conditions</label><label><input type="radio" name="chgc'+i+'" value="Oui">Oui</label></div></div>'+
+      '<label class="f large cache cprecf"><span>Ce qui change</span><textarea class="cprec" maxlength="2000" placeholder="ex. : nouveau poste, nouveau salaire…"></textarea></label>'+
+      '</div><button class="btn cv" data-e="cdi">✓ Confirmer l’embauche en CDI</button></div>';
+    h+='<div class="czone cache" data-z="non"><div class="cinfo r">Fin du contrat le <b>'+esc(x.fin)+'</b>.</div><button class="btn cr" data-e="non">✕ Confirmer la fin du CDD</button></div>';
+    h+='<div class="czone cache" data-z="anticipe"><div class="cinfo o">La rupture d’un CDD avant son terme est strictement encadrée par la loi. Le cabinet prendra contact avec vous pour en examiner les conditions avant toute démarche.</div><button class="btn or" data-e="anticipe">Demander l’intervention du cabinet</button></div>';
+    h+='<div class="czone cache" data-z="essai"><div class="grille"><div class="f large"><span>À l’initiative de</span><div class="choix"><label><input type="radio" name="qui'+i+'" value="employeur">L’employeur</label><label><input type="radio" name="qui'+i+'" value="salarie">Le salarié</label></div></div></div>'+
+      '<div class="cinfo o">Ne remettez aucun courrier au salarié avant notre appel : le cabinet vous contacte pour vérifier les délais.</div><button class="btn or" data-e="essai">Demander l’intervention du cabinet</button></div>';
+    return h+'<div class="erreur"></div></div>';
   }
-  function cddChoisi(){var r=$('c_sal').value;return CDDS.filter(function(x){return x.ref===r;})[0]||null;}
   function afficherCdd(l){
-    CDDS=l;
-    var vide=!l.length;
-    $('c_aucun').style.display=vide?'':'none';$('c_form').style.display=vide?'none':'';$('c_actions').style.display=vide?'none':'';
-    if(vide)return;
+    CDDS=l.slice().sort(function(a,b){return dateFr(a.fin)-dateFr(b.fin);});
+    var vide=!CDDS.length,fa=CDDS.filter(function(x){return x.suite;}).length,af=CDDS.length-fa;
+    $('c_aucun').style.display=vide?'':'none';
+    $('c_compte').innerHTML=vide?'':af?'<b>'+af+'</b> CDD à traiter'+(fa?' · '+fa+' traité'+(fa>1?'s':''):''):'Tous les CDD sont traités.';
+    $('c_cartes').innerHTML=CDDS.map(carteCdd).join('');
     var voulu=P.get('ref')||'';
-    $('c_sal').innerHTML=(l.length>1?'<option value="">Choisir…</option>':'')+l.map(function(x){
-      return '<option value="'+esc(x.ref)+'"'+(x.ref===voulu?' selected':'')+'>'+esc(x.salarie)+(x.emploi?' – '+esc(x.emploi):'')+' – fin le '+esc(x.fin)+'</option>';
-    }).join('');
-    majCdd();
+    CDDS.forEach(function(x,i){var c=$('cc'+i);
+      if(x.ref===voulu){c.classList.add('vise');setTimeout(function(){c.scrollIntoView({behavior:'smooth',block:'center'});},300);}
+      var hb=c.querySelector('.chist');if(hb)hb.onclick=function(){c.querySelector('.chl').classList.toggle('ouvert');};
+      if(x.suite)return;
+      [].forEach.call(c.querySelectorAll('[data-c]'),function(bt){bt.onclick=function(){c.choix=bt.getAttribute('data-c');c.querySelector('.erreur').textContent='';majCarte(x,i);};});
+      ['input','change'].forEach(function(ev){c.addEventListener(ev,function(e){var f=e.target.closest&&e.target.closest('.f');if(f)f.classList.remove('err');c.querySelector('.erreur').textContent='';majCarte(x,i);});});
+      [].forEach.call(c.querySelectorAll('[data-e]'),function(bt){bt.onclick=function(){envoyerCarte(x,i,bt);};});
+    });
   }
-  function nouvelleFin(){
-    var x=cddChoisi(),d=document.querySelector('input[name="duree"]:checked');
-    if(!x||!d)return null;
-    if(d.value==='autre'){var v=$('c_fin').value;if(!v)return null;var t=v.split('-');return new Date(+t[0],+t[1]-1,+t[2]);}
-    return plusMois(dateFr(x.fin),+d.value);
+  function majCarte(x,i){
+    var c=$('cc'+i),ch=c.choix||'';
+    [].forEach.call(c.querySelectorAll('[data-c]'),function(b){b.classList.toggle('on',b.getAttribute('data-c')===ch);});
+    [].forEach.call(c.querySelectorAll('.czone'),function(z){z.classList.toggle('cache',z.getAttribute('data-z')!==ch);});
+    [].forEach.call(c.querySelectorAll('.choix label'),function(l){l.classList.toggle('on',l.querySelector('input').checked);});
+    var ff=c.querySelector('.cfinf');
+    if(ff){var d=c.querySelector('input[name="duree'+i+'"]:checked');ff.classList.toggle('cache',!(d&&d.value==='autre'));
+      var n=finChoisie(x,i);c.querySelector('.cnouv').innerHTML=n?'Nouvelle date de fin : <b>'+fr(n)+'</b>':'';}
+    [].forEach.call(c.querySelectorAll('.czone[data-z="oui"],.czone[data-z="cdi"]'),function(z){var o=z.querySelector('.choix input[value="Oui"]');z.querySelector('.cprecf').classList.toggle('cache',!(o&&o.checked));});
   }
-  function majCdd(){
-    var x=cddChoisi(),d=document.querySelector('input[name="duree"]:checked'),c=document.querySelector('input[name="chg"]:checked');
-    [].forEach.call(document.querySelectorAll('#cdd .choix label'),function(l){l.classList.toggle('on',l.querySelector('input').checked);});
-    $('c_info').innerHTML=x?carteCdd(x):'';
-    var su=document.querySelector('input[name="suite"]:checked'),ren=!!(su&&su.value==='oui'),non=!!(su&&su.value==='non');
-    [].forEach.call(document.querySelectorAll('#cdd .cren'),function(e){if(e.id!=='f_cfin'&&e.id!=='f_cprec')e.classList.toggle('cache',!ren);});
-    $('envoyerCdd').classList.toggle('cache',!ren);$('finCdd').classList.toggle('cache',!non);
-    $('c_non').classList.toggle('cache',!(non&&x));
-    if(x)$('c_non').innerHTML='<div>Le contrat de '+esc(x.salarie)+' prendra fin comme prévu le <b>'+esc(x.fin)+'</b>.</div>';
-    $('f_cfin').classList.toggle('cache',!(ren&&d&&d.value==='autre'));
-    if(x){var mi=dateFr(x.fin);mi.setDate(mi.getDate()+1);$('c_fin').min=iso(mi);}
-    var n=nouvelleFin();
-    $('c_nouv').innerHTML=n?'Nouvelle date de fin : <b>'+fr(n)+'</b>':'';
-    $('f_cprec').classList.toggle('cache',!(ren&&c&&c.value==='Oui'));
+  function envoyerCarte(x,i,b){
+    var c=$('cc'+i),ch=c.choix,z=c.querySelector('.czone[data-z="'+ch+'"]'),er=c.querySelector('.erreur'),err=[],o={rubrique:'cdd',ref:x.ref},recap,titre='Nous vous remercions : votre demande a bien été transmise au cabinet.',texte;
+    [].forEach.call(c.querySelectorAll('.err'),function(e){e.classList.remove('err');});er.textContent='';
+    function cond(){var k=z.querySelector('.choix input[value="Oui"]').name,v=z.querySelector('input[name="'+k+'"]:checked'),p=z.querySelector('.cprec').value.trim();
+      if(!v){z.querySelector('input[name="'+k+'"]').closest('.f').classList.add('err');err.push('si les conditions changent');}
+      else if(v.value==='Oui'&&!p){z.querySelector('.cprecf').classList.add('err');err.push('ce qui change');}
+      o.changement=v?v.value:'';o.precision=v&&v.value==='Oui'?p:'';}
+    if(ch==='oui'){
+      var n=finChoisie(x,i),L=limitesCdd(x),d=c.querySelector('input[name="duree'+i+'"]:checked');
+      if(!n){(d?c.querySelector('.cfinf'):c.querySelector('input[name="duree'+i+'"]').closest('.f')).classList.add('err');err.push('la nouvelle date de fin');}
+      else if(n<=dateFr(x.fin)){c.querySelector('.cfinf').classList.add('err');err.push('une date de fin postérieure au '+x.fin);}
+      else if(L.lim&&n>L.lim){c.querySelector('.cfinf').classList.add('err');err.push('une date de fin au plus tard le '+fr(L.lim));}
+      cond();if(n)o.fin=iso(n);
+      recap=['Renouvellement du CDD de '+x.salarie+' jusqu’au '+(n?fr(n):'')+(o.changement==='Oui'?' (conditions modifiées)':'')];
+    }else if(ch==='cdi'){
+      cond();o.choix='cdi';
+      recap=['Embauche en CDI de '+x.salarie+' à compter du '+fr(lendemain(x.fin))+(o.changement==='Oui'?' (conditions modifiées)':'')];
+      texte='Nous préparons le contrat à durée indéterminée et vous le transmettrons pour signature.';
+    }else if(ch==='non'){
+      o.choix='non';titre='Nous vous remercions : votre réponse a bien été transmise au cabinet.';
+      recap=['Fin du CDD de '+x.salarie+' le '+x.fin+' (non renouvelé)'];
+      texte='Dernier jour de travail : '+x.fin+'. Nous vous transmettrons le dernier bulletin et les documents à remettre au salarié : certificat de travail, attestation France Travail, solde de tout compte.';
+    }else{
+      o.choix=ch;
+      if(ch==='essai'){var q=c.querySelector('input[name="qui'+i+'"]:checked');if(!q){c.querySelector('input[name="qui'+i+'"]').closest('.f').classList.add('err');err.push('qui met fin à la période d’essai');}o.qui=q?q.value:'';}
+      recap=[(ch==='essai'?'Fin de la période d’essai':'Arrêt du CDD avant son terme')+' de '+x.salarie+' : intervention du cabinet demandée'];
+      texte='Le cabinet prendra contact avec vous rapidement. Ne remettez aucun courrier au salarié avant notre appel.';
+    }
+    if(err.length){er.textContent='Merci d’indiquer '+err.join(', ')+'.';return;}
+    var lib=b.textContent;b.disabled=true;etat(b);
+    poster(avecId(o)).then(function(){merci(titre,recap,texte);})
+      .catch(function(e){finAttente();b.disabled=false;b.textContent=lib;afficherEchec(er,e,'L’envoi a échoué ('+(e.message||e)+'). Merci de réessayer.');});
   }
-  ['input','change'].forEach(function(ev){$('cdd').addEventListener(ev,function(e){
-    var f=e.target.closest&&e.target.closest('.f');if(f)f.classList.remove('err');$('erreurCdd').textContent='';majCdd();
-  });});
-  $('envoyerCdd').onclick=function(){
-    var b=this,x=cddChoisi(),n=nouvelleFin(),c=document.querySelector('input[name="chg"]:checked'),prec=$('c_prec').value.trim(),err=[];
-    [].forEach.call(document.querySelectorAll('#cdd .err'),function(e){e.classList.remove('err');});
-    if(!x){$('f_csal').classList.add('err');err.push('le salarié');}
-    if(!n){(document.querySelector('input[name="duree"]:checked')?$('f_cfin'):$('f_duree')).classList.add('err');err.push('la nouvelle date de fin');}
-    else if(x&&n<=dateFr(x.fin)){$('f_cfin').classList.add('err');err.push('une date de fin postérieure au '+x.fin);}
-    if(!c){$('f_chg').classList.add('err');err.push('si les conditions changent');}
-    else if(c.value==='Oui'&&!prec){$('f_cprec').classList.add('err');err.push('ce qui change');}
-    if(err.length){$('erreurCdd').textContent='Merci d’indiquer '+err.join(', ')+'.';return;}
-    b.disabled=true;etat(b);
-    poster(avecId({rubrique:'cdd',ref:x.ref,fin:iso(n),changement:c.value,precision:c.value==='Oui'?prec:''})).then(function(){
-      merci('Nous vous remercions : votre demande a bien été transmise au cabinet.',
-        ['Renouvellement du CDD de '+x.salarie+' jusqu’au '+fr(n)+(c.value==='Oui'?' (conditions modifiées)':'')]);
-    }).catch(function(e){finAttente();b.disabled=false;b.textContent='✓ Envoyer la demande de renouvellement';
-      afficherEchec($('erreurCdd'),e,'L’envoi a échoué ('+(e.message||e)+'). Merci de réessayer.');});
-  };
-  // « Ne pas renouveler » directement depuis l'espace (décision de Mario du 27/11/2026)
-  $('finCdd').onclick=function(){
-    var b=this,x=cddChoisi();
-    if(!x){$('f_csal').classList.add('err');$('erreurCdd').textContent='Merci d’indiquer le salarié.';return;}
-    b.disabled=true;etat(b);
-    poster(avecId({rubrique:'cdd',ref:x.ref,choix:'non'})).then(function(){
-      merci('Nous vous remercions : votre réponse a bien été transmise au cabinet.',['Fin du CDD de '+x.salarie+' le '+x.fin+' (non renouvelé)'],'Dernier jour de travail : '+x.fin+'. Nous vous transmettrons le dernier bulletin et les documents à remettre au salarié : certificat de travail, attestation France Travail, solde de tout compte.');
-    }).catch(function(e){finAttente();b.disabled=false;b.textContent='✕ Confirmer la fin du CDD';
-      afficherEchec($('erreurCdd'),e,'L’envoi a échoué ('+(e.message||e)+'). Merci de réessayer.');});
-  };
 
   // ===================== FORMULAIRE D'EMBAUCHE =====================
   var PIECES={},piecesVues=[];
