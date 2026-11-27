@@ -614,7 +614,7 @@
     paieMois:'décembre 2026',paieLimite:'31/12/2026',paieEnvoi:null,
     salaries:P.get('liste')==='1'?['Paul MARTIN','Sophie BERNARD','Karim BENALI','Julie PETIT','Lucas DUBOIS','Emma LEROY','Hugo MOREAU','Léa GARNIER','Nathan FAURE','Chloé ROUSSEL','Théo BLANC','Inès GUERIN','Louis BOYER','Manon CHEVALIER'].map(function(t){var x=t.split(' ');return {prenom:x[0],nom:x[1]};}):[{prenom:'Paul',nom:'MARTIN'},{prenom:'Sophie',nom:'BERNARD'},{prenom:'Karim',nom:'BENALI'},{prenom:'Julie',nom:'PETIT'}],
     arretsMois:[{prenom:'Paul',nom:'MARTIN',type:'Maladie',du:'03/12/2026',au:'10/12/2026',depose:'04/12/2026'}]}:null;
-  function lienVue(v){var q=new URLSearchParams(C?{c:C}:{s:S,k:K});if(P.get('demo')==='1')q.set('demo','1');if(P.get('liste')==='1')q.set('liste','1');if(v)q.set('r',v);return '?'+q.toString();}
+  function lienVue(v){var q=new URLSearchParams(C?{c:C}:{s:S,k:K});if(P.get('demo')==='1')q.set('demo','1');if(P.get('liste')==='1')q.set('liste','1');if(P.get('bq')==='1')q.set('bq','1');if(ESSAI)q.set('essai','1');if(v)q.set('r',v);return '?'+q.toString();}
   var MAX=10*1024*1024, zones=[];
   var NUAGE='<svg class="ico" viewBox="0 0 64 48" aria-hidden="true"><path d="M51 20.5A15 15 0 0 0 22.5 15 11.5 11.5 0 0 0 12.5 37.5h37A8.6 8.6 0 0 0 51 20.5z" fill="#2e6b3a"/><path d="M32 31V18" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M24 23.5 32 15.5l8 8" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   var ACCEPT='.pdf,.ofx,.jpg,.jpeg,.png,.xls,.xlsx,.csv,.qif,.txt,.tsv,.cfonb,.dat,.120';
