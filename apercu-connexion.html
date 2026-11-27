@@ -2166,7 +2166,7 @@ window.initConv=function(conv){
     :CLIENT.secteur==='Immobilier'?[['Employe','Employé'],['Maitrise','Agent de maîtrise'],['Cadre','Cadre'],['NegoVRP','Négociateur VRP'],['NegoNon','Négociateur non VRP']]
     :[['Ouvrier','Ouvrier'],['ETAM','ETAM (employé, technicien, agent de maîtrise)'],['Cadre','Cadre']];
   function eur(x){return x.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})+' EUR';}
-  document.body.insertAdjacentHTML('afterbegin',ESSAI?'<div class="testbandeau" style="background:#f6d27a;color:#3d3216">MODE ESSAI : rien de ce que vous envoyez n’est transmis au cabinet</div>':'<div class="testbandeau">PAGE DE TEST – non visible par les clients</div>');
+  document.body.insertAdjacentHTML('afterbegin',(new URLSearchParams(location.search).get('essai')==='1')?'<div class="testbandeau" style="background:#f6d27a;color:#3d3216">MODE ESSAI : rien de ce que vous envoyez n’est transmis au cabinet</div>':'<div class="testbandeau">PAGE DE TEST – non visible par les clients</div>');
   // 1. bannière 48 h
   var cons=document.querySelector('#embauche .consigne');
   cons.insertAdjacentHTML('beforebegin','<div class="b48"><b>⏱ À remplir au moins 48 heures avant l’embauche</b> : la déclaration d’embauche doit être faite avant l’arrivée du salarié.</div>');
