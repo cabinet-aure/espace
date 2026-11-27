@@ -1236,7 +1236,7 @@
         '<label class="f prvf" style="margin:0;display:none"><span>Préavis effectué ?</span><select class="prv"><option value="">Choisir…</option><option>Oui</option><option>Non</option><option>Dispensé</option></select></label>'+
         '<div class="dinfo" style="grid-column:1/-1;display:none;background:#f3f6fb;border:1px solid #d6e0ef;border-radius:8px;padding:9px 12px;font-size:14px;color:#2b3f5c"></div>'+
         '<div class="dcdd cinfo o" style="grid-column:1/-1;display:none;margin:0"></div>':'')+
-      (cat==='arret'?'<label class="f" style="margin:0"><span class="libdat">Date de début de l’arrêt</span><input class="dat" type="date"></label><label class="f" style="margin:0"><span>Date de fin de l’arrêt</span><input class="datf" type="date"></label>':'')+'</div>';
+      (cat==='arret'?'<label class="f" style="margin:0"><span class="libdat">Date de début de l’arrêt</span><input class="dat" type="date"></label><label class="f" style="margin:0"><span>Date de fin de l’arrêt</span><input class="datf" type="date"></label>'+'<div class="atz" style="grid-column:1/-1;display:none;border-top:1px solid #eee;padding-top:12px;margin-top:4px">'+'<div style="font-weight:bold;color:#d84315;font-size:15px;margin:0 0 10px">Déclaration de l’accident</div><div class="grille" style="margin:0">'+'<label class="f"><span>Heure de l’accident</span><input class="at_heure" type="time"></label>'+'<label class="f"><span>Lieu de l’accident</span><input class="at_lieu" maxlength="300" placeholder="ex. : chantier, 12 rue des Lilas, Versailles"></label>'+'<label class="f large at_tr"><span>Que faisait le salarié ?</span><input class="at_act" maxlength="300" placeholder="ex. : portait un carton, conduisait le véhicule, utilisait une machine…"></label>'+'<label class="f at_tj" style="display:none"><span>Trajet</span><select class="at_traj"><option value="">Choisir…</option><option>Domicile → travail</option><option>Travail → domicile</option><option>Trajet vers le lieu du repas</option><option>Retour du repas</option></select></label>'+'<label class="f at_tj" style="display:none"><span>Heure de départ (facultatif)</span><input class="at_dep" type="time"></label>'+'<label class="f large"><span>Comment l’accident s’est-il produit ?</span><textarea class="at_circ" maxlength="1500" placeholder="ex. : a glissé dans l’escalier et est tombé sur le poignet"></textarea></label>'+'<label class="f"><span>Objet ou machine en cause (facultatif)</span><input class="at_obj" maxlength="300" placeholder="ex. : échelle, outil, véhicule"></label>'+'<label class="f"><span>Partie du corps touchée</span><input class="at_siege" maxlength="300" placeholder="ex. : poignet droit"></label>'+'<label class="f"><span>Nature de la blessure</span><select class="at_les"><option value="">Choisir…</option><option>Coupure, plaie</option><option>Entorse, foulure</option><option>Fracture</option><option>Épaule ou doigt déboîté (luxation)</option><option>Brûlure (chaleur ou produit)</option><option>Douleur au dos, lumbago</option><option>Douleur musculaire ou articulaire (épaule, genou…)</option><option>Poussière ou éclat dans l’œil</option><option>Électrisation</option><option>Malaise</option><option>Autre (à préciser)</option></select></label>'+'<div class="f"><span>Arrêt de travail ?</span><div class="choix"><label><input type="radio" name="at_arret" value="Avec arrêt">Avec arrêt</label><label><input type="radio" name="at_arret" value="Sans arrêt">Sans arrêt</label></div></div>'+'<label class="f large at_lesAf" style="display:none"><span>Précisez la blessure</span><input class="at_lesA" maxlength="300"></label>'+'<label class="f large"><span>Le salarié a-t-il été transporté ? (facultatif)</span><input class="at_transp" maxlength="300" placeholder="ex. : urgences de l’hôpital le plus proche"></label>'+'<label class="f large"><span>Témoin ou première personne prévenue</span><input class="at_tem" maxlength="500" placeholder="Nom, prénom et adresse"></label>'+'<label class="f"><span>Vous avez été informé le</span><input class="at_infD" type="date"></label>'+'<label class="f"><span>à (facultatif)</span><input class="at_infH" type="time"></label>'+'<div class="f large"><span>Une autre personne est-elle en cause ?</span><div class="choix"><label><input type="radio" name="at_tiers" value="Non">Non</label><label><input type="radio" name="at_tiers" value="Oui">Oui</label></div></div>'+'<label class="f large at_tiersf" style="display:none"><span>Nom et assurance de cette personne, si vous les connaissez</span><input class="at_tiersD" maxlength="500"></label>'+'<label class="f large" style="cursor:pointer"><span style="font-weight:normal"><input class="at_doute" type="checkbox" style="width:auto;margin-right:8px">J’ai un doute sur cet accident : merci de me contacter avant la déclaration.</span></label>'+'</div><div class="cinfo o" style="margin-top:4px">L’accident doit être déclaré dans les 48 heures. Transmettez ces informations le plus tôt possible : le cabinet s’occupe de la déclaration.</div></div>':'')+'</div>';
   }
   var SALS=[],CDD_ACT=[];
   function mots(t){return cle(t).split(/[\s-]+/).filter(Boolean).sort().join(' ');}
@@ -1293,6 +1293,8 @@
     [].forEach.call($('blocsSoc').querySelectorAll('input.sal,input.pre,input.dat,input.datf,input.datd,textarea.prec,select.typ,select.prv'),function(i){
       i.addEventListener(i.tagName==='SELECT'?'change':'input',function(){var f=i.closest('.f');if(f)f.classList.remove('err');if(i.classList.contains('sal')||i.classList.contains('pre'))cddDepart(i.closest('.banque'));
         if(i.classList.contains('typ')){var l=i.closest('.banque').querySelector('.libdat');if(l)l.textContent=/^Accident/.test(i.value)?'Date de l’accident':'Date de début de l’arrêt';
+          var az=i.closest('.banque').querySelector('.atz');if(az){var trj=i.value==='Accident de trajet';az.style.display=/^Accident (du travail|de trajet)$/.test(i.value)?'':'none';
+            az.querySelector('.at_tr').style.display=trj?'none':'';[].forEach.call(az.querySelectorAll('.at_tj'),function(e){e.style.display=trj?'':'none';});}
           var bq=i.closest('.banque'),di=bq.querySelector('.dinfo'),pv=bq.querySelector('.prvf'),z=bq.querySelector('.ztxt');
           if(di){var m=DEPART_MSG[i.value]||'',es=m===ESSAI_MSG;di.innerHTML=m?(es?'':'📎 ')+m:'';di.style.display=m?'':'none';
             di.style.background=es?'#fffbe6':'#f3f6fb';di.style.borderColor=es?'#e0e0e0':'#d6e0ef';di.style.borderLeft=es?'6px solid #ff8a65':'';di.style.color=es?'#333':'#2b3f5c';}
@@ -1300,6 +1302,13 @@
           if(z&&bq.getAttribute('data-cat')==='depart')z.innerHTML=(DEPART_DOC[i.value]?'Faites glisser ici le document':'Faites glisser ici le document (facultatif)')+'<br><b>ou sélectionnez un fichier</b>';}
         majSoc();});
     });
+    // Accident : sous-champs (« Autre » blessure, autre personne en cause) et boutons Avec / Sans arrêt, Oui / Non
+    [].forEach.call($('blocsSoc').querySelectorAll('.atz'),function(az){az.addEventListener('change',function(e){
+      var f=e.target.closest('.f');if(f)f.classList.remove('err');
+      az.querySelector('.at_lesAf').style.display=/^Autre/.test(az.querySelector('.at_les').value)?'':'none';
+      var ti=az.querySelector('input[name="at_tiers"]:checked');az.querySelector('.at_tiersf').style.display=ti&&ti.value==='Oui'?'':'none';
+      [].forEach.call(az.querySelectorAll('.choix label'),function(l){l.classList.toggle('on',l.querySelector('input').checked);});});
+      az.addEventListener('input',function(e){var f=e.target.closest('.f');if(f)f.classList.remove('err');});});
     [].forEach.call($('blocsSoc').querySelectorAll('select.choixsal'),function(sl){sl.onchange=function(){
       var b=sl.closest('.banque'),libres=b.querySelectorAll('.nomlibre'),n=b.querySelector('input.sal'),pr=b.querySelector('input.pre');
       var autre=sl.value==='autre';[].forEach.call(libres,function(l){l.style.display=autre?'':'none';});
@@ -1419,16 +1428,31 @@
         if(DEPART_DOC[typ]&&!d.files.length){d.classList.add('err');docManque=typ;}
         if(datd)titre=typ+' – dernier jour le '+datd.split('-').reverse().join('/');
       }
-      d.files.forEach(function(f,i){taches.push({d:d,cat:cat,sal:sal,nomS:nomS,preS:preS,typ:typ,dat:dat,datf:datf,datd:datd,prv:prv,prec:i===0?prec:'',f:f});});
+      var az=d.querySelector('.atz'),at=null;
+      if(az&&az.style.display!=='none'){ // accident du travail ou de trajet : détails de la déclaration
+        var q=function(c){var e=az.querySelector(c);return e?e.value.trim():'';},rr=function(n){var e=az.querySelector('input[name="'+n+'"]:checked');return e?e.value:'';},trj=typ==='Accident de trajet';
+        at={heure:q('.at_heure'),lieu:q('.at_lieu'),activite:trj?'':q('.at_act'),trajet:trj?q('.at_traj'):'',depart:trj?q('.at_dep'):'',circonstances:q('.at_circ'),objet:q('.at_obj'),siege:q('.at_siege'),
+          lesion:q('.at_les'),lesionAutre:/^Autre/.test(q('.at_les'))?q('.at_lesA'):'',arret:rr('at_arret'),transport:q('.at_transp'),temoin:q('.at_tem'),informeLe:q('.at_infD'),informeA:q('.at_infH'),
+          tiers:rr('at_tiers'),tiersDetail:rr('at_tiers')==='Oui'?q('.at_tiersD'):'',doute:az.querySelector('.at_doute').checked};
+        [['heure','.at_heure'],['lieu','.at_lieu'],[trj?'trajet':'activite',trj?'.at_traj':'.at_act'],['circonstances','.at_circ'],['siege','.at_siege'],['lesion','.at_les'],['temoin','.at_tem'],['informeLe','.at_infD']].forEach(function(x){
+          if(!at[x[0]]){az.querySelector(x[1]).closest('.f').classList.add('err');manque=true;}});
+        if(!at.arret){az.querySelector('input[name="at_arret"]').closest('.f').classList.add('err');manque=true;}
+        if(!at.tiers){az.querySelector('input[name="at_tiers"]').closest('.f').classList.add('err');manque=true;}
+        if(!nomS){var cs3=d.querySelector('select.choixsal');(cs3&&cs3.value!=='autre'?cs3:s).closest('.f').classList.add('err');manque=true;}
+        if(!dat){da.closest('.f').classList.add('err');manque=true;}
+      }
+      d.files.forEach(function(f,i){taches.push({d:d,cat:cat,sal:sal,nomS:nomS,preS:preS,typ:typ,dat:dat,datf:datf,datd:datd,prv:prv,prec:i===0?prec:'',at:i===0?at:null,f:f});});
+      if(at&&!d.files.length)taches.push({d:d,cat:cat,sal:sal,nomS:nomS,preS:preS,typ:typ,dat:dat,datf:datf,prec:prec,at:at,f:null});
       if(!d.files.length&&cat==='depart'&&nomS&&typ&&datd)taches.push({d:d,cat:cat,sal:sal,nomS:nomS,preS:preS,typ:typ,datd:datd,prv:prv,prec:prec,f:null});
-      else if(!d.files.length&&prec)taches.push({d:d,cat:cat,sal:'',prec:prec,f:null});
-      if(d.files.length)recap.push(titre+(sal?' – '+sal:'')+' : '+d.files.length+' fichier'+(d.files.length>1?'s':''));
+      else if(!d.files.length&&prec&&!at)taches.push({d:d,cat:cat,sal:'',prec:prec,f:null});
+      if(d.files.length)recap.push(titre+(sal?' – '+sal:'')+' : '+d.files.length+' fichier'+(d.files.length>1?'s':'')+(at?' et déclaration de l’accident':''));
+      else if(at)recap.push(titre+(sal?' – '+sal:'')+' : déclaration de l’accident');
       else if(cat==='depart'&&nomS&&typ&&datd)recap.push(titre+' – '+sal);
       else if(prec)recap.push(titre+' : précision transmise');
     });
     if(docManque){$('erreurSoc').textContent='Pour une démission, merci de déposer la lettre de démission du salarié.';if(!manque)return;}
     if(finAvant){$('erreurSoc').textContent='La date de fin de l’arrêt est avant la date de début : merci de la corriger.';return;}
-    if(manque){$('erreurSoc').textContent='Merci de compléter les cases en rouge (salarié, motif ou type, dates'+(docManque?', document':'')+').';return;}
+    if(manque){$('erreurSoc').textContent='Merci de compléter les cases en rouge'+(docManque?' et de déposer le document demandé':'')+'.';return;}
     if(!taches.length){
       szones.forEach(function(d){
         if(d.getAttribute('data-cat')==='depart'){['select.choixsal','select.typ','input.datd'].forEach(function(q){var e=d.querySelector(q);if(e&&e.closest('.f').style.display!=='none')e.closest('.f').classList.add('err');});}
@@ -1454,7 +1478,7 @@
       if((t.f&&t.f._ok)||(!t.f&&t.d._precOk)){i++;return suivant();}
       etat(b,i+1,taches.length,t.f?t.f.name:'');
       (t.f?lire(t.f):Promise.resolve('')).then(function(b64){
-        return poster(avecId({rubrique:'social',lot:b.lot,categorie:t.cat,salarie:t.sal,salNom:t.nomS||'',salPrenom:t.preS||'',dateArret:t.dat||'',dateFinArret:t.datf||'',dateDepart:t.datd||'',preavis:t.prv||'',nature:t.typ||'',precision:t.prec,nom:t.f?t.f.name:'',type:t.f?t.f.type:'',base64:b64}));
+        return poster(avecId({rubrique:'social',lot:b.lot,categorie:t.cat,salarie:t.sal,salNom:t.nomS||'',salPrenom:t.preS||'',dateArret:t.dat||'',dateFinArret:t.datf||'',dateDepart:t.datd||'',preavis:t.prv||'',nature:t.typ||'',precision:t.prec,at:t.at?JSON.stringify(t.at):'',nom:t.f?t.f.name:'',type:t.f?t.f.type:'',base64:b64}));
       }).then(function(){if(t.f)t.f._ok=true;else t.d._precOk=true;i++;suivant();}).catch(echec);
     })();
   };
