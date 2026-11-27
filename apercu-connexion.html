@@ -258,6 +258,9 @@
   .cstat.nv{background:#a8892b;color:#fff}
   @media(max-width:600px){.abandeau{margin:6px 16px 0}}
   .rub.sl{background:#455a64}
+  .osim{display:flex;align-items:center;gap:12px;margin:16px 30px 18px;padding:12px 16px;border:1px solid #cfd8dc;border-left:6px solid #455a64;border-radius:10px;background:#fff;text-decoration:none;color:#263238;font-size:15px;transition:background .15s}.osim:hover{background:#f5f7f8}
+  .osim .osi svg{width:22px;height:22px;fill:none;stroke:#455a64;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;display:block}.osim .osd{font-size:14px;color:#555}.osim .osc{color:#455a64;font-weight:bold;white-space:nowrap}
+  @media(max-width:600px){.osim{margin:16px 16px 18px}}
   .sim{border-left:6px solid #455a64}.sim h3{margin:0 0 4px;font-size:17px;color:#222}.sim .sd{font-size:14px;color:#666;margin-bottom:12px}
   .sim .res{background:#eceff1;border-radius:8px;padding:12px 14px;margin-top:6px;font-size:15px;color:#263238;line-height:1.55}.sim .res b{font-size:18px;color:#263238}.sim .res .rd{font-size:13px;color:#555}
   .sim .savert{font-size:12.5px;color:#888;margin-top:8px}
@@ -2026,9 +2029,11 @@
       c.addEventListener('input',maj);c.addEventListener('change',maj);maj();});
   }
 
+  // Accès aux simulateurs : bandeau sous les tuiles, pas de 4e tuile (décision de Mario du 27/11/2026)
   function tuileOutils(){
-    var h='<a class="t" style="--c:#455a64" href="'+lienVue('outils')+'"><div class="tin"><span class="tic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"/><path d="M8 7h8"/><path d="M8 11h.01"/><path d="M12 11h.01"/><path d="M16 11h.01"/><path d="M8 15h.01"/><path d="M12 15h.01"/><path d="M16 15h.01"/></svg></span><div class="tti">Simulateurs</div><div class="tb">Indemnités kilométriques,<br>fin de contrat, congés…</div></div><div class="go">Calculer</div></a>';
-    var t=$('tuiles'),ina=t.querySelector('.t.inactif');if(ina)ina.insertAdjacentHTML('beforebegin',h);else t.insertAdjacentHTML('beforeend',h);
+    var ex=$('osim');if(ex)ex.parentNode.removeChild(ex);
+    $('tuiles').insertAdjacentHTML('afterend','<a id="osim" class="osim" href="'+lienVue('outils')+'"><span class="osi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"/><path d="M8 7h8"/><path d="M8 11h.01"/><path d="M12 11h.01"/><path d="M16 11h.01"/><path d="M8 15h.01"/><path d="M12 15h.01"/><path d="M16 15h.01"/></svg></span>'+
+      '<span style="flex:1"><b>Simulateurs</b><br><span class="osd">Indemnités kilométriques, fin de contrat, congés, heures supplémentaires…</span></span><span class="osc">Calculer ›</span></a>');
   }
 
   // ===================== FORMULAIRE D'EMBAUCHE =====================
