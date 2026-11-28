@@ -898,7 +898,7 @@
     }).catch(function(){erreurLien('La page n’a pas pu être chargée. Merci de réessayer dans quelques instants.');});
   }
 
-  // Petit calendrier (prochaine demande bancaire, le 2 du mois)
+  // Petit calendrier (prochaine demande bancaire, le 1er du mois)
   var nCal=0;
   function calendrier(px){
     var id='gcal'+(++nCal),pts='';
@@ -908,17 +908,17 @@
       '<rect x="5" y="8" width="54" height="52" rx="9" fill="#fff"/><path d="M5 17a9 9 0 0 1 9-9h36a9 9 0 0 1 9 9v6H5z" fill="url(#'+id+')"/>'+
       '<rect x="17" y="3" width="4" height="11" rx="2" fill="#78909c"/><rect x="43" y="3" width="4" height="11" rx="2" fill="#78909c"/>'+
       '<g fill="#cfd8dc">'+pts+'</g><circle cx="23" cy="32" r="6" fill="#2e6b3a"/>'+
-      '<text x="23" y="35.6" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="9.5" fill="#fff">2</text></svg>';
+      '<text x="23" y="35.6" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="9.5" fill="#fff">1</text></svg>';
   }
-  // Date de la prochaine demande bancaire : le 2 du mois (ce mois-ci si on est le 1er)
+  // Date de la prochaine demande bancaire : le 1er du mois suivant (décision de Mario du 28/11/2026)
   function prochaineDemande(){
-    var a=new Date(),pr=new Date(a.getFullYear(),a.getMonth()+(a.getDate()<2?0:1),2);
+    var a=new Date(),pr=new Date(a.getFullYear(),a.getMonth()+1,1);
     var MO=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
-    return '<span style="white-space:nowrap">'+pr.getDate()+' '+MO[pr.getMonth()]+' '+pr.getFullYear()+'</span>';
+    return '<span style="white-space:nowrap">'+(pr.getDate()===1?'1er':pr.getDate())+' '+MO[pr.getMonth()]+' '+pr.getFullYear()+'</span>';
   }
   function tuiles(d){
     var docs=d.documents||[],n=docs.filter(function(x){return x.statut!=='Reçu';}).length,att=(d.attente||[]).length;
-    // Deux états : documents à transmettre, ou « ✔ À jour » avec la date de la prochaine demande (le 2 du mois)
+    // Deux états : documents à transmettre, ou « ✔ À jour » avec la date de la prochaine demande (le 1er du mois)
     var corpsB;
     if(n){
       var mois=(d.periode||'').replace(/^Relevés\s+(de\s+|d’|d')?/i,'');
